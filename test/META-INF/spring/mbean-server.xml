@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context 
+                           http://www.springframework.org/schema/context/spring-context.xsd">
+ 
+    <context:mbean-export/>
+    
+    <!-- Create the MBeanServer -->
+    <bean id="mbeanServer" class="org.springframework.jmx.support.MBeanServerFactoryBean"/>
+    
+	<bean id="jmxExporter" class="org.springframework.jmx.export.MBeanExporter" lazy-init="false">
+        <property name="beans">
+            <map>
+                <entry key="gigaspaces.jmx:name=PerformanceAsync" value-ref="perfMeasure"/>
+            </map>
+        </property>
+        <property name="notificationListenerMappings">
+            <map>
+                <entry key="gigaspaces.jmx:name=PerformanceAsync">
+                    <bean class="com.gigaspaces.monitoring.TestNotificationListener"/>
+                </entry>
+            </map>
+        </property>
+        <property name="server" ref="mbeanServer"/>
+    </bean>
+
+	<bean id="perfMeasure" class="com.gigaspaces.monitoring.AsyncJmxMeasurementExposer" lazy-init="false" init-method="startSpewing">
+		<property name="duration" value="20"/>
+		<property name="frequency" value="1"/>
+	</bean>
+</beans>
