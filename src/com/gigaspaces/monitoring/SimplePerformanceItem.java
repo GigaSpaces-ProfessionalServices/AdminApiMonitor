@@ -37,30 +37,7 @@ public class SimplePerformanceItem implements Serializable, PerformanceItem {
 		super();
 		this.setStartTime(startTime);
 	}
-	
-	/**
-	 * Set the elapsed time based on the <tt>startTime</tt> and the current time.
-	 * Assume this is only called when the method has completed.
-	 * If the method returns a <tt>Future</tt>, then "completed" means it returned the future,
-	 * but there could be an exception thrown on subsequent calls to the <tt>Future</tt>.
-	 * @param completedSuccessfully true if the method completed without
-	 * 		throwing an exception, false otherwise
-	 * @return the elapsed time
-	 */
-	public Integer inferElapsedTime(boolean completedSuccessfully) {
-		//This means "if (completed) then Boolean.FALSE else Boolean.TRUE"
-		this.inException = Boolean.valueOf(!completedSuccessfully);
-		
-		//In reality, this will never overflow an int
-		final int elapsed = (int) (System.currentTimeMillis() - this.startTime);
-		if (elapsed < 0) {
-			throw new IllegalStateException(
-					"PROGRAMMER ERROR in inferElapsedTime(): The current time is later than the start time.");
-		}
-		this.elapsedTime = new Integer(elapsed);
-		return this.elapsedTime;
-	}
-	
+
 	/* (non-Javadoc)
 	 * @see com.gigaspaces.monitoring.PerformanceSource#getSourceMethodName()
 	 */

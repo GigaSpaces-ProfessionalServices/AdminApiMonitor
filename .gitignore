@@ -15,7 +15,8 @@
 *.project
 *.classpath
 
-idea/*
+.idea/*
+out/
 bin/*
 target/*
 build/*

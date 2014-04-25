@@ -13,6 +13,8 @@ import java.util.logging.LogRecord;
  * @author Toby Sarver
  *
  */
+
+//TODO check do we need this class?
 public class AsyncJmxEventLogHandler extends Handler {
 
 	@Override
