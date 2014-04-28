@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--<beans xmlns="http://www.springframework.org/schema/beans"-->
+       <!--xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"-->
+       <!--xmlns:context="http://www.springframework.org/schema/context"-->
+
+       <!--xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd-->
+   <!--http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">-->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:os-core="http://www.openspaces.org/schema/core" xmlns:os-jms="http://www.openspaces.org/schema/jms"
+       xmlns:os-events="http://www.openspaces.org/schema/events"
+       xmlns:os-remoting="http://www.openspaces.org/schema/remoting"
+       xmlns:os-sla="http://www.openspaces.org/schema/sla" xmlns:tx="http://www.springframework.org/schema/tx"
+
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+       http://www.openspaces.org/schema/core http://www.openspaces.org/schema/9.1/core/openspaces-core.xsd
+       http://www.openspaces.org/schema/events http://www.openspaces.org/schema/9.1/events/openspaces-events.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+       http://www.openspaces.org/schema/remoting http://www.openspaces.org/schema/9.1/remoting/openspaces-remoting.xsd">
+
+    <context:annotation-config />
+
+    <context:property-placeholder location="admin_api.properties" />
+
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" />
+
+    <!--TODO SPACE CONFIG!!!-->
+
+    <!--SPACE CONFIG START-->
+    <os-core:space id="mySpace" url="/./mySpace?groups=test" />
+    <!-- OpenSpaces simplified space API built on top of IJSpace/JavaSpace. -->
+    <os-core:giga-space id="gigaSpace" space="mySpace"
+                        tx-manager="transactionManager" />
+
+    <tx:annotation-driven transaction-manager="transactionManager" />
+
+    <!-- Defines a local Jini transaction manager. -->
+    <os-core:distributed-tx-manager id="transactionManager" />
+    <!--SPACE CONFIG END-->
+
+    <!--ADMIN MONITOR START-->
+    <bean id="spaceMonitor" class="com.gigaspaces.monitoring.metrics_source.adminapi.AdminAPIMonitor">
+        <property name="averageCounter" ref="averageCounter" />
+    </bean>
+
+    <bean id="averageCounter" class="com.gigaspaces.monitoring.metrics_source.counter.ExponentialAverageCounter" />
+    <!--ADMIN MONITOR END-->
+
+
+    <!--TIMER START-->
+    <bean id="collectMetricsTask" class="com.gigaspaces.monitoring.metrics_source.timer.CollectMetricsTask" >
+        <property name="adminMonitor" ref="spaceMonitor" />
+    </bean>
+
+    <bean id="schedulerTask" class="org.springframework.scheduling.timer.MethodInvokingTimerTaskFactoryBean">
+        <property name="targetObject" ref="collectMetricsTask" />
+        <property name="targetMethod" value="collectMetrics" />
+    </bean>
+
+    <bean id="timerTask" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+        <property name="timerTask" ref="schedulerTask" />
+        <!--<property name="delay" value="1000" />-->
+        <property name="period" value="5000" />
+    </bean>
+
+    <bean class="org.springframework.scheduling.timer.TimerFactoryBean">
+        <property name="scheduledTimerTasks">
+            <list>
+                <ref local="timerTask" />
+            </list>
+        </property>
+    </bean>
+    <!--TIMER END-->
+
+
+</beans>

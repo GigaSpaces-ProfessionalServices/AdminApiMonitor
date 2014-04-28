@@ -2,10 +2,8 @@ package com.gigaspaces.monitoring.metrics_source.adminapi;
 
 import java.util.Date;
 
-/**
- * Modified Stat class to hold double average values
- */
 public class AverageStat {
+
     long pid;
     String hostname;
     Date timestamp;
