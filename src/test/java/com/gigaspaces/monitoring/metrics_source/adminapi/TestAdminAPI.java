@@ -3,30 +3,34 @@ package com.gigaspaces.monitoring.metrics_source.adminapi;
 import com.j_spaces.core.IJSpace;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.openspaces.core.GigaSpace;
-import org.openspaces.core.GigaSpaceConfigurer;
-import org.openspaces.core.space.UrlSpaceConfigurer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Map;
 
 import static org.junit.Assert.*;
 
+@RunWith( SpringJUnit4ClassRunner.class )
+@ContextConfiguration(locations = {"/META-INF/spring/pu.xml"})
 public class TestAdminAPI {
 
+    @Autowired
     private IJSpace space;
 
+    @Autowired
     private GigaSpace gigaSpace;
 
+    @Autowired
     private ApplicationContext applicationContext;
 
     @Before
-    public void setupSpace(){
-        space = new UrlSpaceConfigurer("/./testSpace?groups=test").space();
-        gigaSpace = new GigaSpaceConfigurer(space).gigaSpace();
+    public void setupSpace() {
+
         gigaSpace.write(new Message(1, "asd"));
-        applicationContext = new ClassPathXmlApplicationContext("META-INF/spring/pu.xml");
     }
 
     @Test
@@ -38,4 +42,11 @@ public class TestAdminAPI {
 
     }
 
+    public void setGigaSpace(GigaSpace gigaSpace) {
+        this.gigaSpace = gigaSpace;
+    }
+
+    public void setSpace(IJSpace space) {
+        this.space = space;
+    }
 }

@@ -24,14 +24,14 @@
 
     <context:property-placeholder location="admin_api.properties" />
 
+    <context:component-scan base-package="com.gigaspaces.monitoring.metrics_source.adminapi" />
+
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" />
 
-    <!--TODO SPACE CONFIG!!!-->
-
     <!--SPACE CONFIG START-->
-    <os-core:space id="mySpace" url="/./mySpace?groups=test" />
+    <os-core:space id="testSpace" url="/./testSpace?groups=test" />
     <!-- OpenSpaces simplified space API built on top of IJSpace/JavaSpace. -->
-    <os-core:giga-space id="gigaSpace" space="mySpace"
+    <os-core:giga-space id="gigaSpace" space="testSpace"
                         tx-manager="transactionManager" />
 
     <tx:annotation-driven transaction-manager="transactionManager" />

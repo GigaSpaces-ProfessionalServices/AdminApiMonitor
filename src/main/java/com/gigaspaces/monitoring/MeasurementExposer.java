@@ -136,55 +136,5 @@ public class MeasurementExposer extends PerformanceSource implements Measurement
 		this.notifyer.removeNotificationListener(listener, filter, handback);
 	}
 	
-	/*
-	public void setNotificationPublisher(NotificationPublisher publisher) {
-		this.publisher = publisher;
-	}
-*/
-	/*
-	@Override
-	public Object getAttribute(String attribute)
-			throws AttributeNotFoundException, MBeanException,
-			ReflectionException {
-		if ("goodConfiguration".equals(attribute)){
-			return this.isGoodConfiguration();
-		}
-		throw new AttributeNotFoundException();
-	}
 
-	@Override
-	public void setAttribute(Attribute attribute)
-			throws AttributeNotFoundException, InvalidAttributeValueException,
-			MBeanException, ReflectionException {
-		if ("goodConfiguration".equals(attribute)) {
-			//do nothing
-		} else {
-			throw new AttributeNotFoundException();
-		}
-	}
-
-	@Override
-	public AttributeList getAttributes(String[] attributes) {
-		if (null != attributes && )
-	}
-
-	@Override
-	public AttributeList setAttributes(AttributeList attributes) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Object invoke(String actionName, Object[] params, String[] signature)
-			throws MBeanException, ReflectionException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public MBeanInfo getMBeanInfo() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	*/
 }
