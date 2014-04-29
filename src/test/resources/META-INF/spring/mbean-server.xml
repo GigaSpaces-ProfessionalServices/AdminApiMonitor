@@ -22,14 +22,15 @@
         <property name="notificationListenerMappings">
             <map>
                 <entry key="gigaspaces.jmx:name=PerformanceAsync">
-                    <bean class="com.gigaspaces.monitoring.TestNotificationListener"/>
+                    <bean class="com.gigaspaces.monitoring.metrics_source.space_proxy.TestNotificationListener"/>
                 </entry>
             </map>
         </property>
         <property name="server" ref="mbeanServer"/>
     </bean>
 
-	<bean id="perfMeasure" class="com.gigaspaces.monitoring.AsyncJmxMeasurementExposer" lazy-init="false" init-method="startSpewing">
+    //SUSPICIOUS PLACE
+	<bean id="perfMeasure" class="com.gigaspaces.monitoring.metrics_source.space_proxy.MeasurementExposer" lazy-init="false" init-method="startSpewing">
 		<property name="duration" value="20"/>
 		<property name="frequency" value="1"/>
 	</bean>
