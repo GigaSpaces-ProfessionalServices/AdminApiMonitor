@@ -4,11 +4,31 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class SpaceProxyCounter {
 
-    AtomicInteger readCounter;
+    AtomicInteger readCounter = new AtomicInteger(0);
 
-    AtomicInteger writeCounter;
+    AtomicInteger writeCounter = new AtomicInteger(0);
 
-    AtomicInteger changeCounter;
+    AtomicInteger changeCounter = new AtomicInteger(0);
 
-    AtomicInteger takeCounter;
+    AtomicInteger takeCounter = new AtomicInteger(0);
+
+    public SpaceProxyCounter() {
+    }
+
+    public SpaceProxyCounter(AtomicInteger readCounter, AtomicInteger writeCounter, AtomicInteger changeCounter, AtomicInteger takeCounter) {
+        this.readCounter = readCounter;
+        this.writeCounter = writeCounter;
+        this.changeCounter = changeCounter;
+        this.takeCounter = takeCounter;
+    }
+
+    @Override
+    public String toString() {
+        return "SpaceProxyCounter{" +
+                "readCounter=" + readCounter +
+                ", writeCounter=" + writeCounter +
+                ", changeCounter=" + changeCounter +
+                ", takeCounter=" + takeCounter +
+                '}';
+    }
 }

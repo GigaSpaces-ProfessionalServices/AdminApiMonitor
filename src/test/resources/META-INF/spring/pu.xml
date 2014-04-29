@@ -52,6 +52,7 @@
     <!--TIMER START-->
     <bean id="collectMetricsTask" class="com.gigaspaces.monitoring.metrics_source.timer.CollectMetricsTask" >
         <property name="adminMonitor" ref="spaceMonitor" />
+        <property name="listener" ref="spaceProxyNotificationListener" />
     </bean>
 
     <bean id="schedulerTask" class="org.springframework.scheduling.timer.MethodInvokingTimerTaskFactoryBean">

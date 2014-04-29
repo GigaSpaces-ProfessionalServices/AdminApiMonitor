@@ -6,7 +6,7 @@ import javax.management.NotificationListener;
 
 public class SpaceProxyNotificationListener implements NotificationListener, NotificationFilter {
 
-    private SpaceProxyCounter spaceProxyCounter;
+    private SpaceProxyCounter spaceProxyCounter = new SpaceProxyCounter();
 
     @Override
     public boolean isNotificationEnabled(Notification notification) {
@@ -15,12 +15,10 @@ public class SpaceProxyNotificationListener implements NotificationListener, Not
 
     @Override
     public void handleNotification(Notification notification, Object handback) {
-        System.out.println("Received notification");
         SimplePerformanceItem userData = (SimplePerformanceItem) notification.getUserData();
-        System.out.println("CLASSname = " + userData.getSourceClassName());
         String methodName = userData.getSourceMethodName();
         incrementCounter(methodName);
-        System.out.println("METHOD name = " + methodName);
+        System.out.println("COUNTER = " + spaceProxyCounter);
     }
 
     private void incrementCounter(String methodName) {
@@ -34,5 +32,9 @@ public class SpaceProxyNotificationListener implements NotificationListener, Not
         }   else if (methodName.contains("take") || methodName.contains("Take")){
             spaceProxyCounter.takeCounter.addAndGet(1);
         }
+    }
+
+    public SpaceProxyCounter getSpaceProxyCounter() {
+        return spaceProxyCounter;
     }
 }

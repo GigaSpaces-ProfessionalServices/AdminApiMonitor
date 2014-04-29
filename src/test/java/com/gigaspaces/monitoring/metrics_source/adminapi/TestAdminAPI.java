@@ -15,7 +15,7 @@ import java.util.Map;
 import static org.junit.Assert.*;
 
 @RunWith( SpringJUnit4ClassRunner.class )
-@ContextConfiguration(locations = {"/META-INF/spring/pu.xml"})
+@ContextConfiguration(locations = {"/META-INF/spring/pu.xml", "/META-INF/spring/mbean-server.xml"})
 public class TestAdminAPI {
 
     @Autowired
