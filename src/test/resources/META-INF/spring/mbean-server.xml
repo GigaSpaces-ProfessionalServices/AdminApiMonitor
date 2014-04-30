@@ -15,7 +15,13 @@
     <!-- Create the MBeanServer -->
     <bean id="mbeanServer" class="org.springframework.jmx.support.MBeanServerFactoryBean"/>
 
-    <bean id="spaceProxyNotificationListener" class="com.gigaspaces.monitoring.metrics_source.space_proxy.SpaceProxyNotificationListener"/>
+    <bean id="spaceProxyNotificationListener" class="com.gigaspaces.monitoring.metrics_source.space_proxy.SpaceProxyNotificationListener">
+        <property name="spaceProxyCounter" ref="spaceProxyCounter" />
+    </bean>
+
+    <bean id="spaceProxyCounter" class="com.gigaspaces.monitoring.metrics_source.space_proxy.SpaceProxyCounter">
+        <property name="averageCounter" ref="averageCounter" />
+    </bean>
 
 	<bean id="jmxExporter" class="org.springframework.jmx.export.MBeanExporter" lazy-init="false">
         <property name="beans">

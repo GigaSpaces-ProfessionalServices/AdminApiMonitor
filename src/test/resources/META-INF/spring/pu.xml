@@ -50,9 +50,9 @@
 
 
     <!--TIMER START-->
-    <bean id="collectMetricsTask" class="com.gigaspaces.monitoring.metrics_source.timer.CollectMetricsTask" >
+    <bean id="collectMetricsTask" class="com.gigaspaces.monitoring.metrics_reporter.CollectMetricsTask" >
         <property name="adminMonitor" ref="spaceMonitor" />
-        <property name="listener" ref="spaceProxyNotificationListener" />
+        <property name="spaceProxyCounter" ref="spaceProxyCounter" />
     </bean>
 
     <bean id="schedulerTask" class="org.springframework.scheduling.timer.MethodInvokingTimerTaskFactoryBean">
@@ -63,7 +63,7 @@
     <bean id="timerTask" class="org.springframework.scheduling.timer.ScheduledTimerTask">
         <property name="timerTask" ref="schedulerTask" />
         <!--<property name="delay" value="1000" />-->
-        <property name="period" value="5000" />
+        <property name="period" value="${stat.sample.interval}" />
     </bean>
 
     <bean class="org.springframework.scheduling.timer.TimerFactoryBean">

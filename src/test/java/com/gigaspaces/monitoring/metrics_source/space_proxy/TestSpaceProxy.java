@@ -17,7 +17,6 @@ import java.util.Set;
 @ContextConfiguration(locations = {"/META-INF/spring/pu.xml", "/META-INF/spring/mbean-server.xml"})
 public class TestSpaceProxy {
 
-    /*@Autowired*/
     private MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
 
     @Autowired

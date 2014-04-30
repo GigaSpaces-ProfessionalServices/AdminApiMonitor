@@ -6,7 +6,7 @@ import javax.management.NotificationListener;
 
 public class SpaceProxyNotificationListener implements NotificationListener, NotificationFilter {
 
-    private SpaceProxyCounter spaceProxyCounter = new SpaceProxyCounter();
+    private SpaceProxyCounter spaceProxyCounter;
 
     @Override
     public boolean isNotificationEnabled(Notification notification) {
@@ -16,25 +16,15 @@ public class SpaceProxyNotificationListener implements NotificationListener, Not
     @Override
     public void handleNotification(Notification notification, Object handback) {
         SimplePerformanceItem userData = (SimplePerformanceItem) notification.getUserData();
-        String methodName = userData.getSourceMethodName();
-        incrementCounter(methodName);
+        spaceProxyCounter.count(userData);
         System.out.println("COUNTER = " + spaceProxyCounter);
-    }
-
-    private void incrementCounter(String methodName) {
-        //TODO find better way to match method and counter
-        if (methodName.contains("write") || methodName.contains("Write")){
-            spaceProxyCounter.writeCounter.addAndGet(1);
-        }   else if (methodName.contains("read") || methodName.contains("Read")){
-            spaceProxyCounter.readCounter.addAndGet(1);
-        }   else if (methodName.contains("change") || methodName.contains("Change")){
-            spaceProxyCounter.changeCounter.addAndGet(1);
-        }   else if (methodName.contains("take") || methodName.contains("Take")){
-            spaceProxyCounter.takeCounter.addAndGet(1);
-        }
     }
 
     public SpaceProxyCounter getSpaceProxyCounter() {
         return spaceProxyCounter;
+    }
+
+    public void setSpaceProxyCounter(SpaceProxyCounter spaceProxyCounter) {
+        this.spaceProxyCounter = spaceProxyCounter;
     }
 }

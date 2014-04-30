@@ -42,8 +42,7 @@ public class AdminAPIMonitor {
 
     }
 
-    public void startCollection(){
-        System.out.println("Start collection");
+    public Map<Long,AverageStat> startCollection(){
         AdminFactory factory = new AdminFactory();
         if(secured){
             factory.credentials(adminUser,adminPassword);
@@ -58,15 +57,12 @@ public class AdminAPIMonitor {
         GridServiceContainers gscs = admin.getGridServiceContainers();
 
       // TODO check (how to start GSC from java?)
-      //  gscs.waitFor(1);
-
+        gscs.waitFor(1, 500, TimeUnit.MILLISECONDS);
 
         Spaces spaces = admin.getSpaces();
         spaces.waitFor("testSpace"); //TODO replace by configurable space name
-
         collectStats(admin);
-        writeStats();
-
+        return lastCollectedStat;
     }
 
     public void collectStats(Admin admin){
@@ -183,10 +179,6 @@ public class AdminAPIMonitor {
                 stat.activeTransactionCount = averageCounter.average(stat.activeTransactionCount, activeTransactionCount);
             }
         }
-
-    public void writeStats(){
-        //TODO to be replaced to smth like "sendStatsToReporter"
-    }
 
     public String getAdminUser() {
         return adminUser;
