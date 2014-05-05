@@ -28,6 +28,7 @@
 
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" />
 
+
     <!--SPACE CONFIG START-->
     <os-core:space id="testSpace" url="/./testSpace?groups=test" />
     <!-- OpenSpaces simplified space API built on top of IJSpace/JavaSpace. -->
@@ -39,6 +40,7 @@
     <!-- Defines a local Jini transaction manager. -->
     <os-core:distributed-tx-manager id="transactionManager" />
     <!--SPACE CONFIG END-->
+
 
     <!--ADMIN MONITOR START-->
     <bean id="spaceMonitor" class="com.gigaspaces.monitoring.metrics_source.adminapi.AdminAPIMonitor">
@@ -75,5 +77,87 @@
     </bean>
     <!--TIMER END-->
 
+
+
+    <!--
+            A bean representing a space (an IJSpace implementation).
+        -->
+    <os-core:space id="postSpace" url="/./processorSpace" >
+        <os-core:space-type type-name="BlogPost" >
+            <os-core:id property="_id"/>
+            <os-core:routing property="_partitionId"/>
+            <os-core:basic-index path="_id"/>
+            <os-core:basic-index path="_postedDateTime"/>
+            <os-core:basic-index path="username"/>
+            <os-core:compound-index paths="username,_postedDateTime"/>
+        </os-core:space-type>
+    </os-core:space>
+
+    <!--
+        A wrapper bean to the space to provide OpenSpaces simplified space API (built on top of IJSpace/JavaSpace).
+    -->
+    <os-core:giga-space id="real_gigaSpace" space="postSpace" tx-manager="transactionManager"/>
+
+    <context:component-scan base-package="com.gigaspaces.monitoring"/>
+
+    <context:mbean-export/>
+    <bean id="serverConnector" class="org.springframework.jmx.support.MBeanServerConnectionFactoryBean">
+        <property name="serviceUrl" value="service:jmx:rmi:///jndi/rmi://localhost:41567/jmxrmi"/>
+        <property name="environment">
+            <props>
+                <prop key="com.sun.management.jmxremote.port">41567</prop>
+                <prop key="com.sun.management.jmxremote.authenticate">false</prop>
+                <prop key="com.sun.management.jmxremote.ssl">false</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="envProps" class="java.util.Properties">
+
+    </bean>
+
+    <bean id="perfMonitor" class="org.springframework.jmx.access.MBeanProxyFactoryBean">
+        <property name="objectName" value="com.gigaspaces.monitoring:name=MeasurementExposer"/>
+        <property name="proxyInterface" value="com.gigaspaces.monitoring.metrics_source.space_proxy.MeasurementExposerMBean"/>
+        <property name="server" ref="serverConnector"/>
+    </bean>
+
+
+    <!--FEEDER START-->
+
+    <bean id="feeder" class="com.gigaspaces.monitoring.metrics_source.feeder.Feeder">
+        <property name="receiver" ref="postReceiver" />
+        <property name="postsLocation" value="META-INF/data/posts.xml" />
+        <property name="interval" value="3" />
+        <property name="maxIncrement" value="20" />
+        <property name="maxSimultaneous" value="2" />
+        <property name="runDuration" value="20" />
+    </bean>
+
+    <bean id="postReceiver" class="com.gigaspaces.monitoring.metrics_source.feeder.SpacePostReceiver">
+        <property name="gigaSpace" ref="wrappedGigaSpace" />
+    </bean>
+
+    <!--FEEDER END-->
+
+
+    <!--SPRING AOP START-->
+
+    <bean id="logInterceptor" class="com.gigaspaces.monitoring.metrics_source.space_proxy.LogInterceptor" >
+        <property name="exposer" ref="perfMonitor" />
+    </bean>
+
+    <bean id="wrappedGigaSpace" class="org.springframework.aop.framework.ProxyFactoryBean">
+
+        <property name="target" ref="real_gigaSpace" />
+
+        <property name="interceptorNames">
+            <list>
+                <value>logInterceptor</value>
+            </list>
+        </property>
+    </bean>
+
+    <!--SPRING AOP END-->
 
 </beans>

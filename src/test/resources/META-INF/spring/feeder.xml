@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:os-core="http://www.openspaces.org/schema/core"
+       xmlns:os-events="http://www.openspaces.org/schema/events"
+       xmlns:os-remoting="http://www.openspaces.org/schema/remoting"
+       xmlns:os-archive="http://www.openspaces.org/schema/archive"
+       xmlns:os-sla="http://www.openspaces.org/schema/sla"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.openspaces.org/schema/core http://www.openspaces.org/schema/9.5/core/openspaces-core.xsd
+       http://www.openspaces.org/schema/events http://www.openspaces.org/schema/9.5/events/openspaces-events.xsd
+       http://www.openspaces.org/schema/remoting http://www.openspaces.org/schema/9.5/remoting/openspaces-remoting.xsd
+       http://www.openspaces.org/schema/archive http://www.openspaces.org/schema/9.5/archive/openspaces-archive.xsd
+       http://www.openspaces.org/schema/sla http://www.openspaces.org/schema/9.5/sla/openspaces-sla.xsd
+       http://www.springframework.org/schema/context 
+                           http://www.springframework.org/schema/context/spring-context.xsd">
+
+<!-- ========================================================================================================== -->
+
+<!--
+        A bean representing a space (an IJSpace implementation).
+    -->
+    <os-core:space id="space" url="jini://*/*/processorSpace" />
+    <!--
+        Defines a distributed transaction manager (will be used for transactional operations with the space).
+    -->
+    <os-core:distributed-tx-manager id="transactionManager"/>
+
+    <!--
+        A wrapper bean to the space to provide OpenSpaces simplified space API (built on top of IJSpace/JavaSpace).
+    -->
+    <os-core:giga-space id="real_gigaSpace" space="space" tx-manager="transactionManager"/>
+
+    <context:component-scan base-package="com.gigaspaces.monitoring"/>
+    
+    <context:mbean-export/>
+    <bean id="serverConnector" class="org.springframework.jmx.support.MBeanServerConnectionFactoryBean">
+		<property name="serviceUrl" value="service:jmx:rmi:///jndi/rmi://localhost:41567/jmxrmi"/>
+    </bean>
+
+
+    <bean id="perfMonitor" class="org.springframework.jmx.access.MBeanProxyFactoryBean">
+    	<property name="objectName" value="com.gigaspaces.monitoring:name=MeasurementExposer"/>
+    	<property name="proxyInterface" value="com.gigaspaces.monitoring.metrics_source.space_proxy.MeasurementExposerMBean"/>
+    	<property name="server" ref="serverConnector"/>
+    </bean>
+
+    <!--SPRING AOP START-->
+
+    <bean id="logInterceptor" class="com.gigaspaces.monitoring.metrics_source.space_proxy.LogInterceptor" >
+        <property name="exposer" ref="perfMonitor" />
+    </bean>
+
+    <bean id="gigaSpace" class="org.springframework.aop.framework.ProxyFactoryBean">
+
+        <property name="target" ref="real_gigaSpace" />
+
+        <property name="interceptorNames">
+            <list>
+                <value>logInterceptor</value>
+            </list>
+        </property>
+    </bean>
+
+    <!--SPRING AOP END-->
+
+</beans>
