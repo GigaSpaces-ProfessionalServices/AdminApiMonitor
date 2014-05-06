@@ -1,6 +1,5 @@
 package com.gigaspaces.monitoring.metrics_source.space_proxy;
 
-import com.gigaspaces.internal.lease.SpaceNotifyLease;
 import com.gigaspaces.monitoring.metrics_source.feeder.Feeder;
 import org.junit.Before;
 import org.junit.Test;
@@ -8,7 +7,6 @@ import org.junit.runner.RunWith;
 import org.openspaces.pu.container.integrated.IntegratedProcessingUnitContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -43,7 +41,6 @@ public class TestSpaceProxy {
         objectName = new ObjectName(beanId);
         mBeanServer.registerMBean(exposer, objectName);
         exposer.startSpewing();
-        //processingUnitContainer = new IntegratedProcessingUnitContainer(new ClassPathXmlApplicationContext("/pu.xml"));
         feeder.startFeed();
     }
 

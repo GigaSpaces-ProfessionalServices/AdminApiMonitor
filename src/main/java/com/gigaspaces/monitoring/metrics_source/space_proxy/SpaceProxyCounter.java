@@ -53,7 +53,7 @@ public class SpaceProxyCounter {
     @Override
     public String toString() {
         return "SpaceProxyCounter{" +
-                ", readCounter=" + readCounter +
+                "readCounter=" + readCounter +
                 ", averageReadTime=" + Float.intBitsToFloat(averageReadTime.get()) +
                 ", writeCounter=" + writeCounter +
                 ", averageWriteTime=" + Float.intBitsToFloat(averageWriteTime.get()) +

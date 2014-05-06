@@ -1,6 +1,5 @@
 package com.gigaspaces.monitoring.metrics_source.adminapi;
 
-import com.j_spaces.core.IJSpace;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
