@@ -1,5 +1,6 @@
 package com.gigaspaces.monitoring.metrics_source.space_proxy;
 
+import com.j_spaces.core.LeaseContext;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.beans.factory.annotation.Required;
@@ -25,7 +26,9 @@ public class LogInterceptor implements MethodInterceptor {
         performanceItem.setSourceMethodName(methodInvocation.getMethod().getName());
         performanceItem.setStartTime(startTime);
         try {
-            return methodInvocation.proceed();
+            Object result = methodInvocation.proceed();
+            performanceItem.setCacheHit(checkCacheHitOrMiss(result));
+            return result;
         } catch (Exception e) {
             performanceItem.setInException(true);
             performanceItem.setExceptionStack(getStackTrace(e));
@@ -37,6 +40,21 @@ public class LogInterceptor implements MethodInterceptor {
             }   catch (Exception e){
 
             }
+        }
+    }
+
+    /**
+     * This method checks whether cache hit or not based on method invocation result
+     * @param result
+     * @return
+     */
+    private Boolean checkCacheHitOrMiss(Object result) {
+        if (result == null){
+            return false;
+        }   else if (result instanceof LeaseContext){
+            return null;
+        }   else {
+            return true;
         }
     }
 

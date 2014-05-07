@@ -15,7 +15,7 @@ public interface MeasurementExposerMBean {
 	 * @param item contains info about what was called and what happened
 	 * @throws Exception if anything goes wrong
 	 */
-	void expose(PerformanceItem item) throws Exception;
+	void expose(SimplePerformanceItem item) throws Exception;
 	
 	/**
 	 * Check the configuration of the <tt>MeasurementExposer</tt>.

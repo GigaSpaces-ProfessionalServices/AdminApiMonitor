@@ -24,8 +24,7 @@ public class ExponentialAverageCounter {
         return oldValue + alpha * (input - oldValue);
     }
 
-    public float average(Integer oldValueInt, int input) {
-        float oldValue = Float.intBitsToFloat(oldValueInt);
+    public float average(float oldValue, int input) {
         return oldValue + alpha * (input - oldValue);
     }
 

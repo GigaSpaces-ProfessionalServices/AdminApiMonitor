@@ -54,7 +54,7 @@ public class MeasurementExposer extends PerformanceSource implements Measurement
 	}
 	
 	// ManagedOperation
-	public void expose(PerformanceItem item) throws Exception {
+	public void expose(SimplePerformanceItem item) throws Exception {
 		String message = "Performance for " + item.getSourceClassName() + "."
 				+ item.getSourceMethodName() + ": ";
 		final Notification notification = new Notification(JMX_NOTIFY_TYPE, this,

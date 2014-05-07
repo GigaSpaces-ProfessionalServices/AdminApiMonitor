@@ -9,7 +9,7 @@ import java.io.Serializable;
  * @author tsarver
  *
  */
-public class SimplePerformanceItem implements Serializable, PerformanceItem {
+public class SimplePerformanceItem implements Serializable {
 
 	private static final long serialVersionUID = -1483287039798071568L;
 
@@ -18,7 +18,8 @@ public class SimplePerformanceItem implements Serializable, PerformanceItem {
 	protected Integer elapsedTime;
 	protected Boolean inException;
 	protected String exceptionStack;
-	
+	protected Boolean cacheHit;
+
 	/**
 	 * Creates a <tt>PerformanceItem</tt> with the start as the current time.
 	 */
@@ -41,7 +42,6 @@ public class SimplePerformanceItem implements Serializable, PerformanceItem {
 	/* (non-Javadoc)
 	 * @see com.gigaspaces.monitoring.metrics_source.space_proxy.PerformanceSource#getSourceMethodName()
 	 */
-	@Override
 	public String getSourceMethodName() {
 		return this.sourceMethodName;
 	}
@@ -49,7 +49,6 @@ public class SimplePerformanceItem implements Serializable, PerformanceItem {
 	/* (non-Javadoc)
 	 * @see com.gigaspaces.monitoring.metrics_source.space_proxy.PerformanceSource#getSourceClassName()
 	 */
-	@Override
 	public String getSourceClassName() {
 		return this.sourceClassName;
 	}
@@ -57,7 +56,6 @@ public class SimplePerformanceItem implements Serializable, PerformanceItem {
 	/* (non-Javadoc)
 	 * @see com.gigaspaces.monitoring.metrics_source.space_proxy.PerformanceSource#getStartTime()
 	 */
-	@Override
 	public long getStartTime() {
 		return this.startTime;
 	}
@@ -65,7 +63,6 @@ public class SimplePerformanceItem implements Serializable, PerformanceItem {
 	/* (non-Javadoc)
 	 * @see com.gigaspaces.monitoring.metrics_source.space_proxy.PerformanceSource#getElapsedTime()
 	 */
-	@Override
 	public Integer getElapsedTime() {
 		return this.elapsedTime;
 	}
@@ -73,7 +70,6 @@ public class SimplePerformanceItem implements Serializable, PerformanceItem {
 	/* (non-Javadoc)
 	 * @see com.gigaspaces.monitoring.metrics_source.space_proxy.PerformanceSource#isInException()
 	 */
-	@Override
 	public Boolean isInException() {
 		return this.inException;
 	}
@@ -81,12 +77,15 @@ public class SimplePerformanceItem implements Serializable, PerformanceItem {
 	/* (non-Javadoc)
 	 * @see com.gigaspaces.monitoring.metrics_source.space_proxy.PerformanceSource#getExceptionStack()
 	 */
-	@Override
 	public String getExceptionStack() {
 		return this.exceptionStack;
 	}
 
-	public Boolean getInException() {
+    public Boolean getCacheHit() {
+        return cacheHit;
+    }
+
+    public Boolean getInException() {
 		return inException;
 	}
 
@@ -114,4 +113,7 @@ public class SimplePerformanceItem implements Serializable, PerformanceItem {
 		this.exceptionStack = exceptionStack;
 	}
 
+    public void setCacheHit(Boolean cacheHit) {
+        this.cacheHit = cacheHit;
+    }
 }

@@ -45,7 +45,7 @@ public class TestNotificationListener implements NotificationListener,
         System.out.println(notification.getType());
         Object payload = notification.getUserData();
         if (null != payload) {
-        	PerformanceItem perfItem = (PerformanceItem) payload;
+        	SimplePerformanceItem perfItem = (SimplePerformanceItem) payload;
         	if (perfItem.isInException()) {
         		System.out.print("\tException=");
         		System.out.println(perfItem.getExceptionStack());
