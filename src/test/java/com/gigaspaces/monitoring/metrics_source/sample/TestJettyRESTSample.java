@@ -1,5 +1,6 @@
 package com.gigaspaces.monitoring.metrics_source.sample;
 
+import com.gigaspaces.async.AsyncFuture;
 import com.gigaspaces.client.WriteModifiers;
 import com.gigaspaces.monitoring.metrics_source.adminapi.Message;
 import com.gigaspaces.monitoring.metrics_source.space_proxy.MeasurementExposer;
@@ -25,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
+import java.util.concurrent.ExecutionException;
 
 /**
  * NON-JAVADOC
@@ -89,7 +91,18 @@ public class TestJettyRESTSample {
             String method = request.getMethod();
             switch (method){
                 case "GET": {
-                    result = gigaSpace.readById(Message.class, id);
+                    if (request.getParameter("async") != null){
+                        AsyncFuture<Message> messageAsyncFuture = gigaSpace.asyncRead(new Message(), id);
+                        try {
+                            result = messageAsyncFuture.get();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        }
+                    }   else {
+                        result = gigaSpace.readById(Message.class, id);
+                    }
                     break;
                 }
                 case "POST": {

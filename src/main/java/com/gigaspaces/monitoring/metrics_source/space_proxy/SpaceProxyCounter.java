@@ -100,16 +100,14 @@ public class SpaceProxyCounter {
     @Override
     public String toString() {
         return "SpaceProxyCounter{" +
-                "averageCounter=" + averageCounter +
-                ", periodicCounter=" + periodicCounter +
-                ", readCounter=" + readCounter +
-                ", averageReadTime=" + averageReadTime +
+                "readCounter=" + readCounter +
+                ", averageReadTime=" + Float.intBitsToFloat(averageReadTime.get()) +
                 ", writeCounter=" + writeCounter +
-                ", averageWriteTime=" + averageWriteTime +
+                ", averageWriteTime=" + Float.intBitsToFloat(averageWriteTime.get()) +
                 ", changeCounter=" + changeCounter +
-                ", averageChangeTime=" + averageChangeTime +
+                ", averageChangeTime=" + Float.intBitsToFloat(averageChangeTime.get()) +
                 ", takeCounter=" + takeCounter +
-                ", averageTakeTime=" + averageTakeTime +
+                ", averageTakeTime=" + Float.intBitsToFloat(averageTakeTime.get()) +
                 ", cacheHitCounter=" + cacheHitCounter +
                 ", cacheMissCounter=" + cacheMissCounter +
                 '}';
@@ -118,6 +116,50 @@ public class SpaceProxyCounter {
     @Required
     public void setAverageCounter(ExponentialAverageCounter averageCounter) {
         this.averageCounter = averageCounter;
+    }
+
+    public PeriodicMetricsCounter getPeriodicCounter() {
+        return periodicCounter;
+    }
+
+    public Integer getReadCounter() {
+        return readCounter.get();
+    }
+
+    public Float getAverageReadTime() {
+        return Float.intBitsToFloat(averageReadTime.get());
+    }
+
+    public Integer getWriteCounter() {
+        return writeCounter.get();
+    }
+
+    public Float getAverageWriteTime() {
+        return Float.intBitsToFloat(averageWriteTime.get());
+    }
+
+    public Integer getChangeCounter() {
+        return changeCounter.get();
+    }
+
+    public Float getAverageChangeTime() {
+        return Float.intBitsToFloat(averageChangeTime.get());
+    }
+
+    public Integer getTakeCounter() {
+        return takeCounter.get();
+    }
+
+    public Float getAverageTakeTime() {
+        return Float.intBitsToFloat(averageTakeTime.get());
+    }
+
+    public Integer getCacheHitCounter() {
+        return cacheHitCounter.get();
+    }
+
+    public Integer getCacheMissCounter() {
+        return cacheMissCounter.get();
     }
 
     public static class PeriodicMetricsCounter {

@@ -3,7 +3,11 @@
  */
 package com.gigaspaces.monitoring.metrics_source.space_proxy;
 
+import com.j_spaces.core.LeaseContext;
+
+import java.io.PrintWriter;
 import java.io.Serializable;
+import java.io.StringWriter;
 
 /**
  * @author tsarver
@@ -37,6 +41,23 @@ public class SimplePerformanceItem implements Serializable {
 	public SimplePerformanceItem(long startTime) {
 		super();
 		this.setStartTime(startTime);
+	}
+
+    public void setCacheHitOrMiss(Object result) {
+        if (result == null){
+            cacheHit = false;
+        }   else if (result instanceof LeaseContext){
+            cacheHit = null;
+        }   else {
+            cacheHit = true;
+        }
+    }
+
+    public void setStackTrace(Exception e) {
+        StringWriter sOut = new StringWriter(255);
+        PrintWriter writer = new PrintWriter(sOut);
+        e.printStackTrace(writer);
+        exceptionStack = sOut.toString();
 	}
 
 	/* (non-Javadoc)
