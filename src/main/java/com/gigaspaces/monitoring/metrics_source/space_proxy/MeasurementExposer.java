@@ -10,9 +10,10 @@ import javax.management.NotificationBroadcasterSupport;
 import javax.management.NotificationEmitter;
 import javax.management.NotificationFilter;
 import javax.management.NotificationListener;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicLong;
 
-//import org.springframework.jmx.export.notification.NotificationPublisher;
-//import org.springframework.jmx.export.notification.NotificationPublisherAware;
 
 /**
  * Raises a JMX event with a simple payload with minimal time by the calling
@@ -28,12 +29,18 @@ import javax.management.NotificationListener;
 public class MeasurementExposer extends PerformanceSource implements MeasurementExposerMBean, NotificationEmitter {
 
 	public static final String BEAN_ID = "com.gigaspaces.monitoring:name=MeasurementExposer";
+
 	public static final String JMX_NOTIFY_TYPE = "perfMonitor";
 	
 	protected int duration = -1, frequency = -1;
-	protected long messageNum = 0;
+
+    protected AtomicLong messageNum = new AtomicLong(0);
+
 //	protected NotificationPublisher publisher;
-	protected NotificationBroadcasterSupport notifyer = new NotificationBroadcasterSupport();
+	protected NotificationBroadcasterSupport notifier = new NotificationBroadcasterSupport();
+
+    //TODO check appropriate executor service implementation
+    protected ExecutorService executorService = Executors.newCachedThreadPool();
 
 	public String getDuration() {
 		return "";
@@ -55,19 +62,40 @@ public class MeasurementExposer extends PerformanceSource implements Measurement
 	
 	// ManagedOperation
 	public void expose(SimplePerformanceItem item) throws Exception {
-		String message = "Performance for " + item.getSourceClassName() + "."
-				+ item.getSourceMethodName() + ": ";
-		final Notification notification = new Notification(JMX_NOTIFY_TYPE, this,
-				this.messageNum++, System.currentTimeMillis(), message);
-		notification.setUserData(item);
-//		publisher.sendNotification(notification);
-		this.notify(notification);
+        executorService.submit(new ExposeThread(notifier, item, messageNum));
 	}
 	
 	// ManagedAttribute
 	public boolean isGoodConfiguration() {
 		return super.isGoodConfiguration();
 	}
+
+    private static class ExposeThread implements Runnable{
+
+        private NotificationBroadcasterSupport notifier;
+
+        private SimplePerformanceItem performanceItem;
+
+        private AtomicLong messageNum;
+
+        private ExposeThread(NotificationBroadcasterSupport notifier, SimplePerformanceItem performanceItem, AtomicLong messageNum) {
+            this.notifier = notifier;
+            this.performanceItem = performanceItem;
+            this.messageNum = messageNum;
+        }
+
+        @Override
+        public void run() {
+            String message = "Performance for " + performanceItem.getSourceClassName() + "."
+                    + performanceItem.getSourceMethodName() + ": ";
+            final Notification notification = new Notification(JMX_NOTIFY_TYPE, this,
+                    messageNum.addAndGet(1), System.currentTimeMillis(), message);
+            System.out.println("MESSAGE_NUMBER = " + notification.getSequenceNumber());
+            notification.setUserData(performanceItem);
+//		publisher.sendNotification(notification);
+            notifier.sendNotification(notification);
+        }
+    }
 
 	static class SpewingThread extends Thread {
 		protected MeasurementExposer exposer;
@@ -108,32 +136,32 @@ public class MeasurementExposer extends PerformanceSource implements Measurement
 	}
 
 	protected void notify(Notification notification) {
-		this.notifyer.sendNotification(notification);
+		this.notifier.sendNotification(notification);
 	}
 	
 	@Override
 	public void addNotificationListener(NotificationListener listener,
 			NotificationFilter filter, Object handback)
 			throws IllegalArgumentException {
-		this.notifyer.addNotificationListener(listener, filter, handback);
+		this.notifier.addNotificationListener(listener, filter, handback);
 	}
 
 	@Override
 	public void removeNotificationListener(NotificationListener listener)
 			throws ListenerNotFoundException {
-		this.notifyer.removeNotificationListener(listener);
+		this.notifier.removeNotificationListener(listener);
 	}
 
 	@Override
 	public MBeanNotificationInfo[] getNotificationInfo() {
-		return this.notifyer.getNotificationInfo();
+		return this.notifier.getNotificationInfo();
 	}
 
 	@Override
 	public void removeNotificationListener(NotificationListener listener,
 			NotificationFilter filter, Object handback)
 			throws ListenerNotFoundException {
-		this.notifyer.removeNotificationListener(listener, filter, handback);
+		this.notifier.removeNotificationListener(listener, filter, handback);
 	}
 	
 

@@ -95,9 +95,7 @@ public class TestJettyRESTSample {
                         AsyncFuture<Message> messageAsyncFuture = gigaSpace.asyncRead(new Message(), id);
                         try {
                             result = messageAsyncFuture.get();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        } catch (ExecutionException e) {
+                        } catch (InterruptedException | ExecutionException e) {
                             e.printStackTrace();
                         }
                     }   else {
