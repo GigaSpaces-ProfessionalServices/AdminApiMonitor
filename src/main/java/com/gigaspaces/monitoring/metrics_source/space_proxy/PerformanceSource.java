@@ -12,16 +12,16 @@ package com.gigaspaces.monitoring.metrics_source.space_proxy;
  */
 public abstract class PerformanceSource {
 
-	private MeasurementExposerMBean exposer;
+	private MeasurementExposerInterface exposer;
 
-	public MeasurementExposerMBean getExposer() {
+	public MeasurementExposerInterface getExposer() {
 		if (null == this.exposer) {
 			throw new IllegalStateException("The MeasurementExposer can not be null.");
 		}
 		return exposer;
 	}
 
-	public void setExposer(MeasurementExposerMBean exposer) {
+	public void setExposer(MeasurementExposerInterface exposer) {
 		this.exposer = exposer;
 	}
 	

@@ -8,10 +8,10 @@ import org.springframework.beans.factory.annotation.Required;
 
 public class LogInterceptor implements MethodInterceptor {
 
-    private MeasurementExposerMBean exposer;
+    private MeasurementExposerInterface exposer;
 
     @Required
-    public void setExposer(MeasurementExposerMBean exposer) {
+    public void setExposer(MeasurementExposerInterface exposer) {
         this.exposer = exposer;
     }
 

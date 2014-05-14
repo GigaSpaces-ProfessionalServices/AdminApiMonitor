@@ -132,7 +132,7 @@
 
     <bean id="perfMonitor" class="org.springframework.jmx.access.MBeanProxyFactoryBean">
         <property name="objectName" value="com.gigaspaces.monitoring:name=MeasurementExposer"/>
-        <property name="proxyInterface" value="com.gigaspaces.monitoring.metrics_source.space_proxy.MeasurementExposerMBean"/>
+        <property name="proxyInterface" value="com.gigaspaces.monitoring.metrics_source.space_proxy.MeasurementExposerInterface"/>
         <property name="server" ref="serverConnector"/>
     </bean>
 
