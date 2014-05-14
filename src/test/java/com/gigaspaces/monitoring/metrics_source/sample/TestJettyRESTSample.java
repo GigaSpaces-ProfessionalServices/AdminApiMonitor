@@ -3,7 +3,7 @@ package com.gigaspaces.monitoring.metrics_source.sample;
 import com.gigaspaces.async.AsyncFuture;
 import com.gigaspaces.client.WriteModifiers;
 import com.gigaspaces.monitoring.metrics_source.adminapi.Message;
-import com.gigaspaces.monitoring.metrics_source.space_proxy.MeasurementExposer;
+import com.gigaspaces.monitoring.metrics_source.space_proxy.MeasurementExposerImpl;
 import com.gigaspaces.query.IdQuery;
 import com.j_spaces.core.LeaseContext;
 import org.eclipse.jetty.server.Request;
@@ -53,7 +53,7 @@ public class TestJettyRESTSample {
     private ObjectName objectName ;
 
     @Autowired
-    private MeasurementExposer exposer;
+    private MeasurementExposerImpl exposer;
 
     @Before
     public void setUp() throws Exception {

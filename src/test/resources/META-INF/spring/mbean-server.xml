@@ -41,7 +41,7 @@
         <property name="server" ref="mbeanServer"/>
     </bean>
 
-	<bean id="exposer" class="com.gigaspaces.monitoring.metrics_source.space_proxy.MeasurementExposer" lazy-init="false" init-method="startSpewing">
+	<bean id="exposer" class="com.gigaspaces.monitoring.metrics_source.space_proxy.MeasurementExposerImpl" lazy-init="false" init-method="startSpewing">
 		<property name="duration" value="20"/>
 		<property name="frequency" value="1"/>
 	</bean>

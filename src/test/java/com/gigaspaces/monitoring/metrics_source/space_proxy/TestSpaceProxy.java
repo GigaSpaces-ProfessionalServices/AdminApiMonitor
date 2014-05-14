@@ -21,7 +21,7 @@ public class TestSpaceProxy {
     private MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
 
     @Autowired
-    private MeasurementExposer exposer;
+    private MeasurementExposerImpl exposer;
 
     @Autowired
     private SpaceProxyNotificationListener proxyNotificationListener;

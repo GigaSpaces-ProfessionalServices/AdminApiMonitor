@@ -23,11 +23,11 @@ public class AsyncFuturePerfSource<T> implements AsyncFuture<T> {
 
     protected SimplePerformanceItem performanceItem;
 
-    protected MeasurementExposerInterface exposer;
+    protected MeasurementExposer exposer;
 
 	protected AsyncFuture<T> actual;
 
-	public AsyncFuturePerfSource(AsyncFuture<T> actual, SimplePerformanceItem performanceItem, MeasurementExposerInterface exposer) {
+	public AsyncFuturePerfSource(AsyncFuture<T> actual, SimplePerformanceItem performanceItem, MeasurementExposer exposer) {
 		this.actual = actual;
         this.performanceItem = performanceItem;
 		this.exposer = exposer;
