@@ -71,6 +71,7 @@
 
     <bean id="collectPeriodicMetricsTask" class="com.gigaspaces.monitoring.metrics_reporter.CollectPeriodicAverageMetricsTask" >
         <property name="spaceProxyCounter" ref="spaceProxyCounter" />
+        <property name="adminMonitor" ref="spaceMonitor" />
     </bean>
 
     <bean id="schedulerPeriodicTask" class="org.springframework.scheduling.timer.MethodInvokingTimerTaskFactoryBean">

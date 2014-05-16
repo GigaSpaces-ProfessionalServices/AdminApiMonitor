@@ -13,8 +13,8 @@ public class LoggingMeasurementExposer implements MeasurementExposer {
     @Override
     public void expose(SimplePerformanceItem performanceItem) throws Exception {
         spaceProxyCounter.count(performanceItem);
-        logger.info("Performance for " + performanceItem.getSourceClassName() + "."
-                + performanceItem.getSourceMethodName() + ": " + performanceItem.getElapsedTime() + "ms. Statistics : " + spaceProxyCounter);
+//        logger.info("Performance for " + performanceItem.getSourceClassName() + "."
+//                + performanceItem.getSourceMethodName() + ": " + performanceItem.getElapsedTime() + "ms. Statistics : " + spaceProxyCounter);
     }
 
     @Override

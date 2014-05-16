@@ -3,6 +3,9 @@ package com.gigaspaces.monitoring.metrics_source.space_proxy;
 import com.gigaspaces.monitoring.metrics_source.counter.ExponentialAverageCounter;
 import org.springframework.beans.factory.annotation.Required;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Calendar;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class SpaceProxyCounter {
@@ -11,25 +14,21 @@ public class SpaceProxyCounter {
 
     private PeriodicMetricsCounter periodicCounter = new PeriodicMetricsCounter();
 
-    AtomicInteger readCounter = new AtomicInteger(0);
+    private AtomicInteger readCounter = new AtomicInteger(0);
 
-    AtomicInteger averageReadTime = new AtomicInteger(0);
+    private AtomicInteger averageReadTime = new AtomicInteger(0);
 
-    AtomicInteger writeCounter = new AtomicInteger(0);
+    private AtomicInteger writeCounter = new AtomicInteger(0);
 
-    AtomicInteger averageWriteTime = new AtomicInteger(0);
+    private AtomicInteger averageWriteTime = new AtomicInteger(0);
 
-    AtomicInteger changeCounter = new AtomicInteger(0);
+    private AtomicInteger changeCounter = new AtomicInteger(0);
 
-    AtomicInteger averageChangeTime = new AtomicInteger(0);
+    private AtomicInteger averageChangeTime = new AtomicInteger(0);
 
-    AtomicInteger takeCounter = new AtomicInteger(0);
+    private AtomicInteger takeCounter = new AtomicInteger(0);
 
-    AtomicInteger averageTakeTime = new AtomicInteger(0);
-
-    AtomicInteger cacheHitCounter = new AtomicInteger(0);
-
-    AtomicInteger cacheMissCounter = new AtomicInteger(0);
+    private AtomicInteger averageTakeTime = new AtomicInteger(0);
 
     public SpaceProxyCounter() {
     }
@@ -44,7 +43,6 @@ public class SpaceProxyCounter {
         }   else if (methodName.contains("read") || methodName.contains("Read")){
             periodicCounter.readCounter.addAndGet(1);
             readCounter.addAndGet(1);
-            updateHitOrMissCounters(performanceItem);
             updateAverageTime(elapsedTime, averageReadTime);
         }   else if (methodName.contains("change") || methodName.contains("Change")){
             periodicCounter.changeCounter.addAndGet(1);
@@ -54,21 +52,6 @@ public class SpaceProxyCounter {
             periodicCounter.takeCounter.addAndGet(1);
             takeCounter.addAndGet(1);
             updateAverageTime(elapsedTime, averageTakeTime);
-        }
-    }
-
-    /**
-     * Updates cache hit or cache miss counter based on SimplePerformanceItem.cacheHit property
-     * //TODO check should this method be used only for read operation?
-     * @param performanceItem
-     */
-    private void updateHitOrMissCounters(SimplePerformanceItem performanceItem) {
-        if (performanceItem.getCacheHit()){
-            periodicCounter.cacheHitCounter.addAndGet(1);
-            cacheHitCounter.addAndGet(1);
-        }   else {
-            periodicCounter.cacheMissCounter.addAndGet(1);
-            cacheMissCounter.addAndGet(1);
         }
     }
 
@@ -108,8 +91,6 @@ public class SpaceProxyCounter {
                 ", averageChangeTime=" + Float.intBitsToFloat(averageChangeTime.get()) +
                 ", takeCounter=" + takeCounter +
                 ", averageTakeTime=" + Float.intBitsToFloat(averageTakeTime.get()) +
-                ", cacheHitCounter=" + cacheHitCounter +
-                ", cacheMissCounter=" + cacheMissCounter +
                 '}';
     }
 
@@ -154,27 +135,15 @@ public class SpaceProxyCounter {
         return Float.intBitsToFloat(averageTakeTime.get());
     }
 
-    public Integer getCacheHitCounter() {
-        return cacheHitCounter.get();
-    }
-
-    public Integer getCacheMissCounter() {
-        return cacheMissCounter.get();
-    }
-
     public static class PeriodicMetricsCounter {
 
-        AtomicInteger readCounter = new AtomicInteger(0);
+        private AtomicInteger readCounter = new AtomicInteger(0);
 
-        AtomicInteger writeCounter = new AtomicInteger(0);
+        private AtomicInteger writeCounter = new AtomicInteger(0);
 
-        AtomicInteger changeCounter = new AtomicInteger(0);
+        private AtomicInteger changeCounter = new AtomicInteger(0);
 
-        AtomicInteger takeCounter = new AtomicInteger(0);
-
-        AtomicInteger cacheHitCounter = new AtomicInteger(0);
-
-        AtomicInteger cacheMissCounter = new AtomicInteger(0);
+        private AtomicInteger takeCounter = new AtomicInteger(0);
 
         @Override
         public String toString() {
@@ -183,9 +152,23 @@ public class SpaceProxyCounter {
                     ", writeCounter=" + writeCounter +
                     ", changeCounter=" + changeCounter +
                     ", takeCounter=" + takeCounter +
-                    ", cacheHitCounter=" + cacheHitCounter +
-                    ", cacheMissCounter=" + cacheMissCounter +
                     '}';
+        }
+
+        public AtomicInteger getReadCounter() {
+            return readCounter;
+        }
+
+        public AtomicInteger getWriteCounter() {
+            return writeCounter;
+        }
+
+        public AtomicInteger getChangeCounter() {
+            return changeCounter;
+        }
+
+        public AtomicInteger getTakeCounter() {
+            return takeCounter;
         }
     }
 }

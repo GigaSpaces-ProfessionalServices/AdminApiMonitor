@@ -15,9 +15,9 @@ public class CollectExponentialMovingAverageMetricsTask {
     private SpaceProxyCounter spaceProxyCounter;
 
     public void collectMetrics() {
-        logger.info("Collect exponential moving average metrics");
-        logger.info("Space proxy statistics = " + spaceProxyCounter);
-        logger.info("AdminAPI statistics = " + adminMonitor.startCollection());
+//        logger.info("Collect exponential moving average metrics");
+//        logger.info("Space proxy statistics = " + spaceProxyCounter);
+//        logger.info("AdminAPI statistics = " + adminMonitor.startCollection());
     }
 
     @Required

@@ -22,16 +22,16 @@ import java.util.concurrent.TimeUnit;
 
 public class AdminAPIMonitor {
 
-    @Value( "${spaceMonitor.adminUser}" )
+   // @Value( "${spaceMonitor.adminUser}" )
     private String adminUser;
 
-    @Value( "${spaceMonitor.adminPassword}" )
+    //@Value( "${spaceMonitor.adminPassword}" )
     private String adminPassword;
 
-    @Value( "${spaceMonitor.secured}" )
+    //@Value( "${spaceMonitor.secured}" )
     private boolean secured = false;
 
-    @Value( "${spaceMonitor.locators}" )
+    //@Value( "${spaceMonitor.locators}" )
     private String locators = null;
 
     private ExponentialAverageCounter averageCounter;
@@ -70,6 +70,38 @@ public class AdminAPIMonitor {
         collectRedologStats(admin);
         collectMirrorStats(admin);
         collectActivityStats(admin);
+    }
+
+    //TODO provide smarter solution, below method is hotfix for Belk
+    public Long getMemoryUsed(){
+        long memoryHeapUsedInBytes = 0;
+        try {
+            AdminFactory factory = new AdminFactory();
+            if(secured){
+                factory.credentials(adminUser,adminPassword);
+            }
+            factory.addLocators(locators);
+//        factory.addGroup("test");
+            factory.discoverUnmanagedSpaces();
+            Admin admin = factory.createAdmin();
+
+//       Machines machines = admin.getMachines();
+//        machines.waitFor(1);
+            GridServiceContainers gscs = admin.getGridServiceContainers();
+
+            // TODO check (how to start GSC from java?)
+//        gscs.waitFor(1, 500, TimeUnit.MILLISECONDS);
+
+            Spaces spaces = admin.getSpaces();
+            //      spaces.waitFor("testSpace"); //TODO replace by configurable space name
+            //collectStats(admin);
+            //return lastCollectedStat;
+            GridServiceContainer containers[] = admin.getGridServiceContainers().getContainers();
+            memoryHeapUsedInBytes = containers[0].getVirtualMachine().getStatistics().getMemoryHeapUsedInBytes();
+        }   catch (Exception e) {
+
+        }
+        return memoryHeapUsedInBytes;
     }
 
     public void collectJVMStats(Admin admin){
