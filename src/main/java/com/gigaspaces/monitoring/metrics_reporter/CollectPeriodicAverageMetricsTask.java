@@ -36,7 +36,7 @@ public class CollectPeriodicAverageMetricsTask {
     private String formatMetrics(String metricType, Number metricValue){
         String date = Calendar.getInstance().getTime().toString(); //TODO to be changed
         String serverName = getServerName();
-        return "\n" + "ex. --> " + date + " -- " + metricType + "-- " + serverName +  " -- jvmName -- cacheNum — " + metricValue;
+        return "\n" + "ex. --> " + date + " -- " + metricType + "-- " + serverName +  " -- "+ adminMonitor.getVmName() + " -- cacheNum — " + metricValue;
     }
 
     private String getServerName() {

@@ -12,7 +12,6 @@ import org.openspaces.admin.machine.Machines;
 import org.openspaces.admin.space.*;
 import org.openspaces.admin.vm.VirtualMachine;
 import org.springframework.beans.factory.annotation.Required;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -22,16 +21,14 @@ import java.util.concurrent.TimeUnit;
 
 public class AdminAPIMonitor {
 
-   // @Value( "${spaceMonitor.adminUser}" )
+    private Admin admin;
+
     private String adminUser;
 
-    //@Value( "${spaceMonitor.adminPassword}" )
     private String adminPassword;
 
-    //@Value( "${spaceMonitor.secured}" )
     private boolean secured = false;
 
-    //@Value( "${spaceMonitor.locators}" )
     private String locators = null;
 
     private String groups = null;
@@ -41,6 +38,8 @@ public class AdminAPIMonitor {
     private ExponentialAverageCounter averageCounter;
 
     private Map<Long,AverageStat> lastCollectedStat = new HashMap<Long, AverageStat>();
+
+    private String vmName;
 
     public AdminAPIMonitor(){
 
@@ -52,7 +51,7 @@ public class AdminAPIMonitor {
             factory.credentials(adminUser,adminPassword);
         }
         factory.addLocators(locators);
-        factory.addGroup("test");
+        factory.addGroups(groups);
         factory.discoverUnmanagedSpaces();
         Admin admin = factory.createAdmin();
 
@@ -64,7 +63,7 @@ public class AdminAPIMonitor {
         gscs.waitFor(1, 500, TimeUnit.MILLISECONDS);
 
         Spaces spaces = admin.getSpaces();
-        spaces.waitFor("testSpace"); //TODO replace by configurable space name
+        spaces.waitFor(spaceName);
         collectStats(admin);
         return lastCollectedStat;
     }
@@ -80,32 +79,34 @@ public class AdminAPIMonitor {
     public Long getMemoryUsed(){
         long memoryHeapUsedInBytes = 0;
         try {
-            AdminFactory factory = new AdminFactory();
-            if(secured){
-                factory.credentials(adminUser,adminPassword);
-            }
-            factory.addLocators(locators);
-            factory.addGroups(groups);
-            factory.discoverUnmanagedSpaces();
-            Admin admin = factory.createAdmin();
-
-            Machines machines = admin.getMachines();
-            machines.waitFor(1);
-            GridServiceContainers gscs = admin.getGridServiceContainers();
-
-            // TODO check (how to start GSC from java?)
-         gscs.waitFor(1, 500, TimeUnit.MILLISECONDS);
-
-            Spaces spaces = admin.getSpaces();
-            spaces.waitFor(spaceName); //TODO replace by configurable space name
-            //collectStats(admin);
-            //return lastCollectedStat;
             GridServiceContainer containers[] = admin.getGridServiceContainers().getContainers();
             memoryHeapUsedInBytes = containers[0].getVirtualMachine().getStatistics().getMemoryHeapUsedInBytes();
         }   catch (Exception e) {
-
         }
         return memoryHeapUsedInBytes;
+    }
+
+    public void init(){
+        AdminFactory factory = new AdminFactory();
+        if(secured){
+            factory.credentials(adminUser,adminPassword);
+        }
+        factory.addLocators(locators);
+        factory.addGroups(groups);
+        factory.discoverUnmanagedSpaces();
+        admin = factory.createAdmin();
+
+        Machines machines = admin.getMachines();
+        machines.waitFor(1);
+        GridServiceContainers gscs = admin.getGridServiceContainers();
+
+        gscs.waitFor(1, 500, TimeUnit.MILLISECONDS);
+
+        Spaces spaces = admin.getSpaces();
+        spaces.waitFor(spaceName);
+
+        GridServiceContainer containers[] = admin.getGridServiceContainers().getContainers();
+        vmName = containers[0].getVirtualMachine().getStatistics().getDetails().getVmName();
     }
 
     public void collectJVMStats(Admin admin){
@@ -253,4 +254,7 @@ public class AdminAPIMonitor {
         return lastCollectedStat;
     }
 
+    public String getVmName() {
+        return vmName;
+    }
 }

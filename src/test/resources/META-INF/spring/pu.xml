@@ -43,7 +43,7 @@
 
 
     <!--ADMIN MONITOR START-->
-    <bean id="spaceMonitor" class="com.gigaspaces.monitoring.metrics_source.adminapi.AdminAPIMonitor">
+    <bean id="spaceMonitor" class="com.gigaspaces.monitoring.metrics_source.adminapi.AdminAPIMonitor" init-method="init">
         <property name="averageCounter" ref="averageCounter" />
     </bean>
 
