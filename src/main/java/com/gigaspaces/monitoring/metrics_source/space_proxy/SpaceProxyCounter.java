@@ -3,10 +3,8 @@ package com.gigaspaces.monitoring.metrics_source.space_proxy;
 import com.gigaspaces.monitoring.metrics_source.counter.ExponentialAverageCounter;
 import org.springframework.beans.factory.annotation.Required;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.Calendar;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class SpaceProxyCounter {
 
@@ -42,6 +40,7 @@ public class SpaceProxyCounter {
             updateAverageTime(elapsedTime, averageWriteTime);
         }   else if (methodName.contains("read") || methodName.contains("Read")){
             periodicCounter.readCounter.addAndGet(1);
+            periodicCounter.readSumTime.addAndGet(elapsedTime);
             readCounter.addAndGet(1);
             updateAverageTime(elapsedTime, averageReadTime);
         }   else if (methodName.contains("change") || methodName.contains("Change")){
@@ -145,6 +144,8 @@ public class SpaceProxyCounter {
 
         private AtomicInteger takeCounter = new AtomicInteger(0);
 
+        private AtomicLong readSumTime = new AtomicLong(0);
+
         @Override
         public String toString() {
             return "PeriodicMetricsCounter{" +
@@ -152,6 +153,7 @@ public class SpaceProxyCounter {
                     ", writeCounter=" + writeCounter +
                     ", changeCounter=" + changeCounter +
                     ", takeCounter=" + takeCounter +
+                    ", averageReadTime=" + getAverageReadTime() +
                     '}';
         }
 
@@ -169,6 +171,10 @@ public class SpaceProxyCounter {
 
         public AtomicInteger getTakeCounter() {
             return takeCounter;
+        }
+
+        public Double getAverageReadTime() {
+            return readCounter.get() == 0 ? 0.0 : readSumTime.get() / readCounter.doubleValue();
         }
     }
 }

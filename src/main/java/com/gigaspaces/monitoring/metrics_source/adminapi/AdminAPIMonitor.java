@@ -34,6 +34,10 @@ public class AdminAPIMonitor {
     //@Value( "${spaceMonitor.locators}" )
     private String locators = null;
 
+    private String groups = null;
+
+    private String spaceName = null;
+
     private ExponentialAverageCounter averageCounter;
 
     private Map<Long,AverageStat> lastCollectedStat = new HashMap<Long, AverageStat>();
@@ -81,19 +85,19 @@ public class AdminAPIMonitor {
                 factory.credentials(adminUser,adminPassword);
             }
             factory.addLocators(locators);
-//        factory.addGroup("test");
+            factory.addGroups(groups);
             factory.discoverUnmanagedSpaces();
             Admin admin = factory.createAdmin();
 
-//       Machines machines = admin.getMachines();
-//        machines.waitFor(1);
+            Machines machines = admin.getMachines();
+            machines.waitFor(1);
             GridServiceContainers gscs = admin.getGridServiceContainers();
 
             // TODO check (how to start GSC from java?)
-//        gscs.waitFor(1, 500, TimeUnit.MILLISECONDS);
+         gscs.waitFor(1, 500, TimeUnit.MILLISECONDS);
 
             Spaces spaces = admin.getSpaces();
-            //      spaces.waitFor("testSpace"); //TODO replace by configurable space name
+            spaces.waitFor(spaceName); //TODO replace by configurable space name
             //collectStats(admin);
             //return lastCollectedStat;
             GridServiceContainer containers[] = admin.getGridServiceContainers().getContainers();
@@ -230,6 +234,14 @@ public class AdminAPIMonitor {
 
     public void setLocators(String locators) {
         this.locators = locators;
+    }
+
+    public void setGroups(String groups) {
+        this.groups = groups;
+    }
+
+    public void setSpaceName(String spaceName) {
+        this.spaceName = spaceName;
     }
 
     @Required

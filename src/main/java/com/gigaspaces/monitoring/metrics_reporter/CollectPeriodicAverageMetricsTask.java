@@ -1,14 +1,12 @@
 package com.gigaspaces.monitoring.metrics_reporter;
 
 import com.gigaspaces.monitoring.metrics_source.adminapi.AdminAPIMonitor;
-import com.gigaspaces.monitoring.metrics_source.adminapi.AverageStat;
 import com.gigaspaces.monitoring.metrics_source.space_proxy.SpaceProxyCounter;
 import org.springframework.beans.factory.annotation.Required;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Calendar;
-import java.util.Map;
 import java.util.logging.Logger;
 
 public class CollectPeriodicAverageMetricsTask {
@@ -32,8 +30,7 @@ public class CollectPeriodicAverageMetricsTask {
 //        Latency / Have already - latency per get (PI) - needs to be exposed
         return formatMetrics("cacheMemUsed", adminMonitor.getMemoryUsed()) + formatMetrics("cachePutCount", periodicMetricsCounter.getWriteCounter()) +
                 formatMetrics("cacheGetCount", periodicMetricsCounter.getReadCounter()) + formatMetrics("cacheRemoveCount", periodicMetricsCounter.getTakeCounter()) +
-                formatMetrics("cacheLatencyCount", spaceProxyCounter.getAverageReadTime());
-
+                formatMetrics("cacheLatencyCount", periodicMetricsCounter.getAverageReadTime());
     }
 
     private String formatMetrics(String metricType, Number metricValue){
