@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Required;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Calendar;
+import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 
 public class CollectPeriodicAverageMetricsTask {
@@ -56,5 +57,9 @@ public class CollectPeriodicAverageMetricsTask {
     @Required
     public void setSpaceProxyCounter(SpaceProxyCounter spaceProxyCounter) {
         this.spaceProxyCounter = spaceProxyCounter;
+    }
+
+    public Logger getLogger() {
+        return logger;
     }
 }

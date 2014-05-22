@@ -2,6 +2,7 @@ package com.gigaspaces.monitoring.metrics_source.adminapi;
 
 import com.gigaspaces.cluster.activeelection.SpaceMode;
 import com.gigaspaces.cluster.replication.async.mirror.MirrorStatistics;
+import com.gigaspaces.monitoring.metrics_reporter.CollectPeriodicAverageMetricsTask;
 import com.gigaspaces.monitoring.metrics_source.counter.ExponentialAverageCounter;
 import com.j_spaces.core.filters.ReplicationStatistics;
 import org.openspaces.admin.Admin;
@@ -15,11 +16,14 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
 
 public class AdminAPIMonitor {
 
@@ -247,9 +251,11 @@ public class AdminAPIMonitor {
             }
         }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext("/META-INF/spring/admin-api-context.xml");
-        applicationContext.getBean("logExposer");
+        CollectPeriodicAverageMetricsTask collectPeriodicMetricsTask = (CollectPeriodicAverageMetricsTask) applicationContext.getBean("collectPeriodicMetricsTask");
+        Logger logger = collectPeriodicMetricsTask.getLogger();
+        logger.addHandler(new FileHandler(args[0]));
     }
 
 
