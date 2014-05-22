@@ -31,7 +31,7 @@ public class CollectPeriodicAverageMetricsTask {
         return  formatMetrics("cacheNum", adminMonitor.getObjectsCount()) + formatMetrics("cacheMemUsed", adminMonitor.getMemoryUsed())
                 + formatMetrics("cachePutCount", periodicMetricsCounter.getWriteCounter()) +
                 formatMetrics("cacheGetCount", periodicMetricsCounter.getReadCounter()) + formatMetrics("cacheRemoveCount", periodicMetricsCounter.getTakeCounter()) +
-                formatMetrics("cacheTransCount", adminMonitor.getObjectsCount()) + formatMetrics("cacheLatencyCount", periodicMetricsCounter.getAverageReadTime());
+                formatMetrics("cacheTransCount", periodicMetricsCounter.getOpenTransactionsCount()) + formatMetrics("cacheLatencyCount", periodicMetricsCounter.getAverageReadTime());
     }
 
     private String formatMetrics(String metricType, Number metricValue){

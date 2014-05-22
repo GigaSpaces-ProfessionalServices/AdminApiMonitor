@@ -1,5 +1,6 @@
 package com.gigaspaces.monitoring.metrics_source.space_proxy;
 
+import com.gigaspaces.monitoring.metrics_source.adminapi.AdminAPIMonitor;
 import com.gigaspaces.monitoring.metrics_source.counter.ExponentialAverageCounter;
 import org.springframework.beans.factory.annotation.Required;
 
@@ -11,6 +12,8 @@ public class SpaceProxyCounter {
     private ExponentialAverageCounter averageCounter;
 
     private PeriodicMetricsCounter periodicCounter = new PeriodicMetricsCounter();
+
+    private AdminAPIMonitor adminMonitor;
 
     private AtomicInteger readCounter = new AtomicInteger(0);
 
@@ -52,6 +55,7 @@ public class SpaceProxyCounter {
             takeCounter.addAndGet(1);
             updateAverageTime(elapsedTime, averageTakeTime);
         }
+        updateAverageTime(adminMonitor.getThroughput().intValue(), periodicCounter.openTransactionsCount);
     }
 
     /**
@@ -72,11 +76,14 @@ public class SpaceProxyCounter {
      * @param averageTime
      * @return
      */
-    private boolean updateAverageTime(Integer elapsedTime, AtomicInteger averageTime) {
-        float oldAverageFloat = Float.intBitsToFloat(averageTime.get());
-        float newAverageFloat = averageCounter.average(oldAverageFloat, elapsedTime);
-        int newIntBits = Float.floatToIntBits(newAverageFloat);
-        return averageTime.compareAndSet(averageTime.get(), newIntBits);
+    private void updateAverageTime(Integer elapsedTime, AtomicInteger averageTime) {
+        boolean success = false;
+        while (!success){
+            float oldAverageFloat = Float.intBitsToFloat(averageTime.get());
+            float newAverageFloat = averageCounter.average(oldAverageFloat, elapsedTime);
+            int newIntBits = Float.floatToIntBits(newAverageFloat);
+            success = averageTime.compareAndSet(averageTime.get(), newIntBits);
+        }
     }
 
     @Override
@@ -96,6 +103,10 @@ public class SpaceProxyCounter {
     @Required
     public void setAverageCounter(ExponentialAverageCounter averageCounter) {
         this.averageCounter = averageCounter;
+    }
+
+    public void setAdminMonitor(AdminAPIMonitor adminMonitor) {
+        this.adminMonitor = adminMonitor;
     }
 
     public PeriodicMetricsCounter getPeriodicCounter() {
@@ -146,6 +157,8 @@ public class SpaceProxyCounter {
 
         private AtomicLong readSumTime = new AtomicLong(0);
 
+        private AtomicInteger openTransactionsCount = new AtomicInteger(0);
+
         @Override
         public String toString() {
             return "PeriodicMetricsCounter{" +
@@ -175,6 +188,10 @@ public class SpaceProxyCounter {
 
         public Double getAverageReadTime() {
             return readCounter.get() == 0 ? 0.0 : readSumTime.get() / readCounter.doubleValue();
+        }
+
+        public Float getOpenTransactionsCount(){
+            return Float.intBitsToFloat(openTransactionsCount.get());
         }
     }
 }

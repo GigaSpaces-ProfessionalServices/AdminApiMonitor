@@ -21,6 +21,7 @@
 
     <bean id="spaceProxyCounter" class="com.gigaspaces.monitoring.metrics_source.space_proxy.SpaceProxyCounter">
         <property name="averageCounter" ref="averageCounter" />
+        <property name="adminMonitor" ref="spaceMonitor" />
     </bean>
 
 	<bean id="jmxExporter" class="org.springframework.jmx.export.MBeanExporter" lazy-init="false">

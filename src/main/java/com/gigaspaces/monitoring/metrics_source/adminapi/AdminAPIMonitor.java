@@ -12,6 +12,8 @@ import org.openspaces.admin.machine.Machines;
 import org.openspaces.admin.space.*;
 import org.openspaces.admin.vm.VirtualMachine;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -244,6 +246,12 @@ public class AdminAPIMonitor {
                 stat.activeTransactionCount = averageCounter.average(stat.activeTransactionCount, activeTransactionCount);
             }
         }
+
+    public static void main(String[] args) {
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("/META-INF/spring/admin-api-context.xml");
+        applicationContext.getBean("logExposer");
+    }
+
 
     public String getAdminUser() {
         return adminUser;
