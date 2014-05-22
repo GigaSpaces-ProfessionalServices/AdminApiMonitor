@@ -255,7 +255,10 @@ public class AdminAPIMonitor {
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext("/META-INF/spring/admin-api-context.xml");
         CollectPeriodicAverageMetricsTask collectPeriodicMetricsTask = (CollectPeriodicAverageMetricsTask) applicationContext.getBean("collectPeriodicMetricsTask");
         Logger logger = collectPeriodicMetricsTask.getLogger();
-        logger.addHandler(new FileHandler(args[0]));
+        if (args.length > 0){
+            String arg = args[0];
+            logger.addHandler(new FileHandler(arg));
+        }
     }
 
 
