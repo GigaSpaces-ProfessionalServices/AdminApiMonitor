@@ -55,7 +55,6 @@ public class SpaceProxyCounter {
             takeCounter.addAndGet(1);
             updateAverageTime(elapsedTime, averageTakeTime);
         }
-        updateAverageTime(adminMonitor.getThroughput().intValue(), periodicCounter.openTransactionsCount);
     }
 
     /**
@@ -190,8 +189,10 @@ public class SpaceProxyCounter {
             return readCounter.get() == 0 ? 0.0 : readSumTime.get() / readCounter.doubleValue();
         }
 
-        public Float getOpenTransactionsCount(){
-            return Float.intBitsToFloat(openTransactionsCount.get());
+        public Float getTotalOperationsCount(){
+            return readCounter.floatValue() + writeCounter.floatValue() + takeCounter.floatValue() + changeCounter.floatValue();
         }
+
+
     }
 }
