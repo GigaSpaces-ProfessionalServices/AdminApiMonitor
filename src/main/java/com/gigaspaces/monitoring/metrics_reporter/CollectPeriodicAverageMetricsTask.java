@@ -28,9 +28,10 @@ public class CollectPeriodicAverageMetricsTask {
 //        Number of Gets / Have already (Admin API) ~ per ???
 //        Number of Removes / Have already (Admin API) ~ takes per ???
 //        Latency / Have already - latency per get (PI) - needs to be exposed
-        return formatMetrics("cacheMemUsed", adminMonitor.getMemoryUsed()) + formatMetrics("cachePutCount", periodicMetricsCounter.getWriteCounter()) +
+        return  formatMetrics("cacheNum", adminMonitor.getObjectsCount()) + formatMetrics("cacheMemUsed", adminMonitor.getMemoryUsed())
+                + formatMetrics("cachePutCount", periodicMetricsCounter.getWriteCounter()) +
                 formatMetrics("cacheGetCount", periodicMetricsCounter.getReadCounter()) + formatMetrics("cacheRemoveCount", periodicMetricsCounter.getTakeCounter()) +
-                formatMetrics("cacheLatencyCount", periodicMetricsCounter.getAverageReadTime());
+                formatMetrics("cacheTransCount", adminMonitor.getObjectsCount()) + formatMetrics("cacheLatencyCount", periodicMetricsCounter.getAverageReadTime());
     }
 
     private String formatMetrics(String metricType, Number metricValue){

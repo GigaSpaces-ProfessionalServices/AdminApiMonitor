@@ -86,6 +86,34 @@ public class AdminAPIMonitor {
         return memoryHeapUsedInBytes;
     }
 
+    public Long getObjectsCount(){
+        long objectsCount = 0;
+        try {
+            Spaces spaces = admin.getSpaces();
+            Space space = spaces.getSpaceByName(spaceName);
+            for (SpaceInstance spaceInstance : space) {
+                SpaceInstanceStatistics stats = spaceInstance.getStatistics();
+                objectsCount = stats.getObjectCount();
+            }
+        }   catch (Exception e) {
+        }
+        return objectsCount;
+    }
+
+    public Long getThroughput(){
+        long throughput = 0;
+        try {
+            Spaces spaces = admin.getSpaces();
+            Space space = spaces.getSpaceByName(spaceName);
+            for (SpaceInstance spaceInstance : space) {
+                SpaceInstanceStatistics stats = spaceInstance.getStatistics();
+                throughput = stats.getActiveTransactionCount();
+            }
+        }   catch (Exception e) {
+        }
+        return throughput;
+    }
+
     public void init(){
         AdminFactory factory = new AdminFactory();
         if(secured){
@@ -106,7 +134,7 @@ public class AdminAPIMonitor {
         spaces.waitFor(spaceName);
 
         GridServiceContainer containers[] = admin.getGridServiceContainers().getContainers();
-        vmName = containers[0].getVirtualMachine().getStatistics().getDetails().getVmName();
+        vmName = containers[0].getVirtualMachine().getStatistics().getDetails().getUid();
     }
 
     public void collectJVMStats(Admin admin){
