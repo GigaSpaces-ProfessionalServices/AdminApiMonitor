@@ -12,6 +12,7 @@ import org.openspaces.admin.gsc.GridServiceContainers;
 import org.openspaces.admin.machine.Machines;
 import org.openspaces.admin.space.*;
 import org.openspaces.admin.vm.VirtualMachine;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -251,16 +252,35 @@ public class AdminAPIMonitor {
             }
         }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws InterruptedException {
+        boolean applicationContextStarted = false;
+        while (!applicationContextStarted){
+            try {
+                startApplicationContext(args);
+                applicationContextStarted = true;
+            }  catch (BeanCreationException e){
+                System.out.println("===================================================");
+                System.out.println("Unable to start AdminAPIMonitor");
+                System.out.println("===================================================");
+                Thread.currentThread().sleep(5000);
+            }
+        }
+
+    }
+
+    private static void startApplicationContext(String[] args){
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext("/META-INF/spring/admin-api-context.xml");
         CollectPeriodicAverageMetricsTask collectPeriodicMetricsTask = (CollectPeriodicAverageMetricsTask) applicationContext.getBean("collectPeriodicMetricsTask");
         Logger logger = collectPeriodicMetricsTask.getLogger();
         if (args.length > 0){
             String arg = args[0];
-            logger.addHandler(new FileHandler(arg));
+            try {
+                logger.addHandler(new FileHandler(arg));
+            } catch (IOException e) {
+                logger.warning("IOException occured while adding log FileHandler");
+            }
         }
     }
-
 
     public String getAdminUser() {
         return adminUser;
