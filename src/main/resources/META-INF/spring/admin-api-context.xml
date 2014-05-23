@@ -87,9 +87,4 @@
     </bean>
             <!--PERFORMANCE INTERCEPTOR END-->
 
-    <!--<os-remoting:executor-proxy id="reader"-->
-                                <!--giga-space="wrappedGigaSpace"-->
-                                <!--interface="com.belk.catalogcache.services.ReadOne"-->
-                                <!--timeout="20000"/>-->
-
 </beans>
