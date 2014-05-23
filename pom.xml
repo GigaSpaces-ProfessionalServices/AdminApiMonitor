@@ -84,6 +84,7 @@
                             <attachToBuild>true</attachToBuild>
                             <!-- Optional, default is "onejar" -->
                             <classifier>executable</classifier>
+                            <filename>AdminAPIMonitor-executable.jar</filename>
                         </configuration>
                         <goals>
                             <goal>one-jar</goal>

@@ -41,8 +41,7 @@
     </bean>
 
     <bean id="spaceProxyCounter" class="com.gigaspaces.monitoring.metrics_source.space_proxy.SpaceProxyCounter">
-    <property name="averageCounter" ref="averageCounter" />
-    <property name="adminMonitor" ref="spaceMonitor" />
+        <property name="averageCounter" ref="averageCounter" />
     </bean>
 
     <bean id="averageCounter" class="com.gigaspaces.monitoring.metrics_source.counter.ExponentialAverageCounter">

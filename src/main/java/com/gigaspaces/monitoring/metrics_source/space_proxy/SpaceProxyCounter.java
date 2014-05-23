@@ -13,8 +13,6 @@ public class SpaceProxyCounter {
 
     private PeriodicMetricsCounter periodicCounter = new PeriodicMetricsCounter();
 
-    private AdminAPIMonitor adminMonitor;
-
     private AtomicInteger readCounter = new AtomicInteger(0);
 
     private AtomicInteger averageReadTime = new AtomicInteger(0);
@@ -102,10 +100,6 @@ public class SpaceProxyCounter {
     @Required
     public void setAverageCounter(ExponentialAverageCounter averageCounter) {
         this.averageCounter = averageCounter;
-    }
-
-    public void setAdminMonitor(AdminAPIMonitor adminMonitor) {
-        this.adminMonitor = adminMonitor;
     }
 
     public PeriodicMetricsCounter getPeriodicCounter() {
