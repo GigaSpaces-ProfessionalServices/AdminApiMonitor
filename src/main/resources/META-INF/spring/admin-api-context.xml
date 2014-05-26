@@ -15,9 +15,9 @@
     <context:component-scan base-package="com.belk.catalogcache.clientonly"/>
     <context:component-scan base-package="com.belk.catalogcache.domain"/>
 
-    <context:property-placeholder location="classpath:admin_api.properties" />
+    <context:property-placeholder location="file:///${properties}" />
 
-    <os-core:space id="space" url="jini://*/*/${spaceMonitor.spaceName}?locators=${spaceMonitor.locators}&amp;groups=${spaceMonitor.groups}" />
+    <os-core:space id="space" url="jini://*/*/${spaceMonitor.spaceName}?locators=${spaceMonitor.locators}" />
     <os-core:distributed-tx-manager id="transactionManager"/>
     <os-core:giga-space id="real_gigaSpace" space="space" tx-manager="transactionManager"/>
 
@@ -35,7 +35,6 @@
     <property name="adminPassword" value="${spaceMonitor.adminPassword}" />
     <property name="locators" value="${spaceMonitor.locators}" />
     <property name="secured" value="${spaceMonitor.secured}" />
-    <property name="groups" value="${spaceMonitor.groups}" />
     <property name="spaceName" value="${spaceMonitor.spaceName}" />
     <property name="averageCounter" ref="averageCounter" />
     </bean>
