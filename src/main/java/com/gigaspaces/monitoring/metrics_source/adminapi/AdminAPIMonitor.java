@@ -2,6 +2,7 @@ package com.gigaspaces.monitoring.metrics_source.adminapi;
 
 import com.gigaspaces.cluster.activeelection.SpaceMode;
 import com.gigaspaces.cluster.replication.async.mirror.MirrorStatistics;
+import com.gigaspaces.monitoring.metrics_reporter.CollectPeriodicAverageMetricsTask;
 import com.gigaspaces.monitoring.metrics_source.counter.ExponentialAverageCounter;
 import com.j_spaces.core.filters.ReplicationStatistics;
 import org.openspaces.admin.Admin;
@@ -11,32 +12,41 @@ import org.openspaces.admin.gsc.GridServiceContainers;
 import org.openspaces.admin.machine.Machines;
 import org.openspaces.admin.space.*;
 import org.openspaces.admin.vm.VirtualMachine;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Required;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
 
 public class AdminAPIMonitor {
 
-    @Value( "${spaceMonitor.adminUser}" )
+    private Admin admin;
+
     private String adminUser;
 
-    @Value( "${spaceMonitor.adminPassword}" )
     private String adminPassword;
 
-    @Value( "${spaceMonitor.secured}" )
     private boolean secured = false;
 
-    @Value( "${spaceMonitor.locators}" )
     private String locators = null;
+
+    private String groups = null;
+
+    private String spaceName = null;
 
     private ExponentialAverageCounter averageCounter;
 
     private Map<Long,AverageStat> lastCollectedStat = new HashMap<Long, AverageStat>();
+
+    private String vmName;
 
     public AdminAPIMonitor(){
 
@@ -48,7 +58,7 @@ public class AdminAPIMonitor {
             factory.credentials(adminUser,adminPassword);
         }
         factory.addLocators(locators);
-        factory.addGroup("test");
+        factory.addGroups(groups);
         factory.discoverUnmanagedSpaces();
         Admin admin = factory.createAdmin();
 
@@ -60,7 +70,7 @@ public class AdminAPIMonitor {
         gscs.waitFor(1, 500, TimeUnit.MILLISECONDS);
 
         Spaces spaces = admin.getSpaces();
-        spaces.waitFor("testSpace"); //TODO replace by configurable space name
+        spaces.waitFor(spaceName);
         collectStats(admin);
         return lastCollectedStat;
     }
@@ -70,6 +80,68 @@ public class AdminAPIMonitor {
         collectRedologStats(admin);
         collectMirrorStats(admin);
         collectActivityStats(admin);
+    }
+
+    //TODO provide smarter solution, below method is hotfix for Belk
+    public Long getMemoryUsed(){
+        long memoryHeapUsedInBytes = 0;
+        try {
+            GridServiceContainer containers[] = admin.getGridServiceContainers().getContainers();
+            memoryHeapUsedInBytes = containers[0].getVirtualMachine().getStatistics().getMemoryHeapUsedInBytes();
+        }   catch (Exception e) {
+        }
+        return memoryHeapUsedInBytes;
+    }
+
+    public Long getObjectsCount(){
+        long objectsCount = 0;
+        try {
+            Spaces spaces = admin.getSpaces();
+            Space space = spaces.getSpaceByName(spaceName);
+            for (SpaceInstance spaceInstance : space) {
+                SpaceInstanceStatistics stats = spaceInstance.getStatistics();
+                objectsCount = stats.getObjectCount();
+            }
+        }   catch (Exception e) {
+        }
+        return objectsCount;
+    }
+
+    public Long getThroughput(){
+        long throughput = 0;
+        try {
+            Spaces spaces = admin.getSpaces();
+            Space space = spaces.getSpaceByName(spaceName);
+            for (SpaceInstance spaceInstance : space) {
+                SpaceInstanceStatistics stats = spaceInstance.getStatistics();
+                throughput = stats.getActiveTransactionCount();
+            }
+        }   catch (Exception e) {
+        }
+        return throughput;
+    }
+
+    public void init(){
+        AdminFactory factory = new AdminFactory();
+        if(secured){
+            factory.credentials(adminUser,adminPassword);
+        }
+        factory.addLocators(locators);
+        factory.addGroups(groups);
+        factory.discoverUnmanagedSpaces();
+        admin = factory.createAdmin();
+
+        Machines machines = admin.getMachines();
+        machines.waitFor(1);
+        GridServiceContainers gscs = admin.getGridServiceContainers();
+
+        gscs.waitFor(1, 500, TimeUnit.MILLISECONDS);
+
+        Spaces spaces = admin.getSpaces();
+        spaces.waitFor(spaceName);
+
+        GridServiceContainer containers[] = admin.getGridServiceContainers().getContainers();
+        vmName = containers[0].getVirtualMachine().getStatistics().getDetails().getUid();
     }
 
     public void collectJVMStats(Admin admin){
@@ -180,6 +252,36 @@ public class AdminAPIMonitor {
             }
         }
 
+    public static void main(String[] args) throws InterruptedException {
+        boolean applicationContextStarted = false;
+        while (!applicationContextStarted){
+            try {
+                startApplicationContext(args);
+                applicationContextStarted = true;
+            }  catch (BeanCreationException e){
+                System.out.println("===================================================");
+                System.out.println("Unable to start AdminAPIMonitor");
+                System.out.println("===================================================");
+                Thread.currentThread().sleep(5000);
+            }
+        }
+
+    }
+
+    private static void startApplicationContext(String[] args){
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("/META-INF/spring/admin-api-context.xml");
+        CollectPeriodicAverageMetricsTask collectPeriodicMetricsTask = (CollectPeriodicAverageMetricsTask) applicationContext.getBean("collectPeriodicMetricsTask");
+        Logger logger = collectPeriodicMetricsTask.getLogger();
+        if (args.length > 0){
+            String arg = args[0];
+            try {
+                logger.addHandler(new FileHandler(arg));
+            } catch (IOException e) {
+                logger.warning("IOException occured while adding log FileHandler");
+            }
+        }
+    }
+
     public String getAdminUser() {
         return adminUser;
     }
@@ -200,6 +302,14 @@ public class AdminAPIMonitor {
         this.locators = locators;
     }
 
+    public void setGroups(String groups) {
+        this.groups = groups;
+    }
+
+    public void setSpaceName(String spaceName) {
+        this.spaceName = spaceName;
+    }
+
     @Required
     public void setAverageCounter(ExponentialAverageCounter averageCounter) {
         this.averageCounter = averageCounter;
@@ -209,4 +319,7 @@ public class AdminAPIMonitor {
         return lastCollectedStat;
     }
 
+    public String getVmName() {
+        return vmName;
+    }
 }

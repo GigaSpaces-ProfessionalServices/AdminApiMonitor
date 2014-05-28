@@ -20,18 +20,17 @@ import com.gigaspaces.async.AsyncFutureListener;
  *
  */
 public class AsyncFuturePerfSource<T> implements AsyncFuture<T> {
-	
-	protected AsyncFuture<T> actual;
-	/**
-	 * The id of the future, so that we can bring the two method calls together:
-	 * The method that created the AsyncFuture and when the application retrieves
-	 * the value of the AsyncFuture.
-	 */
-	protected String id;
 
-	public AsyncFuturePerfSource(AsyncFuture<T> actual, String id) {
+    protected SimplePerformanceItem performanceItem;
+
+    protected MeasurementExposer exposer;
+
+	protected AsyncFuture<T> actual;
+
+	public AsyncFuturePerfSource(AsyncFuture<T> actual, SimplePerformanceItem performanceItem, MeasurementExposer exposer) {
 		this.actual = actual;
-		this.id = id;
+        this.performanceItem = performanceItem;
+		this.exposer = exposer;
 	}
 	
 	@Override
@@ -52,21 +51,48 @@ public class AsyncFuturePerfSource<T> implements AsyncFuture<T> {
 
 	@Override
 	public T get() throws InterruptedException, ExecutionException {
-		// TODO log the get
-		return this.actual.get();
-	}
+        T result = null;
+        try {
+            result = internalGet(false, 0, TimeUnit.MICROSECONDS);
+        } catch (TimeoutException e) {
+            //this exception will not be reached, because internalGet uses V get() throws InterruptedException, ExecutionException;
+        }
+        return result;
+    }
 
 	@Override
 	public T get(long timeout, TimeUnit unit) throws InterruptedException,
 			ExecutionException, TimeoutException {
-		// TODO log the get
-		try {
-			return this.actual.get(timeout, unit);
-		} catch (TimeoutException te) {
-			// TODO log the timeout
-			throw te;
-		}
+        return internalGet(true, timeout, unit);
 	}
+
+    public T internalGet(boolean withTimeout, long timeout, TimeUnit unit) throws InterruptedException,
+            ExecutionException, TimeoutException {
+
+        long startTime = System.currentTimeMillis();
+        performanceItem.setStartTime(startTime);
+        try {
+            T result;
+            if (withTimeout) {
+                result = this.actual.get(timeout, unit);
+            }   else {
+                result = this.actual.get();
+            }
+            performanceItem.setCacheHitOrMiss(result);
+            return result;
+        } catch (Exception e) {
+            performanceItem.setInException(true);
+            performanceItem.setStackTrace(e);
+            throw e;
+        }   finally {
+            performanceItem.setElapsedTime((int)(System.currentTimeMillis() - startTime));
+            try {
+                exposer.expose(performanceItem);
+            }   catch (Exception e){
+
+            }
+        }
+    }
 
 	@Override
 	public void setListener(AsyncFutureListener<T> arg0) {

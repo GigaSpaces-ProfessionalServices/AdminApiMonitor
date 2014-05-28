@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Required;
 
 import java.util.logging.Logger;
 
-public class CollectMetricsTask {
+public class CollectExponentialMovingAverageMetricsTask {
 
     private Logger logger = Logger.getLogger(this.getClass().getName());
 
@@ -15,9 +15,9 @@ public class CollectMetricsTask {
     private SpaceProxyCounter spaceProxyCounter;
 
     public void collectMetrics() {
-        logger.info("Collect metrics");
-        logger.info("Space proxy statistics = " + spaceProxyCounter);
-        logger.info("AdminAPI statistics = " + adminMonitor.startCollection());
+//        logger.info("Collect exponential moving average metrics");
+//        logger.info("Space proxy statistics = " + spaceProxyCounter);
+//        logger.info("AdminAPI statistics = " + adminMonitor.startCollection());
     }
 
     @Required

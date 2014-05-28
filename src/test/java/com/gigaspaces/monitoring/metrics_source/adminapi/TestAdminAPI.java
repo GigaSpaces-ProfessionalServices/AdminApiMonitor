@@ -1,6 +1,5 @@
 package com.gigaspaces.monitoring.metrics_source.adminapi;
 
-import com.j_spaces.core.IJSpace;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,9 +18,6 @@ import static org.junit.Assert.*;
 public class TestAdminAPI {
 
     @Autowired
-    private IJSpace space;
-
-    @Autowired
     private GigaSpace gigaSpace;
 
     @Autowired
@@ -29,7 +25,6 @@ public class TestAdminAPI {
 
     @Before
     public void setupSpace() {
-
         gigaSpace.write(new Message(1, "asd"));
     }
 
@@ -46,7 +41,4 @@ public class TestAdminAPI {
         this.gigaSpace = gigaSpace;
     }
 
-    public void setSpace(IJSpace space) {
-        this.space = space;
-    }
 }

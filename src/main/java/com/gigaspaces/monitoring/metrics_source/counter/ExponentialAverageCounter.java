@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
  */
 public class ExponentialAverageCounter {
 
-    @Value( "${stat.sample.alpha}" )
+    //@Value( "${stat.sample.alpha}" )
     private float alpha;
 
     public double average(Double oldValue, double input) {
@@ -24,8 +24,7 @@ public class ExponentialAverageCounter {
         return oldValue + alpha * (input - oldValue);
     }
 
-    public float average(Integer oldValueInt, int input) {
-        float oldValue = Float.intBitsToFloat(oldValueInt);
+    public float average(float oldValue, int input) {
         return oldValue + alpha * (input - oldValue);
     }
 
