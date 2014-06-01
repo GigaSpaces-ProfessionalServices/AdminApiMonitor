@@ -12,6 +12,7 @@ import org.openspaces.admin.gsc.GridServiceContainers;
 import org.openspaces.admin.machine.Machines;
 import org.openspaces.admin.space.*;
 import org.openspaces.admin.vm.VirtualMachine;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationContext;
@@ -23,8 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.FileHandler;
-import java.util.logging.Logger;
 
 public class AdminAPIMonitor {
 
@@ -262,7 +261,7 @@ public class AdminAPIMonitor {
                 System.out.println("===================================================");
                 System.out.println("Unable to start AdminAPIMonitor");
                 System.out.println("===================================================");
-                Thread.currentThread().sleep(5000);
+                Thread.sleep(5000);
             }
         }
 
@@ -271,15 +270,6 @@ public class AdminAPIMonitor {
     private static void startApplicationContext(String[] args){
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext("/META-INF/spring/admin-api-context.xml");
         CollectPeriodicAverageMetricsTask collectPeriodicMetricsTask = (CollectPeriodicAverageMetricsTask) applicationContext.getBean("collectPeriodicMetricsTask");
-        Logger logger = collectPeriodicMetricsTask.getLogger();
-        if (args.length > 0){
-            String arg = args[0];
-            try {
-                logger.addHandler(new FileHandler(arg));
-            } catch (IOException e) {
-                logger.warning("IOException occured while adding log FileHandler");
-            }
-        }
     }
 
     public String getAdminUser() {

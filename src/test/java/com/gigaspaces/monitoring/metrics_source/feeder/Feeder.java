@@ -15,6 +15,8 @@
  */
 package com.gigaspaces.monitoring.metrics_source.feeder;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -28,14 +30,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.logging.Logger;
 
 /**
  * This feeder class connects to the space started in the hello-processor module.
  */
 public class Feeder {
 
-    Logger logger = Logger.getLogger(this.getClass().getName());
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     private String postsLocation;
 
@@ -63,7 +64,7 @@ public class Feeder {
         InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(postsLocation);
         this.allPosts = parsePosts(new InputSource(new BufferedReader(new InputStreamReader(inputStream))));
 	}
-	
+
 	protected List<Map<String,String>> parsePosts(InputSource source)
 			throws Exception {
 		List<Map<String, String>> result = new ArrayList<Map<String, String>>();
@@ -119,7 +120,7 @@ public class Feeder {
     protected Feeder() {
     }
 
-    
+
     public void setReceiver(PostReceiver receiver) {
     	this.receiver = receiver;
     }
@@ -160,7 +161,7 @@ public class Feeder {
         	receiver.postToBlog(allPosts.get((int)Math.floor(Math.random()*sizeOfMessages)));
         	numberOfMessages++;
         	} catch(Exception e) {
-        		logger.warning("Exception " + e.getMessage());
+        		logger.error(e.getMessage());
         		e.printStackTrace(System.err);
         	}
         	try {

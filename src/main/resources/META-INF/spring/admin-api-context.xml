@@ -51,7 +51,6 @@
         <property name="spaceProxyCounter" ref="spaceProxyCounter" />
         <property name="adminMonitor" ref="spaceMonitor" />
         <property name="collectionPeriod" value="${stat.periodic.sample.interval}" />
-        <property name="logFileLocation" value="${stat.periodic.log.file}" />
     </bean>
 
     <bean id="schedulerPeriodicTask" class="org.springframework.scheduling.timer.MethodInvokingTimerTaskFactoryBean">

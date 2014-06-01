@@ -2,6 +2,8 @@ package com.gigaspaces.monitoring.metrics_reporter;
 
 import com.gigaspaces.monitoring.metrics_source.adminapi.AdminAPIMonitor;
 import com.gigaspaces.monitoring.metrics_source.space_proxy.SpaceProxyCounter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 
 import java.io.IOException;
@@ -9,12 +11,10 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.logging.FileHandler;
-import java.util.logging.Logger;
 
 public class CollectPeriodicAverageMetricsTask {
 
-    private Logger logger = Logger.getLogger(this.getClass().getName());
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     private SpaceProxyCounter spaceProxyCounter;
 
@@ -64,16 +64,6 @@ public class CollectPeriodicAverageMetricsTask {
     @Required
     public void setSpaceProxyCounter(SpaceProxyCounter spaceProxyCounter) {
         this.spaceProxyCounter = spaceProxyCounter;
-    }
-
-    public void setLogFileLocation(String logFileLocation) {
-        this.logFileLocation = logFileLocation;
-        //TODO externalize logging config to separate file
-        try {
-            logger.addHandler(new FileHandler(logFileLocation));
-        } catch (IOException e) {
-            logger.warning("IOException when adding log file");
-        }
     }
 
     public void setCollectionPeriod(Integer collectionPeriod) {
