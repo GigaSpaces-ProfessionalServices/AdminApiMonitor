@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.gigaspaces.monitoring.metrics_source.space_proxy;
 
@@ -15,7 +15,7 @@ import com.gigaspaces.async.AsyncFutureListener;
  * When a method returns an actual AsyncFuture, it is wrapped with an instance of this class.
  * The objective is to determine when the application retrieves the result, and how long it
  * eventually takes.
- * 
+ *
  * @author Toby Sarver
  *
  */
@@ -32,7 +32,7 @@ public class AsyncFuturePerfSource<T> implements AsyncFuture<T> {
         this.performanceItem = performanceItem;
 		this.exposer = exposer;
 	}
-	
+
 	@Override
 	public boolean cancel(boolean mayInterruptIfRunning) {
 		//TODO log the cancel
@@ -71,6 +71,7 @@ public class AsyncFuturePerfSource<T> implements AsyncFuture<T> {
 
         long startTime = System.currentTimeMillis();
         performanceItem.setStartTime(startTime);
+        Exception ex = null;
         try {
             T result;
             if (withTimeout) {
@@ -83,15 +84,18 @@ public class AsyncFuturePerfSource<T> implements AsyncFuture<T> {
         } catch (Exception e) {
             performanceItem.setInException(true);
             performanceItem.setStackTrace(e);
-            throw e;
+            e.printStackTrace();
+            ex = e;
         }   finally {
             performanceItem.setElapsedTime((int)(System.currentTimeMillis() - startTime));
             try {
                 exposer.expose(performanceItem);
             }   catch (Exception e){
-
+                if( ex != null ) ex = e;
             }
         }
+        if( ex != null ) throw new RuntimeException(ex);
+        return null;
     }
 
 	@Override

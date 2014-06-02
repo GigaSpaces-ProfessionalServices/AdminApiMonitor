@@ -37,7 +37,7 @@ import java.util.concurrent.ExecutionException;
  * DELETE http://localhost:8080/perf_interceptor?id=4
  */
 
-@RunWith( SpringJUnit4ClassRunner.class )
+@RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"/META-INF/spring/pu.xml", "/META-INF/spring/mbean-server.xml"})
 public class TestJettyRESTSample {
 
@@ -47,10 +47,10 @@ public class TestJettyRESTSample {
 
     private MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
 
-    @Value( "${bean_id}" )
+    @Value("${bean_id}")
     private String beanId;
 
-    private ObjectName objectName ;
+    private ObjectName objectName;
 
     @Autowired
     private MeasurementExposerImpl exposer;
@@ -74,8 +74,7 @@ public class TestJettyRESTSample {
         this.gigaSpace = gigaSpace;
     }
 
-    static class HelloHandler extends AbstractHandler
-    {
+    static class HelloHandler extends AbstractHandler {
 
         private GigaSpace gigaSpace;
 
@@ -83,40 +82,33 @@ public class TestJettyRESTSample {
             this.gigaSpace = gigaSpace;
         }
 
-        public void handle(String target,Request baseRequest, HttpServletRequest request, HttpServletResponse response)
-                throws IOException, ServletException
-        {
+        public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
+                throws IOException, ServletException {
             Message result = null;
             Integer id = Integer.parseInt(request.getParameter("id"));
             String method = request.getMethod();
-            switch (method){
-                case "GET": {
-                    if (request.getParameter("async") != null){
-                        AsyncFuture<Message> messageAsyncFuture = gigaSpace.asyncRead(new Message(), id);
-                        try {
-                            result = messageAsyncFuture.get();
-                        } catch (InterruptedException | ExecutionException e) {
-                            e.printStackTrace();
-                        }
-                    }   else {
-                        result = gigaSpace.readById(Message.class, id);
+
+            if ("GET".equals(method)) {
+                if (request.getParameter("async") != null) {
+                    AsyncFuture<Message> messageAsyncFuture = gigaSpace.asyncRead(new Message(), id);
+                    try {
+                        result = messageAsyncFuture.get();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException f) {
+                        f.printStackTrace();
                     }
-                    break;
+                } else {
+                    result = gigaSpace.readById(Message.class, id);
                 }
-                case "POST": {
-                    LeaseContext<Message> message = gigaSpace.write(new Message(id, request.getParameter("message")));
-                    result = message.getObject();
-                    break;
-                }
-                case "PUT": {
-                    LeaseContext<Message> context = gigaSpace.write(new Message(id, request.getParameter("message")), WriteModifiers.UPDATE_ONLY);
-                    result = context.getObject();
-                    break;
-                }
-                case "DELETE": {
-                    result = gigaSpace.takeById(new IdQuery<Message>(Message.class, id));
-                    break;
-                }
+            } else if ("POST".equals(method)) {
+                LeaseContext<Message> message = gigaSpace.write(new Message(id, request.getParameter("message")));
+                result = message.getObject();
+            } else if ("PUT".equals(method)) {
+                LeaseContext<Message> context = gigaSpace.write(new Message(id, request.getParameter("message")), WriteModifiers.UPDATE_ONLY);
+                result = context.getObject();
+            } else if ("DELETE".equals(method)) {
+                result = gigaSpace.takeById(new IdQuery<Message>(Message.class, id));
             }
             response.setContentType("text/html;charset=utf-8");
             response.setStatus(HttpServletResponse.SC_OK);
