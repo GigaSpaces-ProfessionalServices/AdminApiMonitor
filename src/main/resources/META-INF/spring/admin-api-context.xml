@@ -21,67 +21,41 @@
     <os-core:distributed-tx-manager id="transactionManager"/>
     <os-core:giga-space id="real_gigaSpace" space="space" tx-manager="transactionManager"/>
 
-            <!--PERFORMANCE INTERCEPTOR START-->
-    <bean id="logInterceptor" class="com.gigaspaces.monitoring.metrics_source.space_proxy.LogInterceptor" >
-    <property name="exposer" ref="logExposer" />
-    </bean>
-
-    <bean id="logExposer" class="com.gigaspaces.monitoring.metrics_source.space_proxy.LoggingMeasurementExposer">
-    <property name="spaceProxyCounter" ref="spaceProxyCounter" />
-    </bean>
-
     <bean id="spaceMonitor" class="com.gigaspaces.monitoring.metrics_source.adminapi.AdminAPIMonitor" init-method="init">
-    <property name="adminUser" value="${spaceMonitor.adminUser}" />
-    <property name="adminPassword" value="${spaceMonitor.adminPassword}" />
-    <property name="locators" value="${spaceMonitor.locators}" />
-    <property name="secured" value="${spaceMonitor.secured}" />
-    <property name="spaceName" value="${spaceMonitor.spaceName}" />
-    <property name="averageCounter" ref="averageCounter" />
-    </bean>
-
-    <bean id="spaceProxyCounter" class="com.gigaspaces.monitoring.metrics_source.space_proxy.SpaceProxyCounter">
+        <property name="adminUser" value="${spaceMonitor.adminUser}" />
+        <property name="adminPassword" value="${spaceMonitor.adminPassword}" />
+        <property name="locators" value="${spaceMonitor.locators}" />
+        <property name="secured" value="${spaceMonitor.secured}" />
+        <property name="spaceName" value="${spaceMonitor.spaceName}" />
         <property name="averageCounter" ref="averageCounter" />
     </bean>
 
     <bean id="averageCounter" class="com.gigaspaces.monitoring.metrics_source.counter.ExponentialAverageCounter">
-    <property name="alpha" value="${stat.sample.alpha}" />
+        <property name="alpha" value="${stat.sample.alpha}" />
     </bean>
 
     <bean id="collectPeriodicMetricsTask" class="com.gigaspaces.monitoring.metrics_reporter.CollectPeriodicAverageMetricsTask" >
-        <property name="spaceProxyCounter" ref="spaceProxyCounter" />
         <property name="adminMonitor" ref="spaceMonitor" />
         <property name="collectionPeriod" value="${stat.periodic.sample.interval}" />
     </bean>
 
     <bean id="schedulerPeriodicTask" class="org.springframework.scheduling.timer.MethodInvokingTimerTaskFactoryBean">
-    <property name="targetObject" ref="collectPeriodicMetricsTask" />
-    <property name="targetMethod" value="collectMetrics" />
+        <property name="targetObject" ref="collectPeriodicMetricsTask" />
+        <property name="targetMethod" value="collectMetrics" />
     </bean>
 
     <bean id="timerPeriodicTask" class="org.springframework.scheduling.timer.ScheduledTimerTask">
-    <property name="timerTask" ref="schedulerPeriodicTask" />
-    <property name="period" value="${stat.periodic.sample.interval}" />
-    <property name="delay" value="${stat.periodic.sample.delay}" />
+        <property name="timerTask" ref="schedulerPeriodicTask" />
+        <property name="period" value="${stat.periodic.sample.interval}" />
+        <property name="delay" value="${stat.periodic.sample.delay}" />
     </bean>
 
     <bean class="org.springframework.scheduling.timer.TimerFactoryBean">
-    <property name="scheduledTimerTasks">
-        <list>
-            <ref local="timerPeriodicTask" />
-        </list>
-    </property>
+        <property name="scheduledTimerTasks">
+            <list>
+                <ref local="timerPeriodicTask" />
+            </list>
+        </property>
     </bean>
-
-    <bean id="wrappedGigaSpace" class="org.springframework.aop.framework.ProxyFactoryBean">
-
-    <property name="target" ref="real_gigaSpace" />
-
-    <property name="interceptorNames">
-        <list>
-            <value>logInterceptor</value>
-        </list>
-    </property>
-    </bean>
-            <!--PERFORMANCE INTERCEPTOR END-->
 
 </beans>
