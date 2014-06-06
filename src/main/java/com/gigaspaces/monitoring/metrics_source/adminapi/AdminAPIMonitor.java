@@ -9,6 +9,7 @@ import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;
 import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.gsc.GridServiceContainers;
+import org.openspaces.admin.internal.gsc.DefaultGridServiceContainer;
 import org.openspaces.admin.machine.Machines;
 import org.openspaces.admin.space.*;
 import org.openspaces.admin.vm.VirtualMachine;
@@ -86,7 +87,9 @@ public class AdminAPIMonitor {
         long memoryHeapUsedInBytes = 0;
         try {
             GridServiceContainer containers[] = admin.getGridServiceContainers().getContainers();
-            memoryHeapUsedInBytes = containers[0].getVirtualMachine().getStatistics().getMemoryHeapUsedInBytes();
+            for (GridServiceContainer container : containers){
+                memoryHeapUsedInBytes += container.getVirtualMachine().getStatistics().getMemoryHeapUsedInBytes();
+            }
         }   catch (Exception e) {
         }
         return memoryHeapUsedInBytes;
@@ -138,7 +141,6 @@ public class AdminAPIMonitor {
 
         Spaces spaces = admin.getSpaces();
         spaces.waitFor(spaceName);
-
         GridServiceContainer containers[] = admin.getGridServiceContainers().getContainers();
         vmName = containers[0].getVirtualMachine().getStatistics().getDetails().getUid();
     }
