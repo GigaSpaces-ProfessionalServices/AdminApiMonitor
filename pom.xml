@@ -81,9 +81,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
-                    <excludes>
-                        <exclude>**/*.properties</exclude>
-                    </excludes>
                     <archive>
                         <manifest>
                             <mainClass>com.gigaspaces.monitoring.metrics_source.adminapi.AdminAPIMonitor</mainClass>
@@ -137,33 +134,8 @@
             </plugin>
 
         </plugins>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-assembly-plugin</artifactId>
-                    <version>2.2-beta-2</version>
-                    <configuration>
-                        <appendAssemblyId>false</appendAssemblyId>
-                        <attach>false</attach>
-                        <ignoreDirFormatExtensions>true</ignoreDirFormatExtensions>
-                        <descriptors>
-                            <descriptor>${basedir}/src/main/assembly/assembly.xml</descriptor>
-                        </descriptors>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <id>assembly</id>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>single</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-            </plugins>
-        </pluginManagement>
     </build>
+
     <repositories>
         <repository>
             <id>org.openspaces</id>
