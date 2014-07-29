@@ -1,25 +1,22 @@
-package com.gigaspaces.monitoring.metrics_source.adminapi;
+package com.gigaspaces.sbp.metrics_source.adminapi;
 
 import com.gigaspaces.cluster.activeelection.SpaceMode;
 import com.gigaspaces.cluster.replication.async.mirror.MirrorStatistics;
-import com.gigaspaces.monitoring.metrics_reporter.CollectPeriodicAverageMetricsTask;
-import com.gigaspaces.monitoring.metrics_source.counter.ExponentialAverageCounter;
+import com.gigaspaces.sbp.metrics_reporter.CollectPeriodicAverageMetricsTask;
+import com.gigaspaces.sbp.metrics_source.counter.ExponentialAverageCounter;
 import com.j_spaces.core.filters.ReplicationStatistics;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;
 import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.gsc.GridServiceContainers;
-import org.openspaces.admin.internal.gsc.DefaultGridServiceContainer;
 import org.openspaces.admin.machine.Machines;
 import org.openspaces.admin.space.*;
 import org.openspaces.admin.vm.VirtualMachine;
-import org.slf4j.Logger;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;

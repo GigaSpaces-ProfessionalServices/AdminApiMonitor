@@ -1,6 +1,6 @@
-package com.gigaspaces.monitoring.metrics_reporter;
+package com.gigaspaces.sbp.metrics_reporter;
 
-import com.gigaspaces.monitoring.metrics_source.adminapi.AdminAPIMonitor;
+import com.gigaspaces.sbp.metrics_source.adminapi.AdminAPIMonitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;

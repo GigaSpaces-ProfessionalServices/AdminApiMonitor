@@ -66,7 +66,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.gigaspaces.monitoring.metrics_source.adminapi.AdminAPIMonitor</mainClass>
+                            <mainClass>com.gigaspaces.sbp.metrics_source.adminapi.AdminAPIMonitor</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

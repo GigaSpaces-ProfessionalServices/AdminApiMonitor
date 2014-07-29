@@ -1,4 +1,4 @@
-package com.gigaspaces.monitoring.metrics_source.counter;
+package com.gigaspaces.sbp.metrics_source.counter;
 
 /**
  * Class instance computes exponentially moving average corresponding to given alpha
