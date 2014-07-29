@@ -5,6 +5,7 @@ import com.gigaspaces.cluster.replication.async.mirror.MirrorStatistics;
 import com.gigaspaces.sbp.metrics_reporter.CollectPeriodicAverageMetricsTask;
 import com.gigaspaces.sbp.metrics_source.counter.ExponentialAverageCounter;
 import com.j_spaces.core.filters.ReplicationStatistics;
+import org.apache.commons.cli.*;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;
 import org.openspaces.admin.gsc.GridServiceContainer;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import java.io.PrintWriter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +26,9 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class AdminAPIMonitor {
+
+    private static final int TERMINAL_WIDTH = 110;
+    private static final int WAITING_FOR_GRID_PAUSE = 5000;
 
     private Admin admin;
 
@@ -189,6 +194,7 @@ public class AdminAPIMonitor {
             stat.redologSendBytesPerSecond = averageCounter.average(stat.redologSendBytesPerSecond, redologBytesPerSecond);
         }
     }
+
     public void collectMirrorStats(Admin admin){
         long mirrorTotalOperations=0;
         long mirrorSuccessfulOperations=0;
@@ -251,6 +257,7 @@ public class AdminAPIMonitor {
         }
 
     public static void main(String[] args) throws InterruptedException {
+        processArgs(args);
         boolean applicationContextStarted = false;
         while (!applicationContextStarted){
             try {
@@ -258,12 +265,31 @@ public class AdminAPIMonitor {
                 applicationContextStarted = true;
             }  catch (BeanCreationException e){
                 System.out.println("===================================================");
-                System.out.println("Unable to start AdminAPIMonitor");
+                System.out.println("Unable to start " + AdminAPIMonitor.class.getSimpleName() + ". Retrying in " + WAITING_FOR_GRID_PAUSE / 1000 + " seconds.");
                 System.out.println("===================================================");
-                Thread.sleep(5000);
+                Thread.sleep(WAITING_FOR_GRID_PAUSE);
             }
         }
 
+    }
+
+    private static void processArgs(String[] args) {
+        try {
+            CommandLine commandLine = new GnuParser().parse(getOptions(), args);
+            commandLine.hasOption('a');
+        } catch (ParseException e) {
+            final PrintWriter writer = new PrintWriter(System.err);
+            final HelpFormatter usageFormatter = new HelpFormatter();
+            usageFormatter.printUsage(writer, TERMINAL_WIDTH, AdminAPIMonitor.class.getSimpleName(), getOptions());
+            writer.flush();
+        }
+    }
+
+    private static Options getOptions(){
+        final Options options = new Options();
+        options.addOption("a", "all-metrics", false, "Print all metrics.");
+        options.addOption("c", "csv", false, "Emit metrics on a single line, separated by commas.");
+        return options;
     }
 
     private static void startApplicationContext(String[] args){
