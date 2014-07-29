@@ -1,14 +1,13 @@
 package com.gigaspaces.monitoring.metrics_source.counter;
 
-import org.springframework.beans.factory.annotation.Value;
-
 /**
  * Class instance computes exponentially moving average corresponding to given alpha
  */
 public class ExponentialAverageCounter {
 
-    //@Value( "${stat.sample.alpha}" )
-    private float alpha;
+    private static final Float DEFAULT_ALPHA = 0.5f;
+
+    private float alpha = DEFAULT_ALPHA;
 
     public double average(Double oldValue, double input) {
         if (oldValue == null) {
