@@ -9,21 +9,21 @@ public class ExponentialMovingAverage {
 
     private float alpha = DEFAULT_ALPHA;
 
-    public double average(Double oldValue, double input) {
+    public Double average(Double oldValue, Double input) {
         if (oldValue == null) {
             return input;
         }
         return oldValue + alpha * (input - oldValue);
     }
 
-    public double average(Double oldValue, long input) {
+    public Double average(Double oldValue, Long input) {
         if (oldValue == null) {
-            return input;
+            return input.doubleValue();
         }
         return oldValue + alpha * (input - oldValue);
     }
 
-    public float average(float oldValue, int input) {
+    public Float average(Float oldValue, Integer input) {
         return oldValue + alpha * (input - oldValue);
     }
 
