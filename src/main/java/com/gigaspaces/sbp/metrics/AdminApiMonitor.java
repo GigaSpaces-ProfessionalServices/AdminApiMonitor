@@ -44,7 +44,7 @@ public class AdminApiMonitor {
 
     // Fields to hold data that we'll report on
     private ExponentialMovingAverage averageCounter;
-    private Map<Long,AdminApiMetrics> pidStatMap = new HashMap<>();
+    private Map<Long,AdminApiMetrics> pidMetricMap = new HashMap<>();
     private String vmName;
 
     public void init(){
@@ -132,20 +132,20 @@ public class AdminApiMonitor {
         GridServiceContainer containers[] = admin.getGridServiceContainers().getContainers();
         for (GridServiceContainer container : containers) {
             VirtualMachine vm = container.getVirtualMachine();
-            AdminApiMetrics stat = pidStatMap.get(vm.getDetails().getPid());
-            if (stat == null) {
-                stat = new AdminApiMetrics();
-                stat.pid = vm.getDetails().getPid();
+            AdminApiMetrics metrics = pidMetricMap.get(vm.getDetails().getPid());
+            if (metrics == null) {
+                metrics = new AdminApiMetrics();
+                metrics.pid = vm.getDetails().getPid();
             }
-            stat.totalMemoryInBytes = averageCounter.average(stat.totalMemoryInBytes.doubleValue(), vm.getDetails().getMemoryHeapMaxInBytes()).longValue();
-            stat.heapUsedMemoryInBytes = averageCounter.average(stat.heapUsedMemoryInBytes.doubleValue(), vm.getStatistics().getMemoryHeapUsedInBytes()).longValue();
-            stat.cpuPercent = averageCounter.average(stat.cpuPercent, vm.getStatistics().getCpuPerc());
-            stat.gcCollectionCount = vm.getStatistics().getGcCollectionCount();
-            stat.hostname = vm.getMachine().getHostName();
-            stat.totalThreads = averageCounter.average(stat.totalThreads.floatValue(), vm.getStatistics().getThreadCount()).doubleValue();
-            stat.nonHeapUsedMemoryInBytes = averageCounter.average(stat.nonHeapUsedMemoryInBytes.doubleValue(), vm.getStatistics().getMemoryNonHeapUsedInBytes()).longValue();
-            stat.timestamp = new Date();
-            pidStatMap.put(vm.getDetails().getPid(), stat);
+            metrics.totalMemoryInBytes = averageCounter.average(metrics.totalMemoryInBytes.doubleValue(), vm.getDetails().getMemoryHeapMaxInBytes()).longValue();
+            metrics.heapUsedMemoryInBytes = averageCounter.average(metrics.heapUsedMemoryInBytes.doubleValue(), vm.getStatistics().getMemoryHeapUsedInBytes()).longValue();
+            metrics.cpuPercent = averageCounter.average(metrics.cpuPercent, vm.getStatistics().getCpuPerc());
+            metrics.gcCollectionCount = vm.getStatistics().getGcCollectionCount();
+            metrics.hostname = vm.getMachine().getHostName();
+            metrics.totalThreads = averageCounter.average(metrics.totalThreads.floatValue(), vm.getStatistics().getThreadCount()).doubleValue();
+            metrics.nonHeapUsedMemoryInBytes = averageCounter.average(metrics.nonHeapUsedMemoryInBytes.doubleValue(), vm.getStatistics().getMemoryNonHeapUsedInBytes()).longValue();
+            metrics.timestamp = new Date();
+            pidMetricMap.put(vm.getDetails().getPid(), metrics);
         }
     }
 
@@ -168,8 +168,8 @@ public class AdminApiMonitor {
             }
 
         }
-        for(Long pid : pidStatMap.keySet()){
-            AdminApiMetrics stat = pidStatMap.get(pid);
+        for(Long pid : pidMetricMap.keySet()){
+            AdminApiMetrics stat = pidMetricMap.get(pid);
             stat.redoLogSize = averageCounter.average(stat.redoLogSize, redoLogSize);
             stat.redoLogSendBytesPerSecond = averageCounter.average(stat.redoLogSendBytesPerSecond, redoLogBytesPerSecond);
         }
@@ -193,8 +193,8 @@ public class AdminApiMonitor {
             }
 
         }
-        for(Long pid : pidStatMap.keySet()){
-            AdminApiMetrics stat = pidStatMap.get(pid);
+        for(Long pid : pidMetricMap.keySet()){
+            AdminApiMetrics stat = pidMetricMap.get(pid);
             //TODO check do we need EAC calculation here?
             stat.mirrorTotalOperations = mirrorTotalOperations;
             stat.mirrorSuccessfulOperations = mirrorSuccessfulOperations;
@@ -225,15 +225,15 @@ public class AdminApiMonitor {
             }
         }
 
-        for(Long pid : pidStatMap.keySet()){
-            AdminApiMetrics stat = pidStatMap.get(pid);
-            stat.readCountPerSecond = averageCounter.average(stat.readCountPerSecond.doubleValue(), readCountPerSecond).longValue();
-            stat.updateCountPerSecond = averageCounter.average(stat.updateCountPerSecond.doubleValue(), updateCountPerSecond).longValue();
-            stat.writeCountPerSecond = averageCounter.average(stat.writeCountPerSecond.doubleValue(), writeCountPerSecond).longValue();
-            stat.changePerSecond = averageCounter.average(stat.changePerSecond.doubleValue(), changePerSecond).longValue();
-            stat.executePerSecond = averageCounter.average(stat.executePerSecond.doubleValue(), executePerSecond).longValue();
-            stat.processorQueueSize = averageCounter.average(stat.processorQueueSize.doubleValue(), processorQueueSize).longValue();
-            stat.activeTransactionCount = averageCounter.average(stat.activeTransactionCount.doubleValue(), activeTransactionCount).longValue();
+        for(Long pid : pidMetricMap.keySet()){
+            AdminApiMetrics metrics = pidMetricMap.get(pid);
+            metrics.readCountPerSecond = averageCounter.average(metrics.readCountPerSecond.doubleValue(), readCountPerSecond).longValue();
+            metrics.updateCountPerSecond = averageCounter.average(metrics.updateCountPerSecond.doubleValue(), updateCountPerSecond).longValue();
+            metrics.writeCountPerSecond = averageCounter.average(metrics.writeCountPerSecond.doubleValue(), writeCountPerSecond).longValue();
+            metrics.changePerSecond = averageCounter.average(metrics.changePerSecond.doubleValue(), changePerSecond).longValue();
+            metrics.executePerSecond = averageCounter.average(metrics.executePerSecond.doubleValue(), executePerSecond).longValue();
+            metrics.processorQueueSize = averageCounter.average(metrics.processorQueueSize.doubleValue(), processorQueueSize).longValue();
+            metrics.activeTransactionCount = averageCounter.average(metrics.activeTransactionCount.doubleValue(), activeTransactionCount).longValue();
         }
     }
 
