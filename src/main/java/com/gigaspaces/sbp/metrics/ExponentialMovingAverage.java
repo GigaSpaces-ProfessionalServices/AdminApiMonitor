@@ -3,7 +3,7 @@ package com.gigaspaces.sbp.metrics;
 /**
  * Class instance computes exponentially moving average corresponding to given alpha
  */
-public class ExponentialAverageCounter {
+public class ExponentialMovingAverage {
 
     private static final Float DEFAULT_ALPHA = 0.5f;
 
