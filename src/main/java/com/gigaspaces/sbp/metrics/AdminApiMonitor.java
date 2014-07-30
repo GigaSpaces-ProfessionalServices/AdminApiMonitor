@@ -29,11 +29,12 @@ public class AdminApiMonitor {
     private static final int WAITING_FOR_GRID_PAUSE = 5000;
     private static final int TERMINAL_WIDTH = 110;
 
-    private static boolean applicationContextStarted;
-    private static EnumSet<Settings> settings;
-
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
+    private static boolean applicationContextStarted;
+    private static EnumSet<Settings> settings; // from command line
+
+    // GigaSpaces configuration elements (from context.xml or properties file)
     private Admin admin;
     private String adminUser;
     private String adminPassword;
@@ -41,13 +42,13 @@ public class AdminApiMonitor {
     private String groups;
     private String spaceName;
 
+    // Fields to hold data that we'll report on
     private ExponentialMovingAverage averageCounter;
-
-    private Map<Long,AverageStat> lastCollectedStat = new HashMap<>();
-
+    private Map<Long,AverageStat> pidStatMap = new HashMap<>();
     private String vmName;
 
-    public Map<Long,AverageStat> startCollection(){
+    public void init(){
+
         AdminFactory factory = new AdminFactory();
         if(settings.contains(Settings.Secured)){
             factory.credentials(adminUser,adminPassword);
@@ -55,21 +56,26 @@ public class AdminApiMonitor {
         factory.addLocators(locators);
         factory.addGroups(groups);
         factory.discoverUnmanagedSpaces();
-        Admin admin = factory.createAdmin();
+        admin = factory.createAdmin();
 
         Machines machines = admin.getMachines();
         machines.waitFor(1);
         GridServiceContainers gscs = admin.getGridServiceContainers();
 
-        // TODO check (how to start GSC from java?)
         gscs.waitFor(1, 500, TimeUnit.MILLISECONDS);
 
+        // TODO I'm pretty sure this is wrong
         Spaces spaces = admin.getSpaces();
         spaces.waitFor(spaceName);
-        collectStats(admin);
-        return lastCollectedStat;
+        GridServiceContainer containers[] = admin.getGridServiceContainers().getContainers();
+        vmName = containers[0].getVirtualMachine().getStatistics().getDetails().getUid();
+
     }
 
+    /**
+     * Called from spring context
+     * @param admin on which to collect statistics
+     */
     public void collectStats(Admin admin){
         collectJvmStats(admin);
         collectRedoLogStats(admin);
@@ -77,7 +83,6 @@ public class AdminApiMonitor {
         collectActivityStats(admin);
     }
 
-    // TODO provide smarter solution, below method is hotfix for Belk
     public Long getMemoryUsed(){
         long memoryHeapUsedInBytes = 0;
         try {
@@ -106,6 +111,7 @@ public class AdminApiMonitor {
         return objectsCount;
     }
 
+    /*
     public Long getThroughput(){
         long throughput = 0;
         try {
@@ -120,36 +126,13 @@ public class AdminApiMonitor {
         }
         return throughput;
     }
-
-    public void init(){
-
-        AdminFactory factory = new AdminFactory();
-        if(settings.contains(Settings.Secured)){
-            factory.credentials(adminUser,adminPassword);
-        }
-        factory.addLocators(locators);
-        factory.addGroups(groups);
-        factory.discoverUnmanagedSpaces();
-        admin = factory.createAdmin();
-
-        Machines machines = admin.getMachines();
-        machines.waitFor(1);
-        GridServiceContainers gscs = admin.getGridServiceContainers();
-
-        gscs.waitFor(1, 500, TimeUnit.MILLISECONDS);
-
-        // TODO I'm pretty sure this is wrong
-        Spaces spaces = admin.getSpaces();
-        spaces.waitFor(spaceName);
-        GridServiceContainer containers[] = admin.getGridServiceContainers().getContainers();
-        vmName = containers[0].getVirtualMachine().getStatistics().getDetails().getUid();
-    }
+    */
 
     public void collectJvmStats(Admin admin){
         GridServiceContainer containers[] = admin.getGridServiceContainers().getContainers();
         for (GridServiceContainer container : containers) {
             VirtualMachine vm = container.getVirtualMachine();
-            AverageStat stat = lastCollectedStat.get(vm.getDetails().getPid());
+            AverageStat stat = pidStatMap.get(vm.getDetails().getPid());
             if (stat == null) {
                 stat = new AverageStat();
                 stat.pid = vm.getDetails().getPid();
@@ -162,7 +145,7 @@ public class AdminApiMonitor {
             stat.totalThreads = averageCounter.average(stat.totalThreads, vm.getStatistics().getThreadCount());
             stat.nonHeapUsedMemory = averageCounter.average(stat.nonHeapUsedMemory, vm.getStatistics().getMemoryNonHeapUsedInBytes());
             stat.timestamp = new Date();
-            lastCollectedStat.put(vm.getDetails().getPid(), stat);
+            pidStatMap.put(vm.getDetails().getPid(), stat);
         }
     }
 
@@ -185,8 +168,8 @@ public class AdminApiMonitor {
             }
 
         }
-        for(Long pid : lastCollectedStat.keySet()){
-            AverageStat stat = lastCollectedStat.get(pid);
+        for(Long pid : pidStatMap.keySet()){
+            AverageStat stat = pidStatMap.get(pid);
             stat.redologSize = averageCounter.average(stat.redologSize, redoLogSize);
             stat.redologSendBytesPerSecond = averageCounter.average(stat.redologSendBytesPerSecond, redoLogBytesPerSecond);
         }
@@ -210,8 +193,8 @@ public class AdminApiMonitor {
             }
 
         }
-        for(Long pid : lastCollectedStat.keySet()){
-            AverageStat stat = lastCollectedStat.get(pid);
+        for(Long pid : pidStatMap.keySet()){
+            AverageStat stat = pidStatMap.get(pid);
             //TODO check do we need EAC calculation here?
             stat.mirrorTotalOperations = mirrorTotalOperations;
             stat.mirrorSuccessfulOperations = mirrorSuccessfulOperations;
@@ -242,8 +225,8 @@ public class AdminApiMonitor {
             }
         }
 
-        for(Long pid : lastCollectedStat.keySet()){
-            AverageStat stat = lastCollectedStat.get(pid);
+        for(Long pid : pidStatMap.keySet()){
+            AverageStat stat = pidStatMap.get(pid);
             stat.readCountPerSecond = averageCounter.average(stat.readCountPerSecond, readCountPerSecond);
             stat.updateCountPerSecond = averageCounter.average(stat.updateCountPerSecond, updateCountPerSecond);
             stat.writeCountPerSecond = averageCounter.average(stat.writeCountPerSecond, writeCountPerSecond);
