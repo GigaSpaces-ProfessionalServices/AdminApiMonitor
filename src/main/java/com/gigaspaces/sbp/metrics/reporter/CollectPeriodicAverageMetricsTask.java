@@ -1,6 +1,6 @@
-package com.gigaspaces.sbp.metrics_reporter;
+package com.gigaspaces.sbp.metrics.reporter;
 
-import com.gigaspaces.sbp.metrics_source.adminapi.AdminAPIMonitor;
+import com.gigaspaces.sbp.metrics.AdminApiMonitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
@@ -14,7 +14,7 @@ public class CollectPeriodicAverageMetricsTask {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    private AdminAPIMonitor adminMonitor;
+    private AdminApiMonitor adminMonitor;
 
     private Integer collectionPeriod;
 
@@ -49,7 +49,7 @@ public class CollectPeriodicAverageMetricsTask {
     }
 
     @Required
-    public void setAdminMonitor(AdminAPIMonitor adminMonitor) {
+    public void setAdminMonitor(AdminApiMonitor adminMonitor) {
         this.adminMonitor = adminMonitor;
     }
 

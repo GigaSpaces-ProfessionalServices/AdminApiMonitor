@@ -30,6 +30,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.9.5</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>
@@ -66,7 +72,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.gigaspaces.sbp.metrics_source.adminapi.AdminAPIMonitor</mainClass>
+                            <mainClass>com.gigaspaces.sbp.metrics.AdminApiMonitor</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -81,7 +87,7 @@
                         <configuration>
                             <attachToBuild>true</attachToBuild>
                             <classifier>executable</classifier>
-                            <filename>AdminAPIMonitor.jar</filename>
+                            <filename>AdminApiMonitor.jar</filename>
                         </configuration>
                         <goals>
                             <goal>one-jar</goal>

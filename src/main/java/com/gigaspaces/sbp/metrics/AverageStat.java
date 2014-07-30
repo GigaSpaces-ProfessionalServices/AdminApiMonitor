@@ -1,4 +1,4 @@
-package com.gigaspaces.sbp.metrics_source.adminapi;
+package com.gigaspaces.sbp.metrics;
 
 import java.util.Date;
 
