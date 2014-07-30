@@ -1,6 +1,5 @@
 package com.gigaspaces.sbp.metrics.cli;
 
-import com.gigaspaces.sbp.metrics.AdminApiMonitor;
 import com.gigaspaces.sbp.metrics.Settings;
 import org.apache.commons.cli.*;
 
@@ -16,29 +15,25 @@ import java.util.EnumSet;
  */
 public class ProcessArgs {
 
-    private static final int TERMINAL_WIDTH = 110;
-
     /**
      * A set of settings
+     *
      * @param args args, as passed on the command line
      * @return such a beast
      */
-    public EnumSet<Settings> invoke(String[] args) {
+    public EnumSet<Settings> invoke(String[] args) throws ParseException {
         EnumSet<Settings> settings = EnumSet.noneOf(Settings.class);
-        try {
-            CommandLine commandLine = new GnuParser().parse(getOptions(), args);
-            if (commandLine.hasOption(Settings.AllMetrics.getOptionCharacter())) {
-                settings = addTo(settings, Settings.AllMetrics);
-            }
-            if (commandLine.hasOption(Settings.Csv.getOptionCharacter())) {
-                settings = addTo(settings, Settings.Csv);
-            }
-        } catch (ParseException e) {
-            final PrintWriter writer = new PrintWriter(System.err);
-            final HelpFormatter usageFormatter = new HelpFormatter();
-            usageFormatter.printUsage(writer, TERMINAL_WIDTH, AdminApiMonitor.class.getSimpleName(), getOptions());
-            writer.flush();
+        CommandLine commandLine = new GnuParser().parse(getOptions(), args);
+        if (commandLine.hasOption(Settings.AllMetrics.getOptionCharacter())) {
+            settings = addTo(settings, Settings.AllMetrics);
         }
+        if (commandLine.hasOption(Settings.Csv.getOptionCharacter())) {
+            settings = addTo(settings, Settings.Csv);
+        }
+        if( commandLine.hasOption(Settings.Secured.getOptionCharacter())){
+            settings = addTo(settings, Settings.Secured);
+        }
+
         return settings;
     }
 
@@ -48,10 +43,11 @@ public class ProcessArgs {
         return result;
     }
 
-    private Options getOptions() {
+    public Options getOptions() {
         final Options options = new Options();
         updateReference(options, Settings.AllMetrics);
         updateReference(options, Settings.Csv);
+        updateReference(options, Settings.Secured);
         return options;
     }
 

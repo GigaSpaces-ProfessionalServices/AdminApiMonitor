@@ -13,6 +13,7 @@ public enum Settings implements OptionLike {
 
     AllMetrics("a", "all-metrics", "Print all metrics.")
     , Csv("c", "csv", "Emit metrics on a single line, separated by commas.")
+    , Secured("s", "secured", "If GigaSpaces security is enabled.")
     ;
 
     private final String optionCharacter;

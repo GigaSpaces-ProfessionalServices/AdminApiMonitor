@@ -23,7 +23,6 @@
         <property name="adminUser" value="${spaceMonitor.adminUser}" />
         <property name="adminPassword" value="${spaceMonitor.adminPassword}" />
         <property name="locators" value="${spaceMonitor.locators}" />
-        <property name="secured" value="${spaceMonitor.secured}" />
         <property name="spaceName" value="${spaceMonitor.spaceName}" />
         <property name="averageCounter" ref="averageCounter" />
     </bean>

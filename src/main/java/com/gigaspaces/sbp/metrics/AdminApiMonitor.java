@@ -2,9 +2,10 @@ package com.gigaspaces.sbp.metrics;
 
 import com.gigaspaces.cluster.activeelection.SpaceMode;
 import com.gigaspaces.cluster.replication.async.mirror.MirrorStatistics;
-import com.gigaspaces.sbp.metrics.reporter.CollectPeriodicAverageMetricsTask;
 import com.gigaspaces.sbp.metrics.cli.ProcessArgs;
 import com.j_spaces.core.filters.ReplicationStatistics;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.ParseException;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;
 import org.openspaces.admin.gsc.GridServiceContainer;
@@ -12,45 +13,43 @@ import org.openspaces.admin.gsc.GridServiceContainers;
 import org.openspaces.admin.machine.Machines;
 import org.openspaces.admin.space.*;
 import org.openspaces.admin.vm.VirtualMachine;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Required;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import java.io.PrintWriter;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class AdminApiMonitor {
 
+    private static final String APPLICATION_CONTEXT_PATH = "/META-INF/spring/admin-api-context.xml";
     private static final int WAITING_FOR_GRID_PAUSE = 5000;
+    private static final int TERMINAL_WIDTH = 110;
+
+    private static boolean applicationContextStarted;
+    private static EnumSet<Settings> settings;
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private Admin admin;
-
     private String adminUser;
-
     private String adminPassword;
-
-    private boolean secured = false;
-
-    private String locators = null;
-
-    private String groups = null;
-
-    private String spaceName = null;
+    private String locators;
+    private String groups;
+    private String spaceName;
 
     private ExponentialMovingAverage averageCounter;
 
-    private Map<Long,AverageStat> lastCollectedStat = new HashMap<Long, AverageStat>();
+    private Map<Long,AverageStat> lastCollectedStat = new HashMap<>();
 
     private String vmName;
 
-    public AdminApiMonitor(){
-
-    }
-
     public Map<Long,AverageStat> startCollection(){
         AdminFactory factory = new AdminFactory();
-        if(secured){
+        if(settings.contains(Settings.Secured)){
             factory.credentials(adminUser,adminPassword);
         }
         factory.addLocators(locators);
@@ -62,7 +61,7 @@ public class AdminApiMonitor {
         machines.waitFor(1);
         GridServiceContainers gscs = admin.getGridServiceContainers();
 
-      // TODO check (how to start GSC from java?)
+        // TODO check (how to start GSC from java?)
         gscs.waitFor(1, 500, TimeUnit.MILLISECONDS);
 
         Spaces spaces = admin.getSpaces();
@@ -72,13 +71,13 @@ public class AdminApiMonitor {
     }
 
     public void collectStats(Admin admin){
-        collectJVMStats(admin);
-        collectRedologStats(admin);
+        collectJvmStats(admin);
+        collectRedoLogStats(admin);
         collectMirrorStats(admin);
         collectActivityStats(admin);
     }
 
-    //TODO provide smarter solution, below method is hotfix for Belk
+    // TODO provide smarter solution, below method is hotfix for Belk
     public Long getMemoryUsed(){
         long memoryHeapUsedInBytes = 0;
         try {
@@ -87,6 +86,7 @@ public class AdminApiMonitor {
                 memoryHeapUsedInBytes += container.getVirtualMachine().getStatistics().getMemoryHeapUsedInBytes();
             }
         }   catch (Exception e) {
+            logger.debug("Error reading used memory.", e);
         }
         return memoryHeapUsedInBytes;
     }
@@ -101,6 +101,7 @@ public class AdminApiMonitor {
                 objectsCount = stats.getObjectCount();
             }
         }   catch (Exception e) {
+            logger.debug("Error reading object count.", e);
         }
         return objectsCount;
     }
@@ -115,13 +116,15 @@ public class AdminApiMonitor {
                 throughput = stats.getActiveTransactionCount();
             }
         }   catch (Exception e) {
+            logger.debug("Error calculating throughput.", e);
         }
         return throughput;
     }
 
     public void init(){
+
         AdminFactory factory = new AdminFactory();
-        if(secured){
+        if(settings.contains(Settings.Secured)){
             factory.credentials(adminUser,adminPassword);
         }
         factory.addLocators(locators);
@@ -135,18 +138,19 @@ public class AdminApiMonitor {
 
         gscs.waitFor(1, 500, TimeUnit.MILLISECONDS);
 
+        // TODO I'm pretty sure this is wrong
         Spaces spaces = admin.getSpaces();
         spaces.waitFor(spaceName);
         GridServiceContainer containers[] = admin.getGridServiceContainers().getContainers();
         vmName = containers[0].getVirtualMachine().getStatistics().getDetails().getUid();
     }
 
-    public void collectJVMStats(Admin admin){
+    public void collectJvmStats(Admin admin){
         GridServiceContainer containers[] = admin.getGridServiceContainers().getContainers();
-        for(int i=0;i<containers.length;i++){
-            VirtualMachine vm = containers[i].getVirtualMachine();
+        for (GridServiceContainer container : containers) {
+            VirtualMachine vm = container.getVirtualMachine();
             AverageStat stat = lastCollectedStat.get(vm.getDetails().getPid());
-            if(stat == null){
+            if (stat == null) {
                 stat = new AverageStat();
                 stat.pid = vm.getDetails().getPid();
             }
@@ -158,34 +162,33 @@ public class AdminApiMonitor {
             stat.totalThreads = averageCounter.average(stat.totalThreads, vm.getStatistics().getThreadCount());
             stat.nonHeapUsedMemory = averageCounter.average(stat.nonHeapUsedMemory, vm.getStatistics().getMemoryNonHeapUsedInBytes());
             stat.timestamp = new Date();
-            lastCollectedStat.put(vm.getDetails().getPid(),stat);
+            lastCollectedStat.put(vm.getDetails().getPid(), stat);
         }
     }
-    public void collectRedologStats(Admin admin){
+
+    public void collectRedoLogStats(Admin admin){
         Space space = admin.getSpaces().waitFor("testSpace", 3, TimeUnit.SECONDS);
         space.waitFor(space.getNumberOfInstances(), SpaceMode.PRIMARY,10 , TimeUnit.SECONDS);
         SpacePartition partitions[]= space.getPartitions();
-        long redologSize = 0;
-        long redologBytesPerSecond = 0;
-        for (int i=0;i<partitions.length;i++) {
-            SpacePartition partition = partitions[i];
-
+        long redoLogSize = 0;
+        long redoLogBytesPerSecond = 0;
+        for (SpacePartition partition : partitions) {
             ReplicationStatistics replicationStatistics = partition.getPrimary().getStatistics().getReplicationStatistics();
 
-            if (replicationStatistics != null){
-                redologSize += replicationStatistics.getOutgoingReplication().getRedoLogSize();
+            if (replicationStatistics != null) {
+                redoLogSize += replicationStatistics.getOutgoingReplication().getRedoLogSize();
 
                 List<ReplicationStatistics.OutgoingChannel> channelList = replicationStatistics.getOutgoingReplication().getChannels();
-                for(ReplicationStatistics.OutgoingChannel channel : channelList){
-                    redologBytesPerSecond += channel.getSendBytesPerSecond();
+                for (ReplicationStatistics.OutgoingChannel channel : channelList) {
+                    redoLogBytesPerSecond += channel.getSendBytesPerSecond();
                 }
             }
 
         }
         for(Long pid : lastCollectedStat.keySet()){
             AverageStat stat = lastCollectedStat.get(pid);
-            stat.redologSize = averageCounter.average(stat.redologSize, redologSize);
-            stat.redologSendBytesPerSecond = averageCounter.average(stat.redologSendBytesPerSecond, redologBytesPerSecond);
+            stat.redologSize = averageCounter.average(stat.redologSize, redoLogSize);
+            stat.redologSendBytesPerSecond = averageCounter.average(stat.redologSendBytesPerSecond, redoLogBytesPerSecond);
         }
     }
 
@@ -226,54 +229,63 @@ public class AdminApiMonitor {
         int processorQueueSize = 0;
         long activeTransactionCount = 0;
 
-            for (Space space : admin.getSpaces()) {
-                for (SpaceInstance spaceInstance : space) {
-                    SpaceInstanceStatistics stats = spaceInstance.getStatistics();
-                    readCountPerSecond += stats.getReadPerSecond();
-                    updateCountPerSecond += stats.getUpdatePerSecond();
-                    writeCountPerSecond += stats.getWritePerSecond();
-                    changePerSecond += stats.getChangePerSecond();
-                    executePerSecond += stats.getExecutePerSecond();
-                    processorQueueSize += stats.getProcessorQueueSize();
-                    activeTransactionCount += stats.getActiveTransactionCount();
-                }
-            }
-            for(Long pid : lastCollectedStat.keySet()){
-                AverageStat stat = lastCollectedStat.get(pid);
-                stat.readCountPerSecond = averageCounter.average(stat.readCountPerSecond, readCountPerSecond);
-                stat.updateCountPerSecond = averageCounter.average(stat.updateCountPerSecond, updateCountPerSecond);
-                stat.writeCountPerSecond = averageCounter.average(stat.writeCountPerSecond, writeCountPerSecond);
-                stat.changePerSecond = averageCounter.average(stat.changePerSecond, changePerSecond);
-                stat.executePerSecond = averageCounter.average(stat.executePerSecond, executePerSecond);
-                stat.processorQueueSize = averageCounter.average(stat.processorQueueSize, processorQueueSize);
-                stat.activeTransactionCount = averageCounter.average(stat.activeTransactionCount, activeTransactionCount);
+        for (Space space : admin.getSpaces()) {
+            for (SpaceInstance spaceInstance : space) {
+                SpaceInstanceStatistics stats = spaceInstance.getStatistics();
+                readCountPerSecond += stats.getReadPerSecond();
+                updateCountPerSecond += stats.getUpdatePerSecond();
+                writeCountPerSecond += stats.getWritePerSecond();
+                changePerSecond += stats.getChangePerSecond();
+                executePerSecond += stats.getExecutePerSecond();
+                processorQueueSize += stats.getProcessorQueueSize();
+                activeTransactionCount += stats.getActiveTransactionCount();
             }
         }
+
+        for(Long pid : lastCollectedStat.keySet()){
+            AverageStat stat = lastCollectedStat.get(pid);
+            stat.readCountPerSecond = averageCounter.average(stat.readCountPerSecond, readCountPerSecond);
+            stat.updateCountPerSecond = averageCounter.average(stat.updateCountPerSecond, updateCountPerSecond);
+            stat.writeCountPerSecond = averageCounter.average(stat.writeCountPerSecond, writeCountPerSecond);
+            stat.changePerSecond = averageCounter.average(stat.changePerSecond, changePerSecond);
+            stat.executePerSecond = averageCounter.average(stat.executePerSecond, executePerSecond);
+            stat.processorQueueSize = averageCounter.average(stat.processorQueueSize, processorQueueSize);
+            stat.activeTransactionCount = averageCounter.average(stat.activeTransactionCount, activeTransactionCount);
+        }
+    }
 
     public static void main(String[] args) throws InterruptedException {
-        EnumSet<Settings> settings = new ProcessArgs().invoke(args);
-        boolean applicationContextStarted = false;
-        while (!applicationContextStarted){
-            try {
-                startApplicationContext(args);
-                applicationContextStarted = true;
-            }  catch (BeanCreationException e){
-                System.out.println("===================================================");
-                System.out.println("Unable to start " + AdminApiMonitor.class.getSimpleName() + ". Retrying in " + WAITING_FOR_GRID_PAUSE / 1000 + " seconds.");
-                System.out.println("===================================================");
-                Thread.sleep(WAITING_FOR_GRID_PAUSE);
-            }
+
+        ProcessArgs processArgs = new ProcessArgs();
+
+        try {
+            settings = processArgs.invoke(args);
+        } catch (ParseException e) {
+            final PrintWriter writer = new PrintWriter(System.err);
+            final HelpFormatter usageFormatter = new HelpFormatter();
+            usageFormatter.printUsage(writer, TERMINAL_WIDTH, AdminApiMonitor.class.getSimpleName(), processArgs.getOptions());
+            writer.flush();
         }
 
+        while (!applicationContextStarted)
+            attemptStart();
+
     }
 
-    private static void startApplicationContext(String[] args){
-        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("/META-INF/spring/admin-api-context.xml");
-        CollectPeriodicAverageMetricsTask collectPeriodicMetricsTask = (CollectPeriodicAverageMetricsTask) applicationContext.getBean("collectPeriodicMetricsTask");
+    private static void attemptStart() throws InterruptedException {
+        try {
+            startApplicationContext();
+            applicationContextStarted = true;
+        }  catch (BeanCreationException e){
+            System.out.println("===================================================");
+            System.out.println("Unable to start " + AdminApiMonitor.class.getSimpleName() + ". Retrying in " + WAITING_FOR_GRID_PAUSE / 1000 + " seconds.");
+            System.out.println("===================================================");
+            Thread.sleep(WAITING_FOR_GRID_PAUSE);
+        }
     }
 
-    public String getAdminUser() {
-        return adminUser;
+    private static void startApplicationContext(){
+        new ClassPathXmlApplicationContext(APPLICATION_CONTEXT_PATH);
     }
 
     public void setAdminUser(String adminUser) {
@@ -282,10 +294,6 @@ public class AdminApiMonitor {
 
     public void setAdminPassword(String adminPassword) {
         this.adminPassword = adminPassword;
-    }
-
-    public void setSecured(String secured) {
-        this.secured = Boolean.valueOf(secured);
     }
 
     public void setLocators(String locators) {
@@ -305,11 +313,8 @@ public class AdminApiMonitor {
         this.averageCounter = averageCounter;
     }
 
-    public Map<Long, AverageStat> getLastCollectedStat() {
-        return lastCollectedStat;
-    }
-
     public String getVmName() {
         return vmName;
     }
+
 }

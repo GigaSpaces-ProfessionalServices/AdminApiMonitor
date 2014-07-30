@@ -1,6 +1,7 @@
 package com.gigaspaces.sbp.metrics.cli;
 
 import com.gigaspaces.sbp.metrics.Settings;
+import org.apache.commons.cli.ParseException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,6 +21,7 @@ public class ProcessArgsTest {
 
     private static final String ALL_OPTION = String.format("-%s", Settings.AllMetrics.getOptionCharacter());
     private static final String CSV_OPTION = String.format("-%s", Settings.Csv.getOptionCharacter());
+    private static final String SECURED_OPTION = String.format("-%s", Settings.Secured.getOptionCharacter());
 
     private ProcessArgs testInstance;
 
@@ -29,12 +31,13 @@ public class ProcessArgsTest {
     }
 
     @Test
-    public void testInvoke(){
+    public void testInvoke() throws Exception{
 
 
-        EnumSet<Settings> actual = testInstance.invoke(new String[]{ALL_OPTION, CSV_OPTION});
+        EnumSet<Settings> actual = testInstance.invoke(new String[]{ALL_OPTION, SECURED_OPTION, CSV_OPTION});
         assertTrue(actual.contains(Settings.AllMetrics));
         assertTrue(actual.contains(Settings.Csv));
+        assertTrue(actual.contains(Settings.Secured));
 
         actual = testInstance.invoke(new String[]{});
         assertNotNull(actual);
@@ -42,7 +45,7 @@ public class ProcessArgsTest {
     }
 
     @Test
-    public void testInvokeRequiresHyphens(){
+    public void testInvokeRequiresHyphens() throws Exception{
 
         EnumSet<Settings> actual = testInstance.invoke(new String[]{Settings.AllMetrics.getOptionCharacter()});
         assertNotNull(actual);
@@ -50,8 +53,8 @@ public class ProcessArgsTest {
         assertEquals(actual.size(), 0, 0);
     }
 
-    @Test
-    public void testInvokeDoesNotThrow(){
-        testInstance.invoke(new String[]{"xyz", "pdq"});
+    @Test(expected = ParseException.class)
+    public void testInvokeThrows() throws Exception{
+        testInstance.invoke(new String[]{"-xyz", "-pdq"});
     }
 }
