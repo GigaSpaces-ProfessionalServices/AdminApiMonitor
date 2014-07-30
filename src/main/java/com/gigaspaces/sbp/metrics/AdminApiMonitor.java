@@ -38,7 +38,7 @@ public class AdminApiMonitor {
 
     private String spaceName = null;
 
-    private ExponentialAverageCounter averageCounter;
+    private ExponentialMovingAverage averageCounter;
 
     private Map<Long,AverageStat> lastCollectedStat = new HashMap<Long, AverageStat>();
 
@@ -301,7 +301,7 @@ public class AdminApiMonitor {
     }
 
     @Required
-    public void setAverageCounter(ExponentialAverageCounter averageCounter) {
+    public void setAverageCounter(ExponentialMovingAverage averageCounter) {
         this.averageCounter = averageCounter;
     }
 

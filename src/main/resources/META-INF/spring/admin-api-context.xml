@@ -28,7 +28,7 @@
         <property name="averageCounter" ref="averageCounter" />
     </bean>
 
-    <bean id="averageCounter" class="com.gigaspaces.sbp.metrics.ExponentialAverageCounter">
+    <bean id="averageCounter" class="com.gigaspaces.sbp.metrics.ExponentialMovingAverage">
         <property name="alpha" value="${stat.sample.alpha}" />
     </bean>
 
