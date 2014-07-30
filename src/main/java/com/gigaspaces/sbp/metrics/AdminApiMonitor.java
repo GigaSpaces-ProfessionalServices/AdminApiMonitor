@@ -244,10 +244,12 @@ public class AdminApiMonitor {
         try {
             settings = processArgs.invoke(args);
         } catch (ParseException e) {
+            System.err.println("ERROR: User error. Please try again...");
             final PrintWriter writer = new PrintWriter(System.err);
             final HelpFormatter usageFormatter = new HelpFormatter();
-            usageFormatter.printUsage(writer, TERMINAL_WIDTH, AdminApiMonitor.class.getSimpleName(), processArgs.getOptions());
+            usageFormatter.printUsage(writer, TERMINAL_WIDTH, "java -DjavaOpt=foo -jar " + AdminApiMonitor.class.getSimpleName() + ".jar", processArgs.getOptions());
             writer.flush();
+            System.exit(666);
         }
 
         while (!applicationContextStarted)
