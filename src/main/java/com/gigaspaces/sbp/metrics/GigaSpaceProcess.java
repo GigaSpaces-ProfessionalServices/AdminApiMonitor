@@ -10,5 +10,5 @@ package com.gigaspaces.sbp.metrics;
  * a Space).
  */
 public enum GigaSpaceProcess {
-    GSM, GSA, LUS, GSC, ESM, MIRROR, SPACE, PARTITION, WEBUI, PROXY;
+    GSM, GSA, LUS, GSC, ESM, MIRROR, SPACE, PARTITION, WEBUI, PROXY, GIGASPACES_UI;
 }

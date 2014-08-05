@@ -1,7 +1,6 @@
 package com.gigaspaces.sbp.metrics;
 
 import java.util.SortedSet;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by IntelliJ IDEA.
@@ -9,7 +8,7 @@ import java.util.concurrent.TimeUnit;
  * Date: 8/4/14
  * Time: 4:41 PM
  *
- * Any given {@link Metric} describes some state in a given context. The context describes
+ * Any given {@link AbstractMetric} describes some state in a given context. The context describes
  * when the metric was recorded and which {@link GigaSpaceProcess}es and hostname(s) that hosted those
  * {@link GigaSpaceProcess}es
  */

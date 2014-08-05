@@ -1,9 +1,7 @@
 package com.gigaspaces.sbp.metrics;
 
-
-import java.util.Arrays;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Created by IntelliJ IDEA.
@@ -11,33 +9,30 @@ import java.util.TreeSet;
  * Date: 8/4/14
  * Time: 5:41 PM
  */
-class MetricFactory {
+abstract class MetricFactory {
 
-    Metric fullContext(final CollectionPeriod collectionPeriod,
-                               final String[] hostNames,
-                               final Displayable metricName,
-                               final GigaSpaceProcess gsProcess) {
-
-        return new Metric(gsProcess) {
-
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public SortedSet<String> onHosts() {
-                SortedSet<String> set = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
-                set.addAll(Arrays.asList(hostNames));
-                return set;
-            }
-
-            /**
-             * {@inheritDoc}
-             */
+    AbstractMetric fullContext(final CollectionPeriod during,
+                               final Collection<String> hostNames,
+                               final NamedMetric metricName,
+                               final GigaSpaceProcess gsProcess){
+        return new MetricOnHost(gsProcess, hostNames) {
             @Override
             public CollectionPeriod during() {
-                return collectionPeriod;
+                return during;
             }
 
+            @Override
+            public String displayName() {
+                return metricName.displayName();
+            }
+        };
+    }
+
+    AbstractMetric fullContext(final Collection<String> hostNames,
+                               final NamedMetric metricName,
+                               final GigaSpaceProcess gsProcess) {
+
+        return new MetricCollectedNow(gsProcess, hostNames) {
             /**
              * {@inheritDoc}
              */
@@ -48,32 +43,58 @@ class MetricFactory {
         };
     }
 
-    Metric singleNodeContext(final Displayable metricName,
-                             final CollectionPeriod collectionPeriod,
-                             final String hostname,
-                             final GigaSpaceProcess gsProcess) {
-        return fullContext(collectionPeriod, new String[]{hostname}, metricName, gsProcess);
-    }
+    class NowMetrics {
 
-    private void procMeBabyOneMoreTime(final Displayable metricName){
-        GigaSpaceProcess gsProcess = null;
+        private final Collection<String> hostNames = new ArrayList<>();
 
-        switch (gsProcess){
+        NowMetrics(String hostName){
+            if( hostName != null && hostName.trim().length() > 0 )
+                this.hostNames.add(hostName.trim());
+        }
 
-            case GSA: return;
-            case GSC: return;
-            case LUS: return;
-            case GSM: return;
+        NowMetrics(Collection<String> hostNames) {
+            if( hostNames != null )
+                this.hostNames.addAll(hostNames);
+        }
 
-            case MIRROR: return;
+        AbstractMetric gsa(final NamedMetric metric) {
+            return fullContext(hostNames, metric, GigaSpaceProcess.GSA);
+        }
 
-            case ESM: return;
+        AbstractMetric gsc(final NamedMetric metric) {
+            return fullContext(hostNames, metric, GigaSpaceProcess.GSC);
+        }
 
-            case PARTITION: return;
-            case PROXY: return;
-            case SPACE: return;
-            case WEBUI: return;
+        AbstractMetric lus(final NamedMetric metric) {
+            return fullContext(hostNames, metric, GigaSpaceProcess.LUS);
+        }
 
+        AbstractMetric gsm(final NamedMetric metric) {
+            return fullContext(hostNames, metric, GigaSpaceProcess.GSM);
+        }
+
+        AbstractMetric mirror(final NamedMetric metric) {
+            return fullContext(hostNames, metric, GigaSpaceProcess.MIRROR);
+        }
+
+        AbstractMetric esm(final NamedMetric metric) {
+            return fullContext(hostNames, metric, GigaSpaceProcess.ESM);
+        }
+
+        AbstractMetric partition(final NamedMetric metric) {
+            return fullContext(hostNames, metric, GigaSpaceProcess.PARTITION);
+        }
+
+        AbstractMetric proxy(final NamedMetric metric) {
+            return fullContext(hostNames, metric, GigaSpaceProcess.PROXY);
+        }
+
+        AbstractMetric webUi(final NamedMetric metric) {
+            return fullContext(hostNames, metric, GigaSpaceProcess.WEBUI);
+        }
+
+        AbstractMetric gigaSpacesUi(final NamedMetric metric) {
+            return fullContext(hostNames, metric, GigaSpaceProcess.GIGASPACES_UI);
         }
     }
 
