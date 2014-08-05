@@ -17,7 +17,7 @@ import static org.junit.Assert.assertTrue;
  * Date: 7/29/14
  * Time: 8:45 PM
  */
-public class ProcessArgsTest {
+public class GigaSpaceProcessArgsTest {
 
     private static final String ALL_OPTION = String.format("-%s", Settings.AllMetrics.getOptionCharacter());
     private static final String CSV_OPTION = String.format("-%s", Settings.Csv.getOptionCharacter());
