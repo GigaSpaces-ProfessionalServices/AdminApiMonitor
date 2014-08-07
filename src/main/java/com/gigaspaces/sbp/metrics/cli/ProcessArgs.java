@@ -38,7 +38,7 @@ public class ProcessArgs {
     }
 
     private EnumSet<Settings> addTo(EnumSet<Settings> result, Settings setting) {
-        if (result == null) return EnumSet.of(setting);
+        if (result == null) return EnumSet.of(setting); // NPE waiting to happen if setting == null???
         else if (setting != null) result.add(setting);
         return result;
     }
