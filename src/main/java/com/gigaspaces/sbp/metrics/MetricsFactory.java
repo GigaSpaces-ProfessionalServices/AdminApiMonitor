@@ -9,24 +9,7 @@ import java.util.Collection;
  * Date: 8/4/14
  * Time: 5:41 PM
  */
-abstract class MetricFactory {
-
-    AbstractMetric fullContext(final CollectionPeriod during,
-                               final Collection<String> hostNames,
-                               final NamedMetric metricName,
-                               final GigaSpaceProcess gsProcess){
-        return new MetricOnHost(gsProcess, hostNames) {
-            @Override
-            public CollectionPeriod during() {
-                return during;
-            }
-
-            @Override
-            public String displayName() {
-                return metricName.displayName();
-            }
-        };
-    }
+abstract class MetricsFactory {
 
     AbstractMetric fullContext(final Collection<String> hostNames,
                                final NamedMetric metricName,
@@ -40,17 +23,17 @@ abstract class MetricFactory {
             public String displayName() {
                 return metricName.displayName();
             }
+
+            @Override
+            public void accept(StatsVisitor statsVisitor) {
+                // CODE SMELL: deferred bequest
+            }
         };
     }
 
-    class NowMetrics {
+    protected class NowMetrics {
 
         private final Collection<String> hostNames = new ArrayList<>();
-
-        NowMetrics(String hostName){
-            if( hostName != null && hostName.trim().length() > 0 )
-                this.hostNames.add(hostName.trim());
-        }
 
         NowMetrics(Collection<String> hostNames) {
             if( hostNames != null )
@@ -96,6 +79,12 @@ abstract class MetricFactory {
         AbstractMetric gigaSpacesUi(final NamedMetric metric) {
             return fullContext(hostNames, metric, GigaSpaceProcess.GIGASPACES_UI);
         }
+
+        AbstractMetric grid(final NamedMetric metric) {
+            return fullContext(hostNames, metric, GigaSpaceProcess.CLUSTER);
+        }
     }
+
+    abstract Collection<AbstractMetric> create();
 
 }
