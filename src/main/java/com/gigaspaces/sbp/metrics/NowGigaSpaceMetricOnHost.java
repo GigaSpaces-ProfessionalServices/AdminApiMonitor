@@ -8,11 +8,11 @@ import java.util.Collection;
  * Date: 8/5/14
  * Time: 4:16 PM
  */
-public abstract class MetricCollectedNow extends MetricOnHost {
+public abstract class NowGigaSpaceMetricOnHost extends MetricOnHost {
 
     private final CollectionPeriod during;
 
-    MetricCollectedNow(GigaSpaceProcess gsProcess, Collection<String> hostNames){
+    NowGigaSpaceMetricOnHost(GigaSpaceProcess gsProcess, Collection<String> hostNames){
         super(gsProcess, hostNames);
         this.during = new PointInTime();
     }

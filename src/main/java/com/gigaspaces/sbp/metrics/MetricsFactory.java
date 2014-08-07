@@ -11,11 +11,11 @@ import java.util.Collection;
  */
 abstract class MetricsFactory {
 
-    AbstractMetric fullContext(final Collection<String> hostNames,
+    GigaSpaceMetric fullContext(final Collection<String> hostNames,
                                final NamedMetric metricName,
                                final GigaSpaceProcess gsProcess) {
 
-        return new MetricCollectedNow(gsProcess, hostNames) {
+        return new NowGigaSpaceMetricOnHost(gsProcess, hostNames) {
             /**
              * {@inheritDoc}
              */
@@ -40,51 +40,51 @@ abstract class MetricsFactory {
                 this.hostNames.addAll(hostNames);
         }
 
-        AbstractMetric gsa(final NamedMetric metric) {
+        GigaSpaceMetric gsa(final NamedMetric metric) {
             return fullContext(hostNames, metric, GigaSpaceProcess.GSA);
         }
 
-        AbstractMetric gsc(final NamedMetric metric) {
+        GigaSpaceMetric gsc(final NamedMetric metric) {
             return fullContext(hostNames, metric, GigaSpaceProcess.GSC);
         }
 
-        AbstractMetric lus(final NamedMetric metric) {
+        GigaSpaceMetric lus(final NamedMetric metric) {
             return fullContext(hostNames, metric, GigaSpaceProcess.LUS);
         }
 
-        AbstractMetric gsm(final NamedMetric metric) {
+        GigaSpaceMetric gsm(final NamedMetric metric) {
             return fullContext(hostNames, metric, GigaSpaceProcess.GSM);
         }
 
-        AbstractMetric mirror(final NamedMetric metric) {
+        GigaSpaceMetric mirror(final NamedMetric metric) {
             return fullContext(hostNames, metric, GigaSpaceProcess.MIRROR);
         }
 
-        AbstractMetric esm(final NamedMetric metric) {
+        GigaSpaceMetric esm(final NamedMetric metric) {
             return fullContext(hostNames, metric, GigaSpaceProcess.ESM);
         }
 
-        AbstractMetric partition(final NamedMetric metric) {
+        GigaSpaceMetric partition(final NamedMetric metric) {
             return fullContext(hostNames, metric, GigaSpaceProcess.PARTITION);
         }
 
-        AbstractMetric proxy(final NamedMetric metric) {
+        GigaSpaceMetric proxy(final NamedMetric metric) {
             return fullContext(hostNames, metric, GigaSpaceProcess.PROXY);
         }
 
-        AbstractMetric webUi(final NamedMetric metric) {
+        GigaSpaceMetric webUi(final NamedMetric metric) {
             return fullContext(hostNames, metric, GigaSpaceProcess.WEBUI);
         }
 
-        AbstractMetric gigaSpacesUi(final NamedMetric metric) {
+        GigaSpaceMetric gigaSpacesUi(final NamedMetric metric) {
             return fullContext(hostNames, metric, GigaSpaceProcess.GIGASPACES_UI);
         }
 
-        AbstractMetric grid(final NamedMetric metric) {
+        GigaSpaceMetric grid(final NamedMetric metric) {
             return fullContext(hostNames, metric, GigaSpaceProcess.CLUSTER);
         }
     }
 
-    abstract Collection<AbstractMetric> create();
+    abstract Collection<GigaSpaceMetric> create();
 
 }

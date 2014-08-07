@@ -11,13 +11,9 @@ import java.util.TreeSet;
  * Date: 8/5/14
  * Time: 3:59 PM
  */
-public abstract class MetricOnHost extends AbstractMetric{
+public abstract class MetricOnHost extends GigaSpaceMetric {
 
     private SortedSet<String> hostNames = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
-
-    protected MetricOnHost(GigaSpaceProcess gsProcess, String hostName) {
-        this(gsProcess, new String[]{hostName});
-    }
 
     protected MetricOnHost(GigaSpaceProcess gsProcess, String[] hostNames){
         this(gsProcess, Arrays.asList(hostNames));

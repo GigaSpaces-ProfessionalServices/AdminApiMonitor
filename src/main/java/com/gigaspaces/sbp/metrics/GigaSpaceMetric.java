@@ -6,11 +6,11 @@ package com.gigaspaces.sbp.metrics;
  * Date: 8/4/14
  * Time: 5:24 PM
  */
-public abstract class AbstractMetric implements NamedMetric, MetricContext {
+public abstract class GigaSpaceMetric implements NamedMetric, MetricContext {
 
     private final GigaSpaceProcess gsProcess;
 
-    public AbstractMetric(GigaSpaceProcess gsProcess) {
+    public GigaSpaceMetric(GigaSpaceProcess gsProcess) {
         assert gsProcess != null : "need a process boundary for this metric.";
         this.gsProcess = gsProcess;
     }

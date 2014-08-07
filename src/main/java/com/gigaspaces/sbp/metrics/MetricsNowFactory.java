@@ -12,13 +12,13 @@ import java.util.List;
  */
 abstract class MetricsNowFactory extends MetricsFactory {
 
-    private List<AbstractMetric> list(int len){
+    private List<GigaSpaceMetric> list(int len){
         return new ArrayList<>(len);
     }
 
-    Collection<AbstractMetric> mirrorMetrics(NowMetrics nowMetrics){
+    Collection<GigaSpaceMetric> mirrorMetrics(NowMetrics nowMetrics){
         GsMirrorInfo[] info = GsMirrorInfo.values();
-        List<AbstractMetric> metrics = list(info.length);
+        List<GigaSpaceMetric> metrics = list(info.length);
         for( GsMirrorInfo mirrorInfo:GsMirrorInfo.values())
             metrics.add(nowMetrics.mirror(mirrorInfo));
         return metrics;
@@ -26,34 +26,34 @@ abstract class MetricsNowFactory extends MetricsFactory {
 
     ////////////////// GSC /////////////////////
 
-    private AbstractMetric gsc(NowMetrics nowMetrics, NamedMetric metric){
+    private GigaSpaceMetric gsc(NowMetrics nowMetrics, NamedMetric metric){
         return nowMetrics.gsc(metric);
     }
 
-    Collection<AbstractMetric> memoryMetrics(NowMetrics nowMetrics){
+    Collection<GigaSpaceMetric> memoryMetrics(NowMetrics nowMetrics){
         Memory[] memory = Memory.values();
-        List<AbstractMetric> metrics = list(memory.length);
+        List<GigaSpaceMetric> metrics = list(memory.length);
         for( Memory metric : memory){
             metrics.add(gsc(nowMetrics, metric));}
         return metrics;
     }
 
-    Collection<AbstractMetric> jvmInfoMetrics(NowMetrics nowMetrics){
+    Collection<GigaSpaceMetric> jvmInfoMetrics(NowMetrics nowMetrics){
         JvmInfo[] info = JvmInfo.values();
-        List<AbstractMetric> metrics = list(info.length);
+        List<GigaSpaceMetric> metrics = list(info.length);
         for( JvmInfo jvmInfo : info ) metrics.add(gsc(nowMetrics, jvmInfo));
         return metrics;
     }
 
-    Collection<AbstractMetric> activityMetrics(NowMetrics nowMetrics){
+    Collection<GigaSpaceMetric> activityMetrics(NowMetrics nowMetrics){
         GigaSpacesActivity[] activities = GigaSpacesActivity.values();
-        List<AbstractMetric> metrics = list(activities.length);
+        List<GigaSpaceMetric> metrics = list(activities.length);
         for( GigaSpacesActivity activity : activities ) metrics.add(gsc(nowMetrics, activity));
         return metrics;
     }
 
-    Collection<AbstractMetric> gscMetrics(NowMetrics nowMetrics){
-        Collection<AbstractMetric> metrics = activityMetrics(nowMetrics);
+    Collection<GigaSpaceMetric> gscMetrics(NowMetrics nowMetrics){
+        Collection<GigaSpaceMetric> metrics = activityMetrics(nowMetrics);
         metrics.addAll(jvmInfoMetrics(nowMetrics));
         metrics.addAll(memoryMetrics(nowMetrics));
         return metrics;
@@ -61,9 +61,9 @@ abstract class MetricsNowFactory extends MetricsFactory {
 
     ////////////////// END GSC /////////////////////
 
-    Collection<AbstractMetric> osMetrics(NowMetrics nowMetrics) {
+    Collection<GigaSpaceMetric> osMetrics(NowMetrics nowMetrics) {
         OperatingSystemInfo[] info = OperatingSystemInfo.values();
-        List<AbstractMetric> metrics = list(info.length);
+        List<GigaSpaceMetric> metrics = list(info.length);
         for( OperatingSystemInfo osInfo : info) metrics.add(nowMetrics.grid(osInfo));
         return metrics;
     }

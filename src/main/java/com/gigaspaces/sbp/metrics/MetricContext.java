@@ -8,7 +8,7 @@ import java.util.SortedSet;
  * Date: 8/4/14
  * Time: 4:41 PM
  *
- * Any given {@link AbstractMetric} describes some state in a given context. The context describes
+ * Any given {@link GigaSpaceMetric} describes some state in a given context. The context describes
  * when the metric was recorded and which {@link GigaSpaceProcess}es and hostname(s) that hosted those
  * {@link GigaSpaceProcess}es
  */
