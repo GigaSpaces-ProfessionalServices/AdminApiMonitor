@@ -1,4 +1,3 @@
-
 package com.gigaspaces.sbp.metrics.visitor;
 
 import com.gigaspaces.cluster.replication.async.mirror.MirrorStatistics;
@@ -14,20 +13,21 @@ import org.openspaces.admin.vm.VirtualMachineStatistics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-public class PrintVisitor extends AbstractStatsVisitor {
+public class CsvVisitor extends AbstractStatsVisitor{
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    public PrintVisitor(Admin admin, String spaceName){
+    public CsvVisitor(Admin admin, String spaceName){
         super(admin, spaceName);
     }
 
     @Override
     public void saveStat(NamedMetric metric, String value) {
-        logger.info(formatMetrics(metric.displayName(), value));
+
     }
 
     @Override
@@ -38,11 +38,5 @@ public class PrintVisitor extends AbstractStatsVisitor {
     @Override
     public void saveOnce(NamedMetric metric, String value) {
 
-    }
-
-    private String formatMetrics(String metricType, String metricValue){
-        SimpleDateFormat date = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
-        String serverName = "TODO SERVER NAME";
-        return "\n" + date.format(new Date()) + " -- " + metricType + "-- " + serverName +  " -- " + "TODO VM NAME" + " -- cacheNum — " + metricValue;
     }
 }
