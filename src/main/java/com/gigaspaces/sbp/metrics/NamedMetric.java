@@ -50,7 +50,7 @@ enum GigaSpacesClusterInfo implements NamedMetric {
 
     SPACE_MODE("space_mode"){
         public void accept(StatsVisitor statsVisitor){
-            SpaceInstance spaceInstance = statsVisitor.spaceInstance();
+            SpaceInstance spaceInstance = statsVisitor.spaceInstance().get(0);
             if( spaceInstance != null ){
                 statsVisitor.saveStat(this, spaceInstance.getMode().name());
             }
@@ -79,133 +79,158 @@ enum GigaSpacesActivity implements NamedMetric {
     READ_COUNT("reads"){
         public void accept(StatsVisitor visitor){
             if( visitor == null ) return;
-            SpaceInstance spaceInstance = visitor.spaceInstance();
-            if( spaceInstance != null ){
-                SpaceInstanceStatistics stats = spaceInstance.getStatistics();
-                Long readCount = stats.getReadCount();
-                visitor.saveStat(this, String.valueOf(readCount));
+            Long readCount = 0l;
+            for (SpaceInstance spaceInstance : visitor.spaceInstance()){
+                if( spaceInstance != null ){
+                    SpaceInstanceStatistics stats = spaceInstance.getStatistics();
+                     readCount += stats.getReadCount();
+
+                }
             }
+            visitor.saveStat(this, String.valueOf(readCount));
         }
     }
     , READ_PER_SEC("reads_per_sec"){
         public void accept(StatsVisitor visitor){
             if( visitor == null ) return;
-            SpaceInstance spaceInstance = visitor.spaceInstance();
-            if( spaceInstance != null ){
-                SpaceInstanceStatistics stats = spaceInstance.getStatistics();
-                Double readsPerSec = stats.getReadPerSecond();
-                visitor.saveStat(this, String.valueOf(readsPerSec));
+            Double readsPerSec = 0.0;
+            for (SpaceInstance spaceInstance : visitor.spaceInstance()){
+                if( spaceInstance != null ){
+                    SpaceInstanceStatistics stats = spaceInstance.getStatistics();
+                    readsPerSec += stats.getReadPerSecond();
+                }
             }
+            visitor.saveStat(this, String.valueOf(readsPerSec));
         }
     }
     , WRITE_COUNT("writes"){
         public void accept(StatsVisitor visitor){
             if( visitor == null ) return;
-            SpaceInstance spaceInstance = visitor.spaceInstance();
-            if( spaceInstance != null ){
-                SpaceInstanceStatistics stats = spaceInstance.getStatistics();
-                Long writeCount = stats.getWriteCount();
-                visitor.saveStat(this, String.valueOf(writeCount));
+            Long writeCount = 0l;
+            for (SpaceInstance spaceInstance : visitor.spaceInstance()){
+                if( spaceInstance != null ){
+                    SpaceInstanceStatistics stats = spaceInstance.getStatistics();
+                    writeCount += stats.getWriteCount();
+                }
             }
+            visitor.saveStat(this, String.valueOf(writeCount));
         }
     }
     , WRITES_PER_SEC("writes_per_sec"){
         public void accept(StatsVisitor visitor){
             if( visitor == null ) return;
-            SpaceInstance spaceInstance = visitor.spaceInstance();
-            if( spaceInstance != null ){
-                SpaceInstanceStatistics stats = spaceInstance.getStatistics();
-                Double writesPerSec = stats.getWritePerSecond();
-                visitor.saveStat(this, String.valueOf(writesPerSec));
+            Double writesPerSec = 0.0;
+            for (SpaceInstance spaceInstance : visitor.spaceInstance()){
+                if( spaceInstance != null ){
+                    SpaceInstanceStatistics stats = spaceInstance.getStatistics();
+                    writesPerSec += stats.getWritePerSecond();
+                }
             }
+            visitor.saveStat(this, String.valueOf(writesPerSec));
         }
     }
     , EXECUTE_COUNT("executes"){
         public void accept(StatsVisitor visitor){
             if( visitor == null ) return;
-            SpaceInstance spaceInstance = visitor.spaceInstance();
-            if( spaceInstance != null ){
-                SpaceInstanceStatistics stats = spaceInstance.getStatistics();
-                Long executeCount = stats.getExecuteCount();
-                visitor.saveStat(this, String.valueOf(executeCount));
+            Long executeCount = 0l;
+            for (SpaceInstance spaceInstance : visitor.spaceInstance()){
+                if( spaceInstance != null ){
+                    SpaceInstanceStatistics stats = spaceInstance.getStatistics();
+                    executeCount += stats.getExecuteCount();
+                }
             }
+            visitor.saveStat(this, String.valueOf(executeCount));
         }
     }
     , EXECUTES_PER_SEC("executes_per_sec"){
         public void accept(StatsVisitor visitor){
             if( visitor == null ) return;
-            SpaceInstance spaceInstance = visitor.spaceInstance();
-            if( spaceInstance != null ){
-                SpaceInstanceStatistics stats = spaceInstance.getStatistics();
-                Double execPerSec = stats.getExecutePerSecond();
-                visitor.saveStat(this, String.valueOf(execPerSec));
+            Double execPerSec = 0.0;
+            for (SpaceInstance spaceInstance : visitor.spaceInstance()){
+                if( spaceInstance != null ){
+                    SpaceInstanceStatistics stats = spaceInstance.getStatistics();
+                    execPerSec += stats.getExecutePerSecond();
+                }
             }
+            visitor.saveStat(this, String.valueOf(execPerSec));
         }
     }
     , TAKE_COUNT("takes"){
         public void accept(StatsVisitor visitor){
             if( visitor == null ) return;
-            SpaceInstance spaceInstance = visitor.spaceInstance();
-            if( spaceInstance != null ){
-                SpaceInstanceStatistics stats = spaceInstance.getStatistics();
-                Long takeCount = stats.getTakeCount();
-                visitor.saveStat(this, String.valueOf(takeCount));
+            Long takeCount = 0l;
+            for (SpaceInstance spaceInstance : visitor.spaceInstance()){
+                if( spaceInstance != null ){
+                    SpaceInstanceStatistics stats = spaceInstance.getStatistics();
+                    takeCount += stats.getTakeCount();
+                }
             }
+            visitor.saveStat(this, String.valueOf(takeCount));
         }
     }
     , TAKES_PER_SECOND("takes_per_sec"){
         public void accept(StatsVisitor visitor){
             if( visitor == null ) return;
-            SpaceInstance spaceInstance = visitor.spaceInstance();
-            if( spaceInstance != null ){
-                SpaceInstanceStatistics stats = spaceInstance.getStatistics();
-                Double takePerSec = stats.getTakePerSecond();
-                visitor.saveStat(this, String.valueOf(takePerSec));
+            Double takePerSec = 0.0;
+            for (SpaceInstance spaceInstance : visitor.spaceInstance()){
+                if( spaceInstance != null ){
+                    SpaceInstanceStatistics stats = spaceInstance.getStatistics();
+                    takePerSec += stats.getTakePerSecond();
+                }
             }
+            visitor.saveStat(this, String.valueOf(takePerSec));
         }
     }
     , UPDATE_COUNT("updates") { // also applies to "change'
         public void accept(StatsVisitor visitor){
             if( visitor == null ) return;
-            SpaceInstance spaceInstance = visitor.spaceInstance();
-            if( spaceInstance != null ){
-                SpaceInstanceStatistics stats = spaceInstance.getStatistics();
-                Long updateCount = stats.getUpdateCount();
-                visitor.saveStat(this, String.valueOf(updateCount));
+            Long updateCount = 0l;
+            for (SpaceInstance spaceInstance : visitor.spaceInstance()){
+                if( spaceInstance != null ){
+                    SpaceInstanceStatistics stats = spaceInstance.getStatistics();
+                    updateCount += stats.getUpdateCount();
+                }
             }
+            visitor.saveStat(this, String.valueOf(updateCount));
         }
     }
     , UPDATES_PER_SEC("updates_per_sec") { // also applies to "change'
         public void accept(StatsVisitor visitor){
             if( visitor == null ) return;
-            SpaceInstance spaceInstance = visitor.spaceInstance();
-            if( spaceInstance != null ){
-                SpaceInstanceStatistics stats = spaceInstance.getStatistics();
-                Double updatesPerSec = stats.getUpdatePerSecond();
-                visitor.saveStat(this, String.valueOf(updatesPerSec));
+            Double updatesPerSec = 0.0;
+            for (SpaceInstance spaceInstance : visitor.spaceInstance()){
+                if( spaceInstance != null ){
+                    SpaceInstanceStatistics stats = spaceInstance.getStatistics();
+                    updatesPerSec += stats.getUpdatePerSecond();
+                }
             }
+            visitor.saveStat(this, String.valueOf(updatesPerSec));
         }
     }
     , TRANSACTION_COUNT("active_transactions"){
         public void accept(StatsVisitor visitor){
             if( visitor == null ) return;
-            SpaceInstance spaceInstance = visitor.spaceInstance();
-            if( spaceInstance != null ){
-                SpaceInstanceStatistics stats = spaceInstance.getStatistics();
-                Long activeTransactions = stats.getActiveTransactionCount();
-                visitor.saveStat(this, String.valueOf(activeTransactions));
+            Long activeTransactions = 0l;
+            for (SpaceInstance spaceInstance : visitor.spaceInstance()){
+                if( spaceInstance != null ){
+                    SpaceInstanceStatistics stats = spaceInstance.getStatistics();
+                    activeTransactions += stats.getActiveTransactionCount();
+                }
             }
+            visitor.saveStat(this, String.valueOf(activeTransactions));
         }
     }
     , CONNECTION_COUNT("active_connections"){
         public void accept(StatsVisitor visitor){
             if( visitor == null ) return;
-            SpaceInstance spaceInstance = visitor.spaceInstance();
-            if( spaceInstance != null ){
-                SpaceInstanceStatistics stats = spaceInstance.getStatistics();
-                Long connectionCount = stats.getActiveConnectionCount();
-                visitor.saveStat(this, String.valueOf(connectionCount));
+            Long connectionCount = 0l;
+            for (SpaceInstance spaceInstance : visitor.spaceInstance()){
+                if( spaceInstance != null ){
+                    SpaceInstanceStatistics stats = spaceInstance.getStatistics();
+                    connectionCount += stats.getActiveConnectionCount();
+                }
             }
+            visitor.saveStat(this, String.valueOf(connectionCount));
         }
     }
     ;
@@ -232,11 +257,13 @@ enum GsMirrorInfo implements NamedMetric {
         @Override
         public void accept(StatsVisitor statsVisitor) {
             if( statsVisitor == null ) return;
-            ReplicationStatistics replicationStatistics = statsVisitor.replicationStatistics();
-            if( replicationStatistics == null ) return;
-            ReplicationStatistics.OutgoingReplication out = replicationStatistics.getOutgoingReplication();
-            if( out == null ) return;
-            Long logSize = out.getRedoLogSize();
+            Long logSize = 0l;
+            for (ReplicationStatistics replicationStatistics : statsVisitor.replicationStatistics()){
+                if( replicationStatistics == null ) return;
+                ReplicationStatistics.OutgoingReplication out = replicationStatistics.getOutgoingReplication();
+                if( out == null ) return;
+                logSize += out.getRedoLogSize();
+            }
             statsVisitor.saveStat(this, String.valueOf(logSize));
         }
     }
@@ -244,15 +271,16 @@ enum GsMirrorInfo implements NamedMetric {
         @Override
         public void accept(StatsVisitor statsVisitor) {
             if( statsVisitor == null ) return;
-            ReplicationStatistics replicationStatistics = statsVisitor.replicationStatistics();
-            if( replicationStatistics == null ) return;
-            ReplicationStatistics.OutgoingReplication out = replicationStatistics.getOutgoingReplication();
-            if( out == null ) return;
-            List<ReplicationStatistics.OutgoingChannel> channelList = out.getChannels();
-            if( channelList == null ) return;
             long byteCount = 0;
-            for(ReplicationStatistics.OutgoingChannel channel : channelList ){
-                if( channel != null ) byteCount += channel.getSendBytesPerSecond();
+            for (ReplicationStatistics replicationStatistics : statsVisitor.replicationStatistics()){
+                if( replicationStatistics == null ) return;
+                ReplicationStatistics.OutgoingReplication out = replicationStatistics.getOutgoingReplication();
+                if( out == null ) return;
+                List<ReplicationStatistics.OutgoingChannel> channelList = out.getChannels();
+                if( channelList == null ) return;
+                for(ReplicationStatistics.OutgoingChannel channel : channelList ){
+                    if( channel != null ) byteCount += channel.getSendBytesPerSecond();
+                }
             }
             statsVisitor.saveStat(this, String.valueOf(byteCount));
         }
@@ -261,33 +289,42 @@ enum GsMirrorInfo implements NamedMetric {
         @Override
         public void accept(StatsVisitor statsVisitor) {
             if( statsVisitor == null ) return;
-            MirrorStatistics mirrorStatistics= statsVisitor.mirrorStatistics();
-            if( mirrorStatistics == null ) return;
-            Long operationCount = mirrorStatistics.getOperationCount();
-            if( operationCount == null ) return;
-            statsVisitor.saveStat(this, operationCount.toString());
+            Long operationCountSum = 0l;
+            for (MirrorStatistics mirrorStatistics : statsVisitor.mirrorStatistics()){
+                if( mirrorStatistics == null ) return;
+                Long operationCount = mirrorStatistics.getOperationCount();
+                if( operationCount == null ) return;
+                operationCountSum += operationCount;
+            }
+            statsVisitor.saveStat(this, operationCountSum.toString());
         }
     }
     , MIRROR_SUCCESSFUL_OPERATIONS("mirror_successes"){
         @Override
         public void accept(StatsVisitor statsVisitor) {
             if( statsVisitor == null ) return;
-            MirrorStatistics mirrorStatistics= statsVisitor.mirrorStatistics();
-            if( mirrorStatistics == null ) return;
-            Long successfulOperations = mirrorStatistics.getSuccessfulOperationCount();
-            if( successfulOperations == null ) return;
-            statsVisitor.saveStat(this, successfulOperations.toString());
+            Long successfulOperationsSum = 0l;
+            for (MirrorStatistics mirrorStatistics : statsVisitor.mirrorStatistics()){
+                if( mirrorStatistics == null ) return;
+                Long successfulOperations = mirrorStatistics.getSuccessfulOperationCount();
+                if( successfulOperations == null ) return;
+                successfulOperationsSum += successfulOperations;
+            }
+            statsVisitor.saveStat(this, successfulOperationsSum.toString());
         }
     }
     , MIRROR_FAILED_OPERATIONS("mirror_failures"){
         @Override
         public void accept(StatsVisitor statsVisitor) {
             if( statsVisitor == null ) return;
-            MirrorStatistics mirrorStatistics= statsVisitor.mirrorStatistics();
-            if( mirrorStatistics == null ) return;
-            Long failedOperations = mirrorStatistics.getFailedOperationCount();
-            if( failedOperations == null ) return;
-            statsVisitor.saveStat(this, failedOperations.toString());
+            Long failedOperationsSum = 0l;
+            for (MirrorStatistics mirrorStatistics : statsVisitor.mirrorStatistics()){
+                if( mirrorStatistics == null ) return;
+                Long failedOperations = mirrorStatistics.getFailedOperationCount();
+                if( failedOperations == null ) return;
+                failedOperationsSum += failedOperations;
+            }
+            statsVisitor.saveStat(this, failedOperationsSum.toString());
         }
     }
     ;

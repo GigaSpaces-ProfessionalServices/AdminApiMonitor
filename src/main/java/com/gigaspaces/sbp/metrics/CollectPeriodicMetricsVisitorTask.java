@@ -25,7 +25,7 @@ public class CollectPeriodicMetricsVisitorTask {
     private void collectMetrics(){
         logger.info("VISITOR_COLLECTION_STARTS");
         //logger.info("PERIODIC_METRICS = " + getMetrics());
-        StatsVisitor visitor = new PrintVisitor(adminMonitor.getAdmin());
+        StatsVisitor visitor = new PrintVisitor(adminMonitor.getAdmin(), "belkSpikes");
         List<NamedMetric> metrics = new ArrayList<>();
         metrics.addAll(Arrays.asList(GigaSpacesActivity.values()));
         metrics.addAll(Arrays.asList(GigaSpacesClusterInfo.values()));

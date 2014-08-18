@@ -6,7 +6,9 @@ import com.gigaspaces.sbp.metrics.NamedMetric;
 import com.j_spaces.core.filters.ReplicationStatistics;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.gsc.GridServiceContainer;
+import org.openspaces.admin.space.Space;
 import org.openspaces.admin.space.SpaceInstance;
+import org.openspaces.admin.space.SpacePartition;
 import org.openspaces.admin.vm.VirtualMachineDetails;
 import org.openspaces.admin.vm.VirtualMachineStatistics;
 import org.slf4j.Logger;
@@ -25,11 +27,11 @@ public class PrintVisitor implements StatsVisitor {
 
     private List<VirtualMachineStatistics> vmStatistics;
 
-    private ReplicationStatistics replicationStatistics;
+    private List<ReplicationStatistics> replicationStatistics;
 
-    private MirrorStatistics mirrorStatistics;
+    private List<MirrorStatistics> mirrorStatistics;
 
-    private SpaceInstance spaceInstance;
+    private List<SpaceInstance> spaceInstances;
 
     //TODO lists
     public PrintVisitor(Admin admin, String spaceName){
@@ -45,9 +47,21 @@ public class PrintVisitor implements StatsVisitor {
 
         vmDetails = virtualMachineDetails;
         vmStatistics = virtualMachineStatistics;
-        replicationStatistics = admin.getSpaces().getSpaceByName("belkSpikes").getPartitions()[0].getPrimary().getStatistics().getReplicationStatistics();
-        mirrorStatistics = admin.getSpaces().getSpaceByName("belkSpikes").getPartitions()[0].getPrimary().getStatistics().getMirrorStatistics();
-        spaceInstance = admin.getSpaces().getSpaceByName("belkSpikes").getInstances()[0];
+
+        Space targetSpace = admin.getSpaces().getSpaceByName(spaceName);
+
+        replicationStatistics = new ArrayList<ReplicationStatistics>();
+        mirrorStatistics = new ArrayList<MirrorStatistics>();
+        for (SpacePartition partition : targetSpace.getPartitions()){
+            replicationStatistics.add(partition.getPrimary().getStatistics().getReplicationStatistics());
+            mirrorStatistics.add(partition.getPrimary().getStatistics().getMirrorStatistics());
+        }
+
+        spaceInstances = new ArrayList<SpaceInstance>();
+
+        for (SpaceInstance spaceInstance : targetSpace.getInstances()){
+            spaceInstances.add(spaceInstance);
+        }
     }
 
     @Override
@@ -61,18 +75,18 @@ public class PrintVisitor implements StatsVisitor {
     }
 
     @Override
-    public MirrorStatistics mirrorStatistics() {
+    public List<MirrorStatistics> mirrorStatistics() {
         return mirrorStatistics;
     }
 
     @Override
-    public ReplicationStatistics replicationStatistics() {
+    public List<ReplicationStatistics> replicationStatistics() {
         return replicationStatistics;
     }
 
     @Override
-    public SpaceInstance spaceInstance() {
-        return spaceInstance;
+    public List<SpaceInstance> spaceInstance() {
+        return spaceInstances;
     }
 
     @Override

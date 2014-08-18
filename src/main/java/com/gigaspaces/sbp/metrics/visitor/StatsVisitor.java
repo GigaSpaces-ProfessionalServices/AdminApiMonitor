@@ -24,11 +24,11 @@ public interface StatsVisitor {
 
     List<VirtualMachineStatistics> vmStatistics();
 
-    ReplicationStatistics replicationStatistics();
+    List<ReplicationStatistics> replicationStatistics();
 
-    MirrorStatistics mirrorStatistics();
+    List<MirrorStatistics> mirrorStatistics();
 
-    SpaceInstance spaceInstance();
+    List<SpaceInstance> spaceInstance();
 
     // For possible, future use...
     //    SpaceStatistics spaceStatistics();
