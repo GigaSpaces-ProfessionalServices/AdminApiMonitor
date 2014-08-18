@@ -7,6 +7,8 @@ import org.openspaces.admin.space.SpaceInstance;
 import org.openspaces.admin.vm.VirtualMachineDetails;
 import org.openspaces.admin.vm.VirtualMachineStatistics;
 
+import java.util.List;
+
 /**
  * Created by IntelliJ IDEA.
  * User: jason
@@ -18,9 +20,9 @@ public interface StatsVisitor {
 
     // STATE VARIABLES FROM WHICH TO EXTRACT METRIC DATA...
 
-    VirtualMachineDetails virtualMachineDetails();
+    List<VirtualMachineDetails> virtualMachineDetails();
 
-    VirtualMachineStatistics vmStatistics();
+    List<VirtualMachineStatistics> vmStatistics();
 
     ReplicationStatistics replicationStatistics();
 

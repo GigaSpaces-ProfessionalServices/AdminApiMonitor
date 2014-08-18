@@ -6,7 +6,7 @@ import com.j_spaces.core.filters.ReplicationStatistics;
 import org.openspaces.admin.space.SpaceInstance;
 import org.openspaces.admin.space.SpaceInstanceStatistics;
 import org.openspaces.admin.vm.VirtualMachineDetails;
-import org.openspaces.admin.vm.VirtualMachinesStatistics;
+import org.openspaces.admin.vm.VirtualMachineStatistics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -315,13 +315,16 @@ enum OperatingSystemInfo implements NamedMetric {
         public void accept(StatsVisitor statsVisitor) {
             if( statsVisitor == null ) return;
             final String openFdCount = "OpenFileDescriptorCount";
-            try {
-                ObjectName objectName = new ObjectName(JmxUtils.OS_SEARCH_STRING);
-                MBeanServerConnection server = JMX_UTILS.mbeanServer(statsVisitor.virtualMachineDetails(), JmxUtils.OS_SEARCH_STRING);
-                AttributeList list = server.getAttributes(objectName, new String[]{openFdCount});
-                for( Attribute attr : list.asList() ) if( attr.getName().equals(openFdCount)) statsVisitor.saveStat(this, attr.getValue().toString());
-            } catch (IOException | MalformedObjectNameException | ReflectionException | InstanceNotFoundException e) {
-                LOGGER.error("Error determining " + this.displayName(), e);
+            for (VirtualMachineDetails details : statsVisitor.virtualMachineDetails()) {
+                try {
+                    ObjectName objectName = new ObjectName(JmxUtils.OS_SEARCH_STRING);
+                    MBeanServerConnection server = JMX_UTILS.mbeanServer(details, JmxUtils.OS_SEARCH_STRING);
+                    AttributeList list = server.getAttributes(objectName, new String[]{openFdCount});
+                    for (Attribute attr : list.asList())
+                        if (attr.getName().equals(openFdCount)) statsVisitor.saveStat(this, attr.getValue().toString());
+                } catch (IOException | MalformedObjectNameException | ReflectionException | InstanceNotFoundException e) {
+                    LOGGER.error("Error determining " + this.displayName(), e);
+                }
             }
         }
     }
@@ -332,13 +335,15 @@ enum OperatingSystemInfo implements NamedMetric {
             if( statsVisitor.isSavedOnce(this)) return;
             final String maxFdCount = "MaxFileDescriptorCount";
             final String osSearchString = "java.lang:type=OperatingSystem";
-            try {
-                ObjectName objectName = new ObjectName(osSearchString);
-                MBeanServerConnection server = JMX_UTILS.mbeanServer(statsVisitor.virtualMachineDetails(), osSearchString);
-                AttributeList list = server.getAttributes(objectName, new String[]{maxFdCount});
-                for( Attribute attr : list.asList() ) if( attr.getName().equals(maxFdCount)) statsVisitor.saveOnce(this, attr.getValue().toString());
-            } catch (IOException | MalformedObjectNameException | ReflectionException | InstanceNotFoundException e) {
-                LOGGER.error("Error determining " + this.displayName(), e);
+            for (VirtualMachineDetails details : statsVisitor.virtualMachineDetails()){
+                try {
+                    ObjectName objectName = new ObjectName(osSearchString);
+                    MBeanServerConnection server = JMX_UTILS.mbeanServer(details, osSearchString);
+                    AttributeList list = server.getAttributes(objectName, new String[]{maxFdCount});
+                    for( Attribute attr : list.asList() ) if( attr.getName().equals(maxFdCount)) statsVisitor.saveOnce(this, attr.getValue().toString());
+                } catch (IOException | MalformedObjectNameException | ReflectionException | InstanceNotFoundException e) {
+                    LOGGER.error("Error determining " + this.displayName(), e);
+                }
             }
         }
     }
@@ -347,29 +352,31 @@ enum OperatingSystemInfo implements NamedMetric {
         public void accept(StatsVisitor statsVisitor) {
             if( statsVisitor == null ) return;
             final String threading = "java.lang:type=Threading";
-            try {
-                ObjectName objectName = new ObjectName(threading);
-                MBeanServerConnection server = JMX_UTILS.mbeanServer(statsVisitor.virtualMachineDetails(), JmxUtils.OS_SEARCH_STRING);
-                Set<ObjectInstance> mBeans = server.queryMBeans(objectName, null);
-                long lrmiThreadCount = 0;
-                for( ObjectInstance mbean : mBeans ){
-                    ObjectName name = mbean.getObjectName();
-                    if( name.toString().contains("Threading")){
-                        long[] threadIds = (long[]) server.getAttribute(name, "AllThreadIds");
-                        for( Long threadId : threadIds ) {
-                            String[] signatures = new String[]{"long"};
-                            CompositeDataSupport threadInfo =
-                                    (CompositeDataSupport) server.invoke(name, "getThreadInfo", new Long[]{threadId}, signatures);
-                            Object threadName = threadInfo.get("threadName");
-                            if( threadName == null ) continue;
-                            if (threadName.toString().contains("LRMI Connection"))
-                                lrmiThreadCount++;
+            for (VirtualMachineDetails details : statsVisitor.virtualMachineDetails()){
+                try {
+                    ObjectName objectName = new ObjectName(threading);
+                    MBeanServerConnection server = JMX_UTILS.mbeanServer(details, JmxUtils.OS_SEARCH_STRING);
+                    Set<ObjectInstance> mBeans = server.queryMBeans(objectName, null);
+                    long lrmiThreadCount = 0;
+                    for( ObjectInstance mbean : mBeans ){
+                        ObjectName name = mbean.getObjectName();
+                        if( name.toString().contains("Threading")){
+                            long[] threadIds = (long[]) server.getAttribute(name, "AllThreadIds");
+                            for( Long threadId : threadIds ) {
+                                String[] signatures = new String[]{"long"};
+                                CompositeDataSupport threadInfo =
+                                        (CompositeDataSupport) server.invoke(name, "getThreadInfo", new Long[]{threadId}, signatures);
+                                Object threadName = threadInfo.get("threadName");
+                                if( threadName == null ) continue;
+                                if (threadName.toString().contains("LRMI Connection"))
+                                    lrmiThreadCount++;
+                            }
                         }
                     }
+                    statsVisitor.saveStat(this, String.valueOf(lrmiThreadCount));
+                } catch (IOException | MalformedObjectNameException | ReflectionException | InstanceNotFoundException | AttributeNotFoundException | MBeanException e) {
+                    LOGGER.error("Error determining " + this.displayName(), e);
                 }
-                statsVisitor.saveStat(this, String.valueOf(lrmiThreadCount));
-            } catch (IOException | MalformedObjectNameException | ReflectionException | InstanceNotFoundException | AttributeNotFoundException | MBeanException e) {
-                LOGGER.error("Error determining " + this.displayName(), e);
             }
         }
     }
@@ -399,61 +406,71 @@ enum JvmInfo implements NamedMetric {
         @Override
         public void accept(StatsVisitor statsVisitor) {
             if( statsVisitor == null ) return;
-            VirtualMachinesStatistics vmStatistics = statsVisitor.vmStatistics();
-            if( vmStatistics == null ) return;
-            Long gcCount = vmStatistics.getGcCollectionCount();
-            if( gcCount == null ) return;
-            statsVisitor.saveStat(this, gcCount.toString());
+            List<VirtualMachineStatistics> virtualMachineStatisticses = statsVisitor.vmStatistics();
+            for (VirtualMachineStatistics vmStatistics : virtualMachineStatisticses){
+                if( vmStatistics == null ) return;
+                Long gcCount = vmStatistics.getGcCollectionCount();
+                if( gcCount == null ) return;
+                statsVisitor.saveStat(this, gcCount.toString());
+            }
         }
     }
     , GARBAGE_COLLECTION_TIME_IN_SECONDS("gc_time_secs"){
         @Override
         public void accept(StatsVisitor statsVisitor) {
             if( statsVisitor == null ) return;
-            VirtualMachinesStatistics vmStatistics = statsVisitor.vmStatistics();
-            if( vmStatistics == null ) return;
-            Long gcTime = vmStatistics.getGcCollectionTime();
-            if( gcTime == null ) return;
-            gcTime /= 1000l;
-            statsVisitor.saveStat(this, gcTime.toString());
+            List<VirtualMachineStatistics> virtualMachineStatisticses = statsVisitor.vmStatistics();
+            for (VirtualMachineStatistics vmStatistics : virtualMachineStatisticses){
+                if( vmStatistics == null ) return;
+                Long gcTime = vmStatistics.getGcCollectionTime();
+                if( gcTime == null ) return;
+                gcTime /= 1000l;
+                statsVisitor.saveStat(this, gcTime.toString());
+            }
         }
     }
     , THREAD_COUNT("threads"){
         @Override
         public void accept(StatsVisitor statsVisitor) {
             if( statsVisitor == null ) return;
-            VirtualMachinesStatistics vmStatistics = statsVisitor.vmStatistics();
-            if( vmStatistics == null ) return;
-            Integer threads = vmStatistics.getThreadCount();
-            if( threads == null ) return;
-            statsVisitor.saveStat(this, threads.toString());
+            List<VirtualMachineStatistics> virtualMachineStatisticses = statsVisitor.vmStatistics();
+            for (VirtualMachineStatistics vmStatistics : virtualMachineStatisticses){
+                if( vmStatistics == null ) return;
+                Integer threads = vmStatistics.getThreadCount();
+                if( threads == null ) return;
+                statsVisitor.saveStat(this, threads.toString());
+            }
         }
     }
     , JVM_UPTIME("jvm_uptime_secs"){
         @Override
         public void accept(StatsVisitor statsVisitor) {
             if( statsVisitor == null ) return;
-            VirtualMachinesStatistics vmStatistics = statsVisitor.vmStatistics();
-            if( vmStatistics == null ) return;
-            Long upTime = vmStatistics.getUptime();
-            if( upTime == null ) return;
-            upTime /= 1000;
-            statsVisitor.saveStat(this, upTime.toString());
+            List<VirtualMachineStatistics> vmStatistics = statsVisitor.vmStatistics();
+            for (VirtualMachineStatistics stats : vmStatistics){
+                if( stats == null ) return;
+                Long upTime = stats.getUptime();
+                if( upTime == null ) return;
+                upTime /= 1000;
+                statsVisitor.saveStat(this, upTime.toString());
+            }
         }
     }
     , JVM_CPU_LOAD("cpu_usage"){
         @Override
         public void accept(StatsVisitor statsVisitor) {
             if( statsVisitor == null ) return;
-            VirtualMachineDetails vmDetails = statsVisitor.virtualMachineDetails();
-            final String cpuLoad = "ProcessCpuLoad";
-            try {
-                ObjectName objectName = new ObjectName(JmxUtils.OS_SEARCH_STRING);
-                MBeanServerConnection server = JMX_UTILS.mbeanServer(statsVisitor.virtualMachineDetails(), JmxUtils.OS_SEARCH_STRING);
-                AttributeList list = server.getAttributes(objectName, new String[]{cpuLoad});
-                for( Attribute attr : list.asList() ) if( attr.getName().equals(cpuLoad)) statsVisitor.saveStat(this, attr.getValue().toString());
-            } catch (IOException | MalformedObjectNameException | ReflectionException | InstanceNotFoundException e) {
-                LOGGER.error("Error determining " + this.displayName(), e);
+            List<VirtualMachineDetails> virtualMachineDetails = statsVisitor.virtualMachineDetails();
+            for (VirtualMachineDetails vmDetails : virtualMachineDetails){
+                final String cpuLoad = "ProcessCpuLoad";
+                try {
+                    ObjectName objectName = new ObjectName(JmxUtils.OS_SEARCH_STRING);
+                    MBeanServerConnection server = JMX_UTILS.mbeanServer(vmDetails, JmxUtils.OS_SEARCH_STRING);
+                    AttributeList list = server.getAttributes(objectName, new String[]{cpuLoad});
+                    for( Attribute attr : list.asList() ) if( attr.getName().equals(cpuLoad)) statsVisitor.saveStat(this, attr.getValue().toString());
+                } catch (IOException | MalformedObjectNameException | ReflectionException | InstanceNotFoundException e) {
+                    LOGGER.error("Error determining " + this.displayName(), e);
+                }
             }
         }
     }
@@ -496,55 +513,61 @@ enum Memory implements NamedMetric {
         @Override
         public void accept(StatsVisitor statsVisitor) {
             if( statsVisitor == null ) return;
-            VirtualMachineDetails details = statsVisitor.virtualMachineDetails();
-            if( details == null ) return;
-            Long heap = details.getMemoryHeapMaxInBytes();
-            Long nonHeap = details.getMemoryNonHeapInitInBytes();
-            if( heap == null || nonHeap == null ) return;
-            Long bytes = heap + nonHeap;
-            statsVisitor.saveStat(this, bytes.toString());
+            for (VirtualMachineDetails details : statsVisitor.virtualMachineDetails()){
+                if( details == null ) return;
+                Long heap = details.getMemoryHeapMaxInBytes();
+                Long nonHeap = details.getMemoryNonHeapInitInBytes();
+                if( heap == null || nonHeap == null ) return;
+                Long bytes = heap + nonHeap;
+                statsVisitor.saveStat(this, bytes.toString());
+            }
         }
     }
     , NON_HEAP_USED_BYTES("non_heap_used_bytes") { // OS & JVM native
         @Override
         public void accept(StatsVisitor statsVisitor) {
             if( statsVisitor == null ) return;
-            VirtualMachineDetails details = statsVisitor.virtualMachineDetails();
-            if( details == null ) return;
-            Long nonHeap = details.getMemoryNonHeapInitInBytes();
-            if( nonHeap == null ) return;
-            statsVisitor.saveStat(this, nonHeap.toString());
+            for (VirtualMachineDetails details : statsVisitor.virtualMachineDetails()){
+                if( details == null ) return;
+                Long nonHeap = details.getMemoryNonHeapInitInBytes();
+                if( nonHeap == null ) return;
+                statsVisitor.saveStat(this, nonHeap.toString());
+            }
         }
     }
     , HEAP_USED_BYTES("heap_used_bytes") { // "working set" ~= application memory
         @Override
         public void accept(StatsVisitor statsVisitor) {
             if( statsVisitor == null ) return;
-            VirtualMachineDetails details = statsVisitor.virtualMachineDetails();
-            if( details == null ) return;
-            Long heap = details.getMemoryHeapInitInBytes();
-            if( heap == null ) return;
-            statsVisitor.saveStat(this, heap.toString());
+            List<VirtualMachineDetails> virtualMachineDetailses = statsVisitor.virtualMachineDetails();
+            for (VirtualMachineDetails details : virtualMachineDetailses){
+                if( details == null ) return;
+                Long heap = details.getMemoryHeapInitInBytes();
+                if( heap == null ) return;
+                statsVisitor.saveStat(this, heap.toString());
+            }
         }
     }
     , NON_HEAP_COMMITTED_BYTES("non_heap_committed_bytes") { // "JVM"; -Xmx minus HEAP_COMMITTED_BYTES
         @Override
         public void accept(StatsVisitor statsVisitor) {
             if( statsVisitor == null ) return;
-            VirtualMachinesStatistics stats = statsVisitor.vmStatistics();
-            Long nonHeapCommitted = stats.getMemoryNonHeapCommittedInBytes();
-            if( nonHeapCommitted == null ) return;
-            statsVisitor.saveStat(this, nonHeapCommitted.toString());
+            for (VirtualMachineStatistics stats : statsVisitor.vmStatistics()){
+                Long nonHeapCommitted = stats.getMemoryNonHeapCommittedInBytes();
+                if( nonHeapCommitted == null ) return;
+                statsVisitor.saveStat(this, nonHeapCommitted.toString());
+            }
         }
     }
     , HEAP_COMMITTED_BYTES("heap_committed_bytes") { // "committed"; NON_HEAP_USED_BYTES + HEAP_USED_BYTES + garbage
         @Override
         public void accept(StatsVisitor statsVisitor) {
             if( statsVisitor == null ) return;
-            VirtualMachinesStatistics stats = statsVisitor.vmStatistics();
-            Long heapCommitted = stats.getMemoryHeapCommittedInBytes();
-            if( heapCommitted == null ) return;
-            statsVisitor.saveStat(this, heapCommitted.toString());
+            for (VirtualMachineStatistics stats : statsVisitor.vmStatistics()){
+                Long heapCommitted = stats.getMemoryHeapCommittedInBytes();
+                if( heapCommitted == null ) return;
+                statsVisitor.saveStat(this, heapCommitted.toString());
+            }
         }
     }
     ;

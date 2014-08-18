@@ -31,7 +31,7 @@
         <property name="alpha" value="${stat.sample.alpha}" />
     </bean>
 
-    <bean id="collectPeriodicMetricsTask" class="com.gigaspaces.sbp.metrics.reporter.CollectPeriodicMetricsVisitorTask" >
+    <bean id="collectPeriodicMetricsTask" class="com.gigaspaces.sbp.metrics.CollectPeriodicMetricsVisitorTask" >
         <property name="adminMonitor" ref="spaceMonitor" />
     </bean>
 

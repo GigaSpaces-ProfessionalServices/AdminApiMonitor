@@ -3,27 +3,27 @@ package com.gigaspaces.sbp.metrics.visitor;
 
 import com.gigaspaces.cluster.replication.async.mirror.MirrorStatistics;
 import com.gigaspaces.sbp.metrics.NamedMetric;
-import com.gigaspaces.sbp.metrics.visitor.StatsVisitor;
 import com.j_spaces.core.filters.ReplicationStatistics;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.space.SpaceInstance;
 import org.openspaces.admin.vm.VirtualMachineDetails;
 import org.openspaces.admin.vm.VirtualMachineStatistics;
-import org.openspaces.admin.vm.VirtualMachinesStatistics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class PrintVisitor implements StatsVisitor {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    private VirtualMachineDetails virtualMachineDetails;
+    private List<VirtualMachineDetails> vmDetails;
 
-    private VirtualMachineStatistics vmStatistics;
+    private List<VirtualMachineStatistics> vmStatistics;
 
     private ReplicationStatistics replicationStatistics;
 
@@ -32,22 +32,31 @@ public class PrintVisitor implements StatsVisitor {
     private SpaceInstance spaceInstance;
 
     //TODO lists
-    public PrintVisitor(Admin admin){
-        GridServiceContainer gridServiceContainer = admin.getGridServiceContainers().getContainers()[0];
-        virtualMachineDetails = gridServiceContainer.getVirtualMachine().getDetails();
-        vmStatistics = gridServiceContainer.getVirtualMachine().getStatistics();
+    public PrintVisitor(Admin admin, String spaceName){
+        GridServiceContainer[] gridServiceContainers = admin.getGridServiceContainers().getContainers();
+
+        List<VirtualMachineDetails> virtualMachineDetails = new ArrayList<VirtualMachineDetails>(gridServiceContainers.length);
+        List<VirtualMachineStatistics> virtualMachineStatistics = new ArrayList<>(gridServiceContainers.length);
+
+        for (GridServiceContainer gsc : gridServiceContainers){
+            virtualMachineDetails.add(gsc.getVirtualMachine().getDetails());
+            virtualMachineStatistics.add(gsc.getVirtualMachine().getStatistics());
+        }
+
+        vmDetails = virtualMachineDetails;
+        vmStatistics = virtualMachineStatistics;
         replicationStatistics = admin.getSpaces().getSpaceByName("belkSpikes").getPartitions()[0].getPrimary().getStatistics().getReplicationStatistics();
         mirrorStatistics = admin.getSpaces().getSpaceByName("belkSpikes").getPartitions()[0].getPrimary().getStatistics().getMirrorStatistics();
         spaceInstance = admin.getSpaces().getSpaceByName("belkSpikes").getInstances()[0];
     }
 
     @Override
-    public VirtualMachineDetails virtualMachineDetails() {
-        return virtualMachineDetails;
+    public List<VirtualMachineDetails> virtualMachineDetails() {
+        return vmDetails;
     }
 
     @Override
-    public VirtualMachineStatistics vmStatistics() {
+    public List<VirtualMachineStatistics> vmStatistics() {
         return vmStatistics;
     }
 
