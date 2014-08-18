@@ -31,9 +31,8 @@
         <property name="alpha" value="${stat.sample.alpha}" />
     </bean>
 
-    <bean id="collectPeriodicMetricsTask" class="com.gigaspaces.sbp.metrics.reporter.CollectPeriodicAverageMetricsTask" >
+    <bean id="collectPeriodicMetricsTask" class="com.gigaspaces.sbp.metrics.reporter.CollectPeriodicMetricsVisitorTask" >
         <property name="adminMonitor" ref="spaceMonitor" />
-        <property name="collectionPeriod" value="${stat.periodic.sample.interval}" />
     </bean>
 
     <bean id="schedulerPeriodicTask" class="org.springframework.scheduling.timer.MethodInvokingTimerTaskFactoryBean">

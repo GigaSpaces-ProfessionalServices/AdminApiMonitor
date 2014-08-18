@@ -1,10 +1,11 @@
-package com.gigaspaces.sbp.metrics;
+package com.gigaspaces.sbp.metrics.visitor;
 
 import com.gigaspaces.cluster.replication.async.mirror.MirrorStatistics;
+import com.gigaspaces.sbp.metrics.NamedMetric;
 import com.j_spaces.core.filters.ReplicationStatistics;
 import org.openspaces.admin.space.SpaceInstance;
 import org.openspaces.admin.vm.VirtualMachineDetails;
-import org.openspaces.admin.vm.VirtualMachinesStatistics;
+import org.openspaces.admin.vm.VirtualMachineStatistics;
 
 /**
  * Created by IntelliJ IDEA.
@@ -19,7 +20,7 @@ public interface StatsVisitor {
 
     VirtualMachineDetails virtualMachineDetails();
 
-    VirtualMachinesStatistics vmStatistics();
+    VirtualMachineStatistics vmStatistics();
 
     ReplicationStatistics replicationStatistics();
 

@@ -1,6 +1,7 @@
 package com.gigaspaces.sbp.metrics;
 
 import com.gigaspaces.cluster.replication.async.mirror.MirrorStatistics;
+import com.gigaspaces.sbp.metrics.visitor.StatsVisitor;
 import com.j_spaces.core.filters.ReplicationStatistics;
 import org.openspaces.admin.space.SpaceInstance;
 import org.openspaces.admin.space.SpaceInstanceStatistics;
