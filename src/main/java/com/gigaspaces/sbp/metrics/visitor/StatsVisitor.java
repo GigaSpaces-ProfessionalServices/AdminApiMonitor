@@ -1,8 +1,10 @@
 package com.gigaspaces.sbp.metrics.visitor;
 
 import com.gigaspaces.cluster.replication.async.mirror.MirrorStatistics;
+import com.gigaspaces.sbp.metrics.FullMetric;
 import com.gigaspaces.sbp.metrics.NamedMetric;
 import com.j_spaces.core.filters.ReplicationStatistics;
+import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.space.SpaceInstance;
 import org.openspaces.admin.vm.VirtualMachineDetails;
 import org.openspaces.admin.vm.VirtualMachineStatistics;
@@ -19,6 +21,8 @@ import java.util.List;
 public interface StatsVisitor {
 
     // STATE VARIABLES FROM WHICH TO EXTRACT METRIC DATA...
+
+    List<GridServiceContainer> gridServiceContainers();
 
     List<VirtualMachineDetails> virtualMachineDetails();
 
@@ -44,6 +48,14 @@ public interface StatsVisitor {
     void saveStat(NamedMetric metric, String value);
 
     /**
+     * Save off a statistic for safe-keeping. May be reported now or later, at the
+     * Visitor's discretion
+     * @param metric name of the metric
+     * @param value value of it
+     */
+    void saveStat(FullMetric fullMetric);
+
+    /**
      * Determine if a system-wide metric has been saved already
      * @param metric if a named metric has been saved in a chunk of system-wide state
      * @return if so
@@ -56,5 +68,13 @@ public interface StatsVisitor {
      * @param value value to save for it
      */
     void saveOnce(NamedMetric metric, String value);
+
+    /**
+     * If this metric hasn't been saved in a system-wide manner yet, save it
+     * @param metric thing to save
+     * @param value value to save for it
+     */
+    void saveOnce(FullMetric fullMetric);
+
 
 }

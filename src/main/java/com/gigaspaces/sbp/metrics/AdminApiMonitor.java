@@ -117,23 +117,6 @@ public class AdminApiMonitor {
         return objectsCount;
     }
 
-    /*
-    public Long getThroughput(){
-        long throughput = 0;
-        try {
-            Spaces spaces = admin.getSpaces();
-            Space space = spaces.getSpaceByName(spaceName);
-            for (SpaceInstance spaceInstance : space) {
-                SpaceInstanceStatistics stats = spaceInstance.getStatistics();
-                throughput = stats.getActiveTransactionCount();
-            }
-        }   catch (Exception e) {
-            logger.debug("Error calculating throughput.", e);
-        }
-        return throughput;
-    }
-    */
-
     public void collectJvmStats(Admin admin){
         GridServiceContainer containers[] = admin.getGridServiceContainers().getContainers();
         for (GridServiceContainer container : containers) {

@@ -3,6 +3,7 @@ package com.gigaspaces.sbp.metrics;
 import com.gigaspaces.cluster.replication.async.mirror.MirrorStatistics;
 import com.gigaspaces.sbp.metrics.visitor.StatsVisitor;
 import com.j_spaces.core.filters.ReplicationStatistics;
+import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.space.SpaceInstance;
 import org.openspaces.admin.space.SpaceInstanceStatistics;
 import org.openspaces.admin.vm.VirtualMachineDetails;
@@ -16,6 +17,7 @@ import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -52,7 +54,7 @@ enum GigaSpacesClusterInfo implements NamedMetric {
         public void accept(StatsVisitor statsVisitor){
             SpaceInstance spaceInstance = statsVisitor.spaceInstance().get(0);
             if( spaceInstance != null ){
-                statsVisitor.saveStat(this, spaceInstance.getMode().name());
+                statsVisitor.saveStat(new FullMetric(this, spaceInstance.getMode().name()));
             }
         }
     }
@@ -87,7 +89,7 @@ enum GigaSpacesActivity implements NamedMetric {
 
                 }
             }
-            visitor.saveStat(this, String.valueOf(readCount));
+            visitor.saveStat(new FullMetric(this, String.valueOf(readCount)));
         }
     }
     , READ_PER_SEC("reads_per_sec"){
@@ -100,7 +102,7 @@ enum GigaSpacesActivity implements NamedMetric {
                     readsPerSec += stats.getReadPerSecond();
                 }
             }
-            visitor.saveStat(this, String.valueOf(readsPerSec));
+            visitor.saveStat(new FullMetric(this, String.valueOf(readsPerSec)));
         }
     }
     , WRITE_COUNT("writes"){
@@ -113,7 +115,7 @@ enum GigaSpacesActivity implements NamedMetric {
                     writeCount += stats.getWriteCount();
                 }
             }
-            visitor.saveStat(this, String.valueOf(writeCount));
+            visitor.saveStat(new FullMetric(this, String.valueOf(writeCount)));
         }
     }
     , WRITES_PER_SEC("writes_per_sec"){
@@ -126,7 +128,7 @@ enum GigaSpacesActivity implements NamedMetric {
                     writesPerSec += stats.getWritePerSecond();
                 }
             }
-            visitor.saveStat(this, String.valueOf(writesPerSec));
+            visitor.saveStat(new FullMetric(this, String.valueOf(writesPerSec)));
         }
     }
     , EXECUTE_COUNT("executes"){
@@ -139,7 +141,7 @@ enum GigaSpacesActivity implements NamedMetric {
                     executeCount += stats.getExecuteCount();
                 }
             }
-            visitor.saveStat(this, String.valueOf(executeCount));
+            visitor.saveStat(new FullMetric(this, String.valueOf(executeCount)));
         }
     }
     , EXECUTES_PER_SEC("executes_per_sec"){
@@ -152,7 +154,7 @@ enum GigaSpacesActivity implements NamedMetric {
                     execPerSec += stats.getExecutePerSecond();
                 }
             }
-            visitor.saveStat(this, String.valueOf(execPerSec));
+            visitor.saveStat(new FullMetric(this, String.valueOf(execPerSec)));
         }
     }
     , TAKE_COUNT("takes"){
@@ -165,7 +167,7 @@ enum GigaSpacesActivity implements NamedMetric {
                     takeCount += stats.getTakeCount();
                 }
             }
-            visitor.saveStat(this, String.valueOf(takeCount));
+            visitor.saveStat(new FullMetric(this, String.valueOf(takeCount)));
         }
     }
     , TAKES_PER_SECOND("takes_per_sec"){
@@ -178,7 +180,7 @@ enum GigaSpacesActivity implements NamedMetric {
                     takePerSec += stats.getTakePerSecond();
                 }
             }
-            visitor.saveStat(this, String.valueOf(takePerSec));
+            visitor.saveStat(new FullMetric(this, String.valueOf(takePerSec)));
         }
     }
     , UPDATE_COUNT("updates") { // also applies to "change'
@@ -191,7 +193,7 @@ enum GigaSpacesActivity implements NamedMetric {
                     updateCount += stats.getUpdateCount();
                 }
             }
-            visitor.saveStat(this, String.valueOf(updateCount));
+            visitor.saveStat(new FullMetric(this, String.valueOf(updateCount)));
         }
     }
     , UPDATES_PER_SEC("updates_per_sec") { // also applies to "change'
@@ -204,7 +206,7 @@ enum GigaSpacesActivity implements NamedMetric {
                     updatesPerSec += stats.getUpdatePerSecond();
                 }
             }
-            visitor.saveStat(this, String.valueOf(updatesPerSec));
+            visitor.saveStat(new FullMetric(this, String.valueOf(updatesPerSec)));
         }
     }
     , TRANSACTION_COUNT("active_transactions"){
@@ -217,7 +219,7 @@ enum GigaSpacesActivity implements NamedMetric {
                     activeTransactions += stats.getActiveTransactionCount();
                 }
             }
-            visitor.saveStat(this, String.valueOf(activeTransactions));
+            visitor.saveStat(new FullMetric(this, String.valueOf(activeTransactions)));
         }
     }
     , CONNECTION_COUNT("active_connections"){
@@ -230,7 +232,7 @@ enum GigaSpacesActivity implements NamedMetric {
                     connectionCount += stats.getActiveConnectionCount();
                 }
             }
-            visitor.saveStat(this, String.valueOf(connectionCount));
+            visitor.saveStat(new FullMetric(this, String.valueOf(connectionCount)));
         }
     }
     ;
@@ -264,7 +266,7 @@ enum GsMirrorInfo implements NamedMetric {
                 if( out == null ) return;
                 logSize += out.getRedoLogSize();
             }
-            statsVisitor.saveStat(this, String.valueOf(logSize));
+            statsVisitor.saveStat(new FullMetric(this, String.valueOf(logSize)));
         }
     }
     , REDO_LOG_SEND_BYTES_PER_SECOND("mirror_sent_bytes_per_sec"){
@@ -282,7 +284,7 @@ enum GsMirrorInfo implements NamedMetric {
                     if( channel != null ) byteCount += channel.getSendBytesPerSecond();
                 }
             }
-            statsVisitor.saveStat(this, String.valueOf(byteCount));
+            statsVisitor.saveStat(new FullMetric(this, String.valueOf(byteCount)));
         }
     }
     , MIRROR_OPERATIONS("mirror_total_operations"){
@@ -296,7 +298,7 @@ enum GsMirrorInfo implements NamedMetric {
                 if( operationCount == null ) return;
                 operationCountSum += operationCount;
             }
-            statsVisitor.saveStat(this, operationCountSum.toString());
+            statsVisitor.saveStat(new FullMetric(this, operationCountSum.toString()));
         }
     }
     , MIRROR_SUCCESSFUL_OPERATIONS("mirror_successes"){
@@ -310,7 +312,7 @@ enum GsMirrorInfo implements NamedMetric {
                 if( successfulOperations == null ) return;
                 successfulOperationsSum += successfulOperations;
             }
-            statsVisitor.saveStat(this, successfulOperationsSum.toString());
+            statsVisitor.saveStat(new FullMetric(this, successfulOperationsSum.toString()));
         }
     }
     , MIRROR_FAILED_OPERATIONS("mirror_failures"){
@@ -324,7 +326,7 @@ enum GsMirrorInfo implements NamedMetric {
                 if( failedOperations == null ) return;
                 failedOperationsSum += failedOperations;
             }
-            statsVisitor.saveStat(this, failedOperationsSum.toString());
+            statsVisitor.saveStat(new FullMetric(this, failedOperationsSum.toString()));
         }
     }
     ;
@@ -357,8 +359,11 @@ enum OperatingSystemInfo implements NamedMetric {
                     ObjectName objectName = new ObjectName(JmxUtils.OS_SEARCH_STRING);
                     MBeanServerConnection server = JMX_UTILS.mbeanServer(details, JmxUtils.OS_SEARCH_STRING);
                     AttributeList list = server.getAttributes(objectName, new String[]{openFdCount});
-                    for (Attribute attr : list.asList())
-                        if (attr.getName().equals(openFdCount)) statsVisitor.saveStat(this, attr.getValue().toString());
+                    for (Attribute attr : list.asList()){
+                        if (attr.getName().equals(openFdCount)){
+                            statsVisitor.saveStat(new FullMetric(this, attr.getValue().toString()));
+                        }
+                    }
                 } catch (IOException | MalformedObjectNameException | ReflectionException | InstanceNotFoundException e) {
                     LOGGER.error("Error determining " + this.displayName(), e);
                 }
@@ -377,7 +382,11 @@ enum OperatingSystemInfo implements NamedMetric {
                     ObjectName objectName = new ObjectName(osSearchString);
                     MBeanServerConnection server = JMX_UTILS.mbeanServer(details, osSearchString);
                     AttributeList list = server.getAttributes(objectName, new String[]{maxFdCount});
-                    for( Attribute attr : list.asList() ) if( attr.getName().equals(maxFdCount)) statsVisitor.saveOnce(this, attr.getValue().toString());
+                    for( Attribute attr : list.asList() ){
+                        if( attr.getName().equals(maxFdCount)){
+                            statsVisitor.saveOnce(new FullMetric(this, attr.getValue().toString()));
+                        }
+                    }
                 } catch (IOException | MalformedObjectNameException | ReflectionException | InstanceNotFoundException e) {
                     LOGGER.error("Error determining " + this.displayName(), e);
                 }
@@ -410,7 +419,7 @@ enum OperatingSystemInfo implements NamedMetric {
                             }
                         }
                     }
-                    statsVisitor.saveStat(this, String.valueOf(lrmiThreadCount));
+                    statsVisitor.saveStat(new FullMetric(this, String.valueOf(lrmiThreadCount)));
                 } catch (IOException | MalformedObjectNameException | ReflectionException | InstanceNotFoundException | AttributeNotFoundException | MBeanException e) {
                     LOGGER.error("Error determining " + this.displayName(), e);
                 }
@@ -443,12 +452,13 @@ enum JvmInfo implements NamedMetric {
         @Override
         public void accept(StatsVisitor statsVisitor) {
             if( statsVisitor == null ) return;
-            List<VirtualMachineStatistics> virtualMachineStatisticses = statsVisitor.vmStatistics();
-            for (VirtualMachineStatistics vmStatistics : virtualMachineStatisticses){
-                if( vmStatistics == null ) return;
-                Long gcCount = vmStatistics.getGcCollectionCount();
+            List<GridServiceContainer> gridServiceContainers = statsVisitor.gridServiceContainers();
+            for (GridServiceContainer gridServiceContainer : gridServiceContainers){
+                VirtualMachineStatistics stats = gridServiceContainer.getVirtualMachine().getStatistics();
+                if( stats == null ) return;
+                Long gcCount = stats.getGcCollectionCount();
                 if( gcCount == null ) return;
-                statsVisitor.saveStat(this, gcCount.toString());
+                statsVisitor.saveStat(new FullMetric(this, gcCount.toString()));
             }
         }
     }
@@ -456,13 +466,14 @@ enum JvmInfo implements NamedMetric {
         @Override
         public void accept(StatsVisitor statsVisitor) {
             if( statsVisitor == null ) return;
-            List<VirtualMachineStatistics> virtualMachineStatisticses = statsVisitor.vmStatistics();
-            for (VirtualMachineStatistics vmStatistics : virtualMachineStatisticses){
-                if( vmStatistics == null ) return;
-                Long gcTime = vmStatistics.getGcCollectionTime();
+            List<GridServiceContainer> gridServiceContainers = statsVisitor.gridServiceContainers();
+            for (GridServiceContainer gridServiceContainer : gridServiceContainers){
+                VirtualMachineStatistics stats = gridServiceContainer.getVirtualMachine().getStatistics();
+                if( stats == null ) return;
+                Long gcTime = stats.getGcCollectionTime();
                 if( gcTime == null ) return;
                 gcTime /= 1000l;
-                statsVisitor.saveStat(this, gcTime.toString());
+                statsVisitor.saveStat(new FullMetric(this, gcTime.toString()));
             }
         }
     }
@@ -470,12 +481,13 @@ enum JvmInfo implements NamedMetric {
         @Override
         public void accept(StatsVisitor statsVisitor) {
             if( statsVisitor == null ) return;
-            List<VirtualMachineStatistics> virtualMachineStatisticses = statsVisitor.vmStatistics();
-            for (VirtualMachineStatistics vmStatistics : virtualMachineStatisticses){
-                if( vmStatistics == null ) return;
-                Integer threads = vmStatistics.getThreadCount();
+            List<GridServiceContainer> gridServiceContainers = statsVisitor.gridServiceContainers();
+            for (GridServiceContainer gridServiceContainer : gridServiceContainers){
+                VirtualMachineStatistics stats = gridServiceContainer.getVirtualMachine().getStatistics();
+                if( stats == null ) return;
+                Integer threads = stats.getThreadCount();
                 if( threads == null ) return;
-                statsVisitor.saveStat(this, threads.toString());
+                statsVisitor.saveStat(new FullMetric(this, threads.toString(), gridServiceContainer));
             }
         }
     }
@@ -483,13 +495,14 @@ enum JvmInfo implements NamedMetric {
         @Override
         public void accept(StatsVisitor statsVisitor) {
             if( statsVisitor == null ) return;
-            List<VirtualMachineStatistics> vmStatistics = statsVisitor.vmStatistics();
-            for (VirtualMachineStatistics stats : vmStatistics){
+            List<GridServiceContainer> gridServiceContainers = statsVisitor.gridServiceContainers();
+            for (GridServiceContainer gridServiceContainer : gridServiceContainers){
+                VirtualMachineStatistics stats = gridServiceContainer.getVirtualMachine().getStatistics();
                 if( stats == null ) return;
                 Long upTime = stats.getUptime();
                 if( upTime == null ) return;
                 upTime /= 1000;
-                statsVisitor.saveStat(this, upTime.toString());
+                statsVisitor.saveStat(new FullMetric(this, upTime.toString(), gridServiceContainer));
             }
         }
     }
@@ -504,7 +517,11 @@ enum JvmInfo implements NamedMetric {
                     ObjectName objectName = new ObjectName(JmxUtils.OS_SEARCH_STRING);
                     MBeanServerConnection server = JMX_UTILS.mbeanServer(vmDetails, JmxUtils.OS_SEARCH_STRING);
                     AttributeList list = server.getAttributes(objectName, new String[]{cpuLoad});
-                    for( Attribute attr : list.asList() ) if( attr.getName().equals(cpuLoad)) statsVisitor.saveStat(this, attr.getValue().toString());
+                    for( Attribute attr : list.asList() ){
+                        if( attr.getName().equals(cpuLoad)){
+                            statsVisitor.saveStat(new FullMetric(this, attr.getValue().toString()));
+                        }
+                    }
                 } catch (IOException | MalformedObjectNameException | ReflectionException | InstanceNotFoundException e) {
                     LOGGER.error("Error determining " + this.displayName(), e);
                 }
@@ -550,13 +567,15 @@ enum Memory implements NamedMetric {
         @Override
         public void accept(StatsVisitor statsVisitor) {
             if( statsVisitor == null ) return;
-            for (VirtualMachineDetails details : statsVisitor.virtualMachineDetails()){
+            List<GridServiceContainer> gridServiceContainers = statsVisitor.gridServiceContainers();
+            for (GridServiceContainer gridServiceContainer : gridServiceContainers){
+                VirtualMachineDetails details = gridServiceContainer.getVirtualMachine().getDetails();
                 if( details == null ) return;
                 Long heap = details.getMemoryHeapMaxInBytes();
                 Long nonHeap = details.getMemoryNonHeapInitInBytes();
                 if( heap == null || nonHeap == null ) return;
                 Long bytes = heap + nonHeap;
-                statsVisitor.saveStat(this, bytes.toString());
+                statsVisitor.saveStat(new FullMetric(this, bytes.toString(), gridServiceContainer));
             }
         }
     }
@@ -564,11 +583,13 @@ enum Memory implements NamedMetric {
         @Override
         public void accept(StatsVisitor statsVisitor) {
             if( statsVisitor == null ) return;
-            for (VirtualMachineDetails details : statsVisitor.virtualMachineDetails()){
+            List<GridServiceContainer> gridServiceContainers = statsVisitor.gridServiceContainers();
+            for (GridServiceContainer gridServiceContainer : gridServiceContainers){
+                VirtualMachineDetails details = gridServiceContainer.getVirtualMachine().getDetails();
                 if( details == null ) return;
                 Long nonHeap = details.getMemoryNonHeapInitInBytes();
                 if( nonHeap == null ) return;
-                statsVisitor.saveStat(this, nonHeap.toString());
+                statsVisitor.saveStat(new FullMetric(this, nonHeap.toString(), gridServiceContainer));
             }
         }
     }
@@ -576,12 +597,13 @@ enum Memory implements NamedMetric {
         @Override
         public void accept(StatsVisitor statsVisitor) {
             if( statsVisitor == null ) return;
-            List<VirtualMachineDetails> virtualMachineDetailses = statsVisitor.virtualMachineDetails();
-            for (VirtualMachineDetails details : virtualMachineDetailses){
-                if( details == null ) return;
+            List<GridServiceContainer> gridServiceContainers = statsVisitor.gridServiceContainers();
+            for (GridServiceContainer gridServiceContainer : gridServiceContainers){
+                VirtualMachineDetails details = gridServiceContainer.getVirtualMachine().getDetails();
                 Long heap = details.getMemoryHeapInitInBytes();
                 if( heap == null ) return;
-                statsVisitor.saveStat(this, heap.toString());
+                FullMetric fullMetric = new FullMetric(this, heap.toString(), gridServiceContainer);
+                statsVisitor.saveStat(fullMetric);
             }
         }
     }
@@ -589,10 +611,12 @@ enum Memory implements NamedMetric {
         @Override
         public void accept(StatsVisitor statsVisitor) {
             if( statsVisitor == null ) return;
-            for (VirtualMachineStatistics stats : statsVisitor.vmStatistics()){
+            List<GridServiceContainer> gridServiceContainers = statsVisitor.gridServiceContainers();
+            for (GridServiceContainer gridServiceContainer : gridServiceContainers){
+                VirtualMachineStatistics stats = gridServiceContainer.getVirtualMachine().getStatistics();
                 Long nonHeapCommitted = stats.getMemoryNonHeapCommittedInBytes();
                 if( nonHeapCommitted == null ) return;
-                statsVisitor.saveStat(this, nonHeapCommitted.toString());
+                statsVisitor.saveStat(new FullMetric(this, nonHeapCommitted.toString(), gridServiceContainer));
             }
         }
     }
@@ -600,10 +624,12 @@ enum Memory implements NamedMetric {
         @Override
         public void accept(StatsVisitor statsVisitor) {
             if( statsVisitor == null ) return;
-            for (VirtualMachineStatistics stats : statsVisitor.vmStatistics()){
+            List<GridServiceContainer> gridServiceContainers = statsVisitor.gridServiceContainers();
+            for (GridServiceContainer gridServiceContainer : gridServiceContainers){
+                VirtualMachineStatistics stats = gridServiceContainer.getVirtualMachine().getStatistics();
                 Long heapCommitted = stats.getMemoryHeapCommittedInBytes();
                 if( heapCommitted == null ) return;
-                statsVisitor.saveStat(this, heapCommitted.toString());
+                statsVisitor.saveStat(new FullMetric(this, heapCommitted.toString(), gridServiceContainer));
             }
         }
     }

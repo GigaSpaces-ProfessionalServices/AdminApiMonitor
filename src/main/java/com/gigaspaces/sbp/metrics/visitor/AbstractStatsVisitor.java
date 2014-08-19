@@ -1,6 +1,8 @@
 package com.gigaspaces.sbp.metrics.visitor;
 
 import com.gigaspaces.cluster.replication.async.mirror.MirrorStatistics;
+import com.gigaspaces.grid.gsc.GSC;
+import com.gigaspaces.sbp.metrics.NamedMetric;
 import com.j_spaces.core.filters.ReplicationStatistics;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.gsc.GridServiceContainer;
@@ -13,8 +15,11 @@ import org.openspaces.admin.vm.VirtualMachineStatistics;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 public abstract class AbstractStatsVisitor implements StatsVisitor {
+
+    protected List<GridServiceContainer> gridServiceContainers;
 
     protected List<VirtualMachineDetails> vmDetails;
 
@@ -26,11 +31,13 @@ public abstract class AbstractStatsVisitor implements StatsVisitor {
 
     protected List<SpaceInstance> spaceInstances;
 
+    protected Set<NamedMetric> savedMetrics;
+
     protected AbstractStatsVisitor(Admin admin, String spaceName){
-        GridServiceContainer[] gridServiceContainers = admin.getGridServiceContainers().getContainers();
+        gridServiceContainers = Arrays.asList(admin.getGridServiceContainers().getContainers());
         Space targetSpace = admin.getSpaces().getSpaceByName(spaceName);
-        vmDetails = new ArrayList<>(gridServiceContainers.length);
-        vmStatistics = new ArrayList<>(gridServiceContainers.length);
+        vmDetails = new ArrayList<>(gridServiceContainers.size());
+        vmStatistics = new ArrayList<>(gridServiceContainers.size());
         replicationStatistics = new ArrayList<>();
         mirrorStatistics = new ArrayList<>();
         spaceInstances = Arrays.asList(targetSpace.getInstances());
@@ -67,5 +74,10 @@ public abstract class AbstractStatsVisitor implements StatsVisitor {
     @Override
     public List<SpaceInstance> spaceInstance() {
         return spaceInstances;
+    }
+
+    @Override
+    public List<GridServiceContainer> gridServiceContainers() {
+        return gridServiceContainers;
     }
 }
