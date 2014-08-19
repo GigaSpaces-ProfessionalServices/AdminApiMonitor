@@ -354,14 +354,16 @@ enum OperatingSystemInfo implements NamedMetric {
         public void accept(StatsVisitor statsVisitor) {
             if( statsVisitor == null ) return;
             final String openFdCount = "OpenFileDescriptorCount";
-            for (VirtualMachineDetails details : statsVisitor.virtualMachineDetails()) {
+            List<GridServiceContainer> gridServiceContainers = statsVisitor.gridServiceContainers();
+            for (GridServiceContainer gridServiceContainer : gridServiceContainers){
+                VirtualMachineDetails details = gridServiceContainer.getVirtualMachine().getDetails();
                 try {
                     ObjectName objectName = new ObjectName(JmxUtils.OS_SEARCH_STRING);
                     MBeanServerConnection server = JMX_UTILS.mbeanServer(details, JmxUtils.OS_SEARCH_STRING);
                     AttributeList list = server.getAttributes(objectName, new String[]{openFdCount});
                     for (Attribute attr : list.asList()){
                         if (attr.getName().equals(openFdCount)){
-                            statsVisitor.saveStat(new FullMetric(this, attr.getValue().toString()));
+                            statsVisitor.saveStat(new FullMetric(this, attr.getValue().toString(), gridServiceContainer));
                         }
                     }
                 } catch (IOException | MalformedObjectNameException | ReflectionException | InstanceNotFoundException e) {
@@ -377,14 +379,16 @@ enum OperatingSystemInfo implements NamedMetric {
             if( statsVisitor.isSavedOnce(this)) return;
             final String maxFdCount = "MaxFileDescriptorCount";
             final String osSearchString = "java.lang:type=OperatingSystem";
-            for (VirtualMachineDetails details : statsVisitor.virtualMachineDetails()){
+            List<GridServiceContainer> gridServiceContainers = statsVisitor.gridServiceContainers();
+            for (GridServiceContainer gridServiceContainer : gridServiceContainers){
+                VirtualMachineDetails details = gridServiceContainer.getVirtualMachine().getDetails();
                 try {
                     ObjectName objectName = new ObjectName(osSearchString);
                     MBeanServerConnection server = JMX_UTILS.mbeanServer(details, osSearchString);
                     AttributeList list = server.getAttributes(objectName, new String[]{maxFdCount});
                     for( Attribute attr : list.asList() ){
                         if( attr.getName().equals(maxFdCount)){
-                            statsVisitor.saveOnce(new FullMetric(this, attr.getValue().toString()));
+                            statsVisitor.saveOnce(new FullMetric(this, attr.getValue().toString(), gridServiceContainer));
                         }
                     }
                 } catch (IOException | MalformedObjectNameException | ReflectionException | InstanceNotFoundException e) {
@@ -398,7 +402,9 @@ enum OperatingSystemInfo implements NamedMetric {
         public void accept(StatsVisitor statsVisitor) {
             if( statsVisitor == null ) return;
             final String threading = "java.lang:type=Threading";
-            for (VirtualMachineDetails details : statsVisitor.virtualMachineDetails()){
+            List<GridServiceContainer> gridServiceContainers = statsVisitor.gridServiceContainers();
+            for (GridServiceContainer gridServiceContainer : gridServiceContainers){
+                VirtualMachineDetails details = gridServiceContainer.getVirtualMachine().getDetails();
                 try {
                     ObjectName objectName = new ObjectName(threading);
                     MBeanServerConnection server = JMX_UTILS.mbeanServer(details, JmxUtils.OS_SEARCH_STRING);
@@ -419,7 +425,7 @@ enum OperatingSystemInfo implements NamedMetric {
                             }
                         }
                     }
-                    statsVisitor.saveStat(new FullMetric(this, String.valueOf(lrmiThreadCount)));
+                    statsVisitor.saveStat(new FullMetric(this, String.valueOf(lrmiThreadCount), gridServiceContainer));
                 } catch (IOException | MalformedObjectNameException | ReflectionException | InstanceNotFoundException | AttributeNotFoundException | MBeanException e) {
                     LOGGER.error("Error determining " + this.displayName(), e);
                 }
@@ -458,7 +464,7 @@ enum JvmInfo implements NamedMetric {
                 if( stats == null ) return;
                 Long gcCount = stats.getGcCollectionCount();
                 if( gcCount == null ) return;
-                statsVisitor.saveStat(new FullMetric(this, gcCount.toString()));
+                statsVisitor.saveStat(new FullMetric(this, gcCount.toString(), gridServiceContainer));
             }
         }
     }
@@ -473,7 +479,7 @@ enum JvmInfo implements NamedMetric {
                 Long gcTime = stats.getGcCollectionTime();
                 if( gcTime == null ) return;
                 gcTime /= 1000l;
-                statsVisitor.saveStat(new FullMetric(this, gcTime.toString()));
+                statsVisitor.saveStat(new FullMetric(this, gcTime.toString(), gridServiceContainer));
             }
         }
     }
@@ -510,16 +516,17 @@ enum JvmInfo implements NamedMetric {
         @Override
         public void accept(StatsVisitor statsVisitor) {
             if( statsVisitor == null ) return;
-            List<VirtualMachineDetails> virtualMachineDetails = statsVisitor.virtualMachineDetails();
-            for (VirtualMachineDetails vmDetails : virtualMachineDetails){
+            List<GridServiceContainer> gridServiceContainers = statsVisitor.gridServiceContainers();
+            for (GridServiceContainer gridServiceContainer : gridServiceContainers){
+                VirtualMachineDetails details = gridServiceContainer.getVirtualMachine().getDetails();
                 final String cpuLoad = "ProcessCpuLoad";
                 try {
                     ObjectName objectName = new ObjectName(JmxUtils.OS_SEARCH_STRING);
-                    MBeanServerConnection server = JMX_UTILS.mbeanServer(vmDetails, JmxUtils.OS_SEARCH_STRING);
+                    MBeanServerConnection server = JMX_UTILS.mbeanServer(details, JmxUtils.OS_SEARCH_STRING);
                     AttributeList list = server.getAttributes(objectName, new String[]{cpuLoad});
                     for( Attribute attr : list.asList() ){
                         if( attr.getName().equals(cpuLoad)){
-                            statsVisitor.saveStat(new FullMetric(this, attr.getValue().toString()));
+                            statsVisitor.saveStat(new FullMetric(this, attr.getValue().toString(), gridServiceContainer));
                         }
                     }
                 } catch (IOException | MalformedObjectNameException | ReflectionException | InstanceNotFoundException e) {

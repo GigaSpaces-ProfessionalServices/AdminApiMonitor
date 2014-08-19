@@ -22,11 +22,6 @@ public class PrintVisitor extends AbstractStatsVisitor {
     }
 
     @Override
-    public void saveStat(NamedMetric metric, String value) {
-        logger.info(formatMetrics(metric.displayName(), value));
-    }
-
-    @Override
     public void saveStat(FullMetric fullMetric) {
         logger.info(formatMetrics(fullMetric));
     }
@@ -45,19 +40,9 @@ public class PrintVisitor extends AbstractStatsVisitor {
     }
 
     @Override
-    public void saveOnce(NamedMetric metric, String value) {
-        savedOnceMetrics.add(metric);
-        logger.info(formatMetrics(metric.displayName(), value));
-    }
-
-    @Override
     public void saveOnce(FullMetric fullMetric) {
+        savedOnceMetrics.add(fullMetric.getMetric());
         logger.info(formatMetrics(fullMetric));
     }
 
-    private String formatMetrics(String metricType, String metricValue){
-        SimpleDateFormat date = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
-        String serverName = "TODO SERVER NAME";
-        return "\n" + date.format(new Date()) + " -- " + metricType + "-- " + serverName +  " -- " + "TODO VM NAME" + " -- cacheNum — " + metricValue;
-    }
 }

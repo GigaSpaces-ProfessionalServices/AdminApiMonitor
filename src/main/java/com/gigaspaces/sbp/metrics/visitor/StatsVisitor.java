@@ -42,16 +42,7 @@ public interface StatsVisitor {
     /**
      * Save off a statistic for safe-keeping. May be reported now or later, at the
      * Visitor's discretion
-     * @param metric name of the metric
-     * @param value value of it
-     */
-    void saveStat(NamedMetric metric, String value);
-
-    /**
-     * Save off a statistic for safe-keeping. May be reported now or later, at the
-     * Visitor's discretion
-     * @param metric name of the metric
-     * @param value value of it
+     * @param fullMetric the metric
      */
     void saveStat(FullMetric fullMetric);
 
@@ -61,13 +52,6 @@ public interface StatsVisitor {
      * @return if so
      */
     boolean isSavedOnce(NamedMetric metric);
-
-    /**
-     * If this metric hasn't been saved in a system-wide manner yet, save it
-     * @param metric thing to save
-     * @param value value to save for it
-     */
-    void saveOnce(NamedMetric metric, String value);
 
     /**
      * If this metric hasn't been saved in a system-wide manner yet, save it

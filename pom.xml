@@ -72,7 +72,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.gigaspaces.sbp.metrics.AdminApiMonitor</mainClass>
+                            <mainClass>com.gigaspaces.sbp.metrics.AdminApiMonitorRunner</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
