@@ -76,12 +76,12 @@ public abstract class AbstractStatsVisitor implements StatsVisitor {
         }
         if (exponentialMovingAverage(metricName)){
             if (namedMetricStringMap.get(metricName) == null){
-                namedMetricStringMap.put(metricName, "0");
+                namedMetricStringMap.put(metricName, fullMetric.getMetricValue());
             }
             Double oldValue = Double.parseDouble(namedMetricStringMap.get(metricName));
             Double collectedValue = Double.parseDouble(fullMetric.getMetricValue());
             Double averagedValue = average.average(oldValue, collectedValue);
-            fullMetric.setMetricValue(averagedValue.toString());
+            fullMetric.setMetricValue(String.format("%.3f", averagedValue));
             namedMetricStringMap.put(metricName, averagedValue.toString());
         }   else {
             namedMetricStringMap.put(metricName, fullMetric.getMetricValue());

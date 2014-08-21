@@ -18,6 +18,8 @@ public class FullMetric {
 
     private Long gscPid;
 
+    private String className;
+
     public FullMetric(NamedMetric metric, String metricValue, GridServiceContainer gridServiceContainer) {
         this.metric = metric;
         this.metricValue = metricValue;
@@ -27,10 +29,25 @@ public class FullMetric {
         this.gscPid = gridServiceContainer.getVirtualMachine().getDetails().getPid();
     }
 
+    public FullMetric(NamedMetric metric, String metricValue, Integer spaceInstanceID) {
+        this.metric = metric;
+        this.metricValue = metricValue;
+        this.time = new Date();
+        this.gscPid = 0l;
+        this.spaceInstanceID = spaceInstanceID;
+    }
+
     public FullMetric(NamedMetric metric, String metricValue) {
         this.metric = metric;
         this.metricValue = metricValue;
         this.time = new Date();
+        this.gscPid = 0l;
+    }
+
+    public FullMetric(NamedMetric metric, String metricValue, String className) {
+        this.metric = metric;
+        this.metricValue = metricValue;
+        this.className = className;
         this.gscPid = 0l;
     }
 
@@ -60,5 +77,9 @@ public class FullMetric {
 
     public void setMetricValue(String metricValue) {
         this.metricValue = metricValue;
+    }
+
+    public String getMetricName(){
+        return (className != null) ? (metric.displayName() + "_" + className) : metric.displayName();
     }
 }

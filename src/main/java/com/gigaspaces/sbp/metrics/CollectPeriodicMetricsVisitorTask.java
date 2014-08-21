@@ -29,6 +29,7 @@ public class CollectPeriodicMetricsVisitorTask {
         metrics.addAll(Arrays.asList(JvmInfo.values()));
         metrics.addAll(Arrays.asList(Memory.values()));
         metrics.addAll(Arrays.asList(OperatingSystemInfo.values()));
+        metrics.addAll(Arrays.asList(CacheContentMetric.values()));
         if (csv){
             CsvVisitor visitor = new CsvVisitor(adminMonitor.getAdmin(), spaceName, pidMetricMap, exponentialMovingAverage);
             if (!headersSaved){
