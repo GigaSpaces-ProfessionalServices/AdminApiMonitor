@@ -1,8 +1,7 @@
 package com.gigaspaces.sbp.metrics.visitor;
 
 import com.gigaspaces.cluster.replication.async.mirror.MirrorStatistics;
-import com.gigaspaces.grid.gsc.GSC;
-import com.gigaspaces.sbp.metrics.NamedMetric;
+import com.gigaspaces.sbp.metrics.*;
 import com.j_spaces.core.filters.ReplicationStatistics;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.gsc.GridServiceContainer;
@@ -12,10 +11,9 @@ import org.openspaces.admin.space.SpacePartition;
 import org.openspaces.admin.vm.VirtualMachineDetails;
 import org.openspaces.admin.vm.VirtualMachineStatistics;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+
+import static java.util.Arrays.*;
 
 public abstract class AbstractStatsVisitor implements StatsVisitor {
 
@@ -33,22 +31,65 @@ public abstract class AbstractStatsVisitor implements StatsVisitor {
 
     protected Set<NamedMetric> savedMetrics;
 
-    protected AbstractStatsVisitor(Admin admin, String spaceName){
-        gridServiceContainers = Arrays.asList(admin.getGridServiceContainers().getContainers());
+    protected Map<Long, Map<NamedMetric, String>> pidMetricMap;
+
+    protected ExponentialMovingAverage average;
+
+    protected List<NamedMetric> emas = asList(new NamedMetric[]{GigaSpacesActivity.READ_PER_SEC,
+            GigaSpacesActivity.WRITES_PER_SEC,
+            GigaSpacesActivity.TAKES_PER_SECOND,
+            GigaSpacesActivity.UPDATES_PER_SEC,
+            GigaSpacesActivity.EXECUTES_PER_SEC, GigaSpacesActivity.TRANSACTION_COUNT,
+            GsMirrorInfo.REDO_LOG_SIZE, GsMirrorInfo.REDO_LOG_SEND_BYTES_PER_SECOND,
+            JvmInfo.THREAD_COUNT, JvmInfo.JVM_CPU_LOAD,
+            Memory.TOTAL_BYTES, Memory.HEAP_USED_BYTES, Memory.HEAP_COMMITTED_BYTES, Memory.NON_HEAP_USED_BYTES, Memory.NON_HEAP_COMMITTED_BYTES,
+            OperatingSystemInfo.LRMI_CONNECTIONS
+    });
+
+
+    protected AbstractStatsVisitor(Admin admin, String spaceName, Map<Long, Map<NamedMetric, String>> pidMetricMap, ExponentialMovingAverage average) {
+        this.pidMetricMap = pidMetricMap;
+        this.average = average;
+        gridServiceContainers = asList(admin.getGridServiceContainers().getContainers());
         Space targetSpace = admin.getSpaces().getSpaceByName(spaceName);
         vmDetails = new ArrayList<>(gridServiceContainers.size());
         vmStatistics = new ArrayList<>(gridServiceContainers.size());
         replicationStatistics = new ArrayList<>();
         mirrorStatistics = new ArrayList<>();
-        spaceInstances = Arrays.asList(targetSpace.getInstances());
-        for (GridServiceContainer gsc : gridServiceContainers){
+        spaceInstances = asList(targetSpace.getInstances());
+        for (GridServiceContainer gsc : gridServiceContainers) {
             vmDetails.add(gsc.getVirtualMachine().getDetails());
             vmStatistics.add(gsc.getVirtualMachine().getStatistics());
         }
-        for (SpacePartition partition : targetSpace.getPartitions()){
+        for (SpacePartition partition : targetSpace.getPartitions()) {
             replicationStatistics.add(partition.getPrimary().getStatistics().getReplicationStatistics());
             mirrorStatistics.add(partition.getPrimary().getStatistics().getMirrorStatistics());
         }
+    }
+
+    protected void prepareMetric(FullMetric fullMetric) {
+        NamedMetric metricName = fullMetric.getMetric();
+        Map<NamedMetric, String> namedMetricStringMap = pidMetricMap.get(fullMetric.getGscPid());
+        if (namedMetricStringMap == null){
+            namedMetricStringMap = new HashMap<>();
+            pidMetricMap.put(fullMetric.getGscPid(), namedMetricStringMap);
+        }
+        if (exponentialMovingAverage(metricName)){
+            if (namedMetricStringMap.get(metricName) == null){
+                namedMetricStringMap.put(metricName, "0");
+            }
+            Double oldValue = Double.parseDouble(namedMetricStringMap.get(metricName));
+            Double collectedValue = Double.parseDouble(fullMetric.getMetricValue());
+            Double averagedValue = average.average(oldValue, collectedValue);
+            fullMetric.setMetricValue(averagedValue.toString());
+            namedMetricStringMap.put(metricName, averagedValue.toString());
+        }   else {
+            namedMetricStringMap.put(metricName, fullMetric.getMetricValue());
+        }
+    }
+
+    protected boolean exponentialMovingAverage(NamedMetric metric) {
+        return emas.contains(metric);
     }
 
     @Override

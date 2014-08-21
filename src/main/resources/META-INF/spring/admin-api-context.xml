@@ -35,6 +35,7 @@
         <property name="adminMonitor" ref="spaceMonitor" />
         <property name="spaceName" value="${spaceMonitor.spaceName}" />
         <property name="csv" value="${csv_format}" />
+        <property name="exponentialMovingAverage" ref="averageCounter" />
     </bean>
 
     <bean id="schedulerPeriodicTask" class="org.springframework.scheduling.timer.MethodInvokingTimerTaskFactoryBean">

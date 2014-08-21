@@ -1,6 +1,7 @@
 
 package com.gigaspaces.sbp.metrics.visitor;
 
+import com.gigaspaces.sbp.metrics.ExponentialMovingAverage;
 import com.gigaspaces.sbp.metrics.FullMetric;
 import com.gigaspaces.sbp.metrics.NamedMetric;
 import org.openspaces.admin.Admin;
@@ -17,12 +18,13 @@ public class PrintVisitor extends AbstractStatsVisitor {
 
     private Set<NamedMetric> savedOnceMetrics = new HashSet<>();
 
-    public PrintVisitor(Admin admin, String spaceName){
-        super(admin, spaceName);
+    public PrintVisitor(Admin admin, String spaceName, Map<Long, Map<NamedMetric, String>> pidMetricMap, ExponentialMovingAverage average){
+        super(admin, spaceName, pidMetricMap, average);
     }
 
     @Override
     public void saveStat(FullMetric fullMetric) {
+        prepareMetric(fullMetric);
         logger.info(formatMetrics(fullMetric));
     }
 

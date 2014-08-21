@@ -5,9 +5,7 @@ import com.gigaspaces.sbp.metrics.visitor.PrintVisitor;
 import com.gigaspaces.sbp.metrics.visitor.StatsVisitor;
 import org.springframework.beans.factory.annotation.Required;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class CollectPeriodicMetricsVisitorTask {
 
@@ -19,6 +17,10 @@ public class CollectPeriodicMetricsVisitorTask {
 
     private boolean csv;
 
+    private Map<Long,Map<NamedMetric, String>> pidMetricMap = new HashMap<>();
+
+    private ExponentialMovingAverage exponentialMovingAverage;
+
     private void collectMetrics(){
         List<NamedMetric> metrics = new ArrayList<>();
         metrics.addAll(Arrays.asList(GigaSpacesActivity.values()));
@@ -28,7 +30,7 @@ public class CollectPeriodicMetricsVisitorTask {
         metrics.addAll(Arrays.asList(Memory.values()));
         metrics.addAll(Arrays.asList(OperatingSystemInfo.values()));
         if (csv){
-            CsvVisitor visitor = new CsvVisitor(adminMonitor.getAdmin(), spaceName);
+            CsvVisitor visitor = new CsvVisitor(adminMonitor.getAdmin(), spaceName, pidMetricMap, exponentialMovingAverage);
             if (!headersSaved){
                 visitor.setSaveHeaders(true);
                 headersSaved = true;
@@ -38,7 +40,7 @@ public class CollectPeriodicMetricsVisitorTask {
             }
             visitor.printCsvMetrics();
         }   else {
-            StatsVisitor visitor = new PrintVisitor(adminMonitor.getAdmin(), spaceName);
+            StatsVisitor visitor = new PrintVisitor(adminMonitor.getAdmin(), spaceName, pidMetricMap, exponentialMovingAverage);
             for (NamedMetric metric : metrics){
                 metric.accept(visitor);
             }
@@ -60,4 +62,8 @@ public class CollectPeriodicMetricsVisitorTask {
         this.adminMonitor = adminMonitor;
     }
 
+    @Required
+    public void setExponentialMovingAverage(ExponentialMovingAverage exponentialMovingAverage) {
+        this.exponentialMovingAverage = exponentialMovingAverage;
+    }
 }

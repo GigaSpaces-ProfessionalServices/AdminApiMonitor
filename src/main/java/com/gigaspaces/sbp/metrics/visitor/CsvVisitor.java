@@ -1,11 +1,13 @@
 package com.gigaspaces.sbp.metrics.visitor;
 
+import com.gigaspaces.sbp.metrics.ExponentialMovingAverage;
 import com.gigaspaces.sbp.metrics.FullMetric;
 import com.gigaspaces.sbp.metrics.NamedMetric;
 import org.openspaces.admin.Admin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -17,14 +19,23 @@ public class CsvVisitor extends AbstractStatsVisitor{
 
     private boolean saveHeaders = false;
 
-    public CsvVisitor(Admin admin, String spaceName){
-        super(admin, spaceName);
+    public CsvVisitor(Admin admin, String spaceName, Map<Long, Map<NamedMetric, String>> pidMetricMap, ExponentialMovingAverage average){
+        super(admin, spaceName, pidMetricMap, average);
     }
 
     @Override
     public void saveStat(FullMetric fullMetric) {
-        String metricName = (fullMetric.getGscPid() == null) ? fullMetric.getMetric().displayName() : fullMetric.getMetric().displayName() + "-" + fullMetric.getGscPid();
+        Long gscPid = fullMetric.getGscPid();
+        NamedMetric namedMetric = fullMetric.getMetric();
+        String metricName = (gscPid == 0) ? namedMetric.displayName() : namedMetric.displayName() + "-" + gscPid;
+        Map<NamedMetric, String> map = pidMetricMap.get(gscPid);
+        if (map == null){
+            map = new HashMap<>();
+            pidMetricMap.put(gscPid, map);
+        }
+        prepareMetric(fullMetric);
         metrics.put(metricName, fullMetric.getMetricValue());
+
     }
 
     @Override

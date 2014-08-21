@@ -63,8 +63,7 @@ public interface StatsVisitor {
 
     /**
      * If this metric hasn't been saved in a system-wide manner yet, save it
-     * @param metric thing to save
-     * @param value value to save for it
+     * @param fullMetric the metric
      */
     void saveOnce(FullMetric fullMetric);
 
