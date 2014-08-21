@@ -3,6 +3,8 @@ package com.gigaspaces.sbp.metrics;
 import com.gigaspaces.cluster.activeelection.SpaceMode;
 import com.gigaspaces.cluster.replication.async.mirror.MirrorStatistics;
 import com.gigaspaces.sbp.metrics.cli.ProcessArgs;
+import com.gigaspaces.sbp.metrics.visitor.PrintVisitor;
+import com.gigaspaces.sbp.metrics.visitor.StatsVisitor;
 import com.j_spaces.core.filters.ReplicationStatistics;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.ParseException;
@@ -46,6 +48,10 @@ public class AdminApiMonitor {
     private ExponentialMovingAverage averageCounter;
     private Map<Long,AdminApiMetrics> pidMetricMap = new HashMap<>();
     private String vmName;
+
+    public Admin getAdmin() {
+        return admin;
+    }
 
     public void init(){
 
@@ -110,23 +116,6 @@ public class AdminApiMonitor {
         }
         return objectsCount;
     }
-
-    /*
-    public Long getThroughput(){
-        long throughput = 0;
-        try {
-            Spaces spaces = admin.getSpaces();
-            Space space = spaces.getSpaceByName(spaceName);
-            for (SpaceInstance spaceInstance : space) {
-                SpaceInstanceStatistics stats = spaceInstance.getStatistics();
-                throughput = stats.getActiveTransactionCount();
-            }
-        }   catch (Exception e) {
-            logger.debug("Error calculating throughput.", e);
-        }
-        return throughput;
-    }
-    */
 
     public void collectJvmStats(Admin admin){
         GridServiceContainer containers[] = admin.getGridServiceContainers().getContainers();

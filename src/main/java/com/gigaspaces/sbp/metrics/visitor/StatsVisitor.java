@@ -1,10 +1,15 @@
-package com.gigaspaces.sbp.metrics;
+package com.gigaspaces.sbp.metrics.visitor;
 
 import com.gigaspaces.cluster.replication.async.mirror.MirrorStatistics;
+import com.gigaspaces.sbp.metrics.FullMetric;
+import com.gigaspaces.sbp.metrics.NamedMetric;
 import com.j_spaces.core.filters.ReplicationStatistics;
+import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.space.SpaceInstance;
 import org.openspaces.admin.vm.VirtualMachineDetails;
-import org.openspaces.admin.vm.VirtualMachinesStatistics;
+import org.openspaces.admin.vm.VirtualMachineStatistics;
+
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -17,15 +22,17 @@ public interface StatsVisitor {
 
     // STATE VARIABLES FROM WHICH TO EXTRACT METRIC DATA...
 
-    VirtualMachineDetails virtualMachineDetails();
+    List<GridServiceContainer> gridServiceContainers();
 
-    VirtualMachinesStatistics vmStatistics();
+    List<VirtualMachineDetails> virtualMachineDetails();
 
-    ReplicationStatistics replicationStatistics();
+    List<VirtualMachineStatistics> vmStatistics();
 
-    MirrorStatistics mirrorStatistics();
+    List<ReplicationStatistics> replicationStatistics();
 
-    SpaceInstance spaceInstance();
+    List<MirrorStatistics> mirrorStatistics();
+
+    List<SpaceInstance> spaceInstance();
 
     // For possible, future use...
     //    SpaceStatistics spaceStatistics();
@@ -35,10 +42,9 @@ public interface StatsVisitor {
     /**
      * Save off a statistic for safe-keeping. May be reported now or later, at the
      * Visitor's discretion
-     * @param metric name of the metric
-     * @param value value of it
+     * @param fullMetric the metric
      */
-    void saveStat(NamedMetric metric, String value);
+    void saveStat(FullMetric fullMetric);
 
     /**
      * Determine if a system-wide metric has been saved already
@@ -49,9 +55,11 @@ public interface StatsVisitor {
 
     /**
      * If this metric hasn't been saved in a system-wide manner yet, save it
-     * @param metric thing to save
-     * @param value value to save for it
+     * @param fullMetric the metric
      */
-    void saveOnce(NamedMetric metric, String value);
+    void saveOnce(FullMetric fullMetric);
+
+
+
 
 }
