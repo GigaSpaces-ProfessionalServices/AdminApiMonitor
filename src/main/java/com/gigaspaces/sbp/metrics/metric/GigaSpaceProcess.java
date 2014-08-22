@@ -1,4 +1,4 @@
-package com.gigaspaces.sbp.metrics;
+package com.gigaspaces.sbp.metrics.metric;
 
 /**
  * Created by IntelliJ IDEA.

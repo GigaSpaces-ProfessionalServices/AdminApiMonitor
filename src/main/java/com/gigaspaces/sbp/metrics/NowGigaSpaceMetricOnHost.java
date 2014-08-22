@@ -1,5 +1,7 @@
 package com.gigaspaces.sbp.metrics;
 
+import com.gigaspaces.sbp.metrics.metric.GigaSpaceProcess;
+
 import java.util.Collection;
 
 /**

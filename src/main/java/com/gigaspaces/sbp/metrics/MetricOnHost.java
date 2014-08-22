@@ -1,5 +1,8 @@
 package com.gigaspaces.sbp.metrics;
 
+import com.gigaspaces.sbp.metrics.metric.GigaSpaceMetric;
+import com.gigaspaces.sbp.metrics.metric.GigaSpaceProcess;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.SortedSet;

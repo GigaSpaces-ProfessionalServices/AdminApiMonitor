@@ -1,5 +1,7 @@
 package com.gigaspaces.sbp.metrics;
 
+import com.gigaspaces.sbp.metrics.metric.GigaSpaceProcess;
+
 import java.util.SortedSet;
 
 /**
@@ -8,9 +10,9 @@ import java.util.SortedSet;
  * Date: 8/4/14
  * Time: 4:41 PM
  *
- * Any given {@link GigaSpaceMetric} describes some state in a given context. The context describes
- * when the metric was recorded and which {@link GigaSpaceProcess}es and hostname(s) that hosted those
- * {@link GigaSpaceProcess}es
+ * Any given {@link com.gigaspaces.sbp.metrics.metric.GigaSpaceMetric} describes some state in a given context. The context describes
+ * when the metric was recorded and which {@link com.gigaspaces.sbp.metrics.metric.GigaSpaceProcess}es and hostname(s) that hosted those
+ * {@link com.gigaspaces.sbp.metrics.metric.GigaSpaceProcess}es
  */
 public interface MetricContext {
 

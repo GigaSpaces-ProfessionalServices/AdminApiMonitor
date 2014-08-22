@@ -2,7 +2,7 @@ package com.gigaspaces.sbp.metrics.visitor;
 
 import com.gigaspaces.cluster.replication.async.mirror.MirrorStatistics;
 import com.gigaspaces.sbp.metrics.FullMetric;
-import com.gigaspaces.sbp.metrics.NamedMetric;
+import com.gigaspaces.sbp.metrics.metric.NamedMetric;
 import com.j_spaces.core.filters.ReplicationStatistics;
 import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.space.SpaceInstance;

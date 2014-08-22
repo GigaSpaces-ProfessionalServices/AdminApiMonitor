@@ -3,7 +3,7 @@ package com.gigaspaces.sbp.metrics.visitor;
 
 import com.gigaspaces.sbp.metrics.ExponentialMovingAverage;
 import com.gigaspaces.sbp.metrics.FullMetric;
-import com.gigaspaces.sbp.metrics.NamedMetric;
+import com.gigaspaces.sbp.metrics.metric.NamedMetric;
 import org.openspaces.admin.Admin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +32,7 @@ public class PrintVisitor extends AbstractStatsVisitor {
         SimpleDateFormat date = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
         String spaceInstanceID = (fullMetric.getSpaceInstanceID() != null) ? fullMetric.getSpaceInstanceID().toString() : " - ";
         String gscPid = (fullMetric.getGscPid() != null) ? fullMetric.getGscPid().toString() : " - ";
-        String hostName = (fullMetric.getHostName() != null) ? fullMetric.getHostName().toString() : " - ";
+        String hostName = (fullMetric.getHostName() != null) ? fullMetric.getHostName() : " - ";
         return "\n" + date.format(new Date()) + VALUE_SEPARATOR +  hostName + VALUE_SEPARATOR + spaceInstanceID + VALUE_SEPARATOR + gscPid +
                 VALUE_SEPARATOR + fullMetric.getMetricName() + VALUE_SEPARATOR + fullMetric.getMetricValue();
     }

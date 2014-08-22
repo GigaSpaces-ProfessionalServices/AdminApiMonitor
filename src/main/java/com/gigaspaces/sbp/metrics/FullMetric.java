@@ -1,5 +1,6 @@
 package com.gigaspaces.sbp.metrics;
 
+import com.gigaspaces.sbp.metrics.metric.NamedMetric;
 import org.openspaces.admin.gsc.GridServiceContainer;
 
 import java.util.Date;
@@ -18,7 +19,7 @@ public class FullMetric {
 
     private Long gscPid;
 
-    private String className;
+    private String qualifier;
 
     public FullMetric(NamedMetric metric, String metricValue, GridServiceContainer gridServiceContainer) {
         this.metric = metric;
@@ -44,10 +45,10 @@ public class FullMetric {
         this.gscPid = 0l;
     }
 
-    public FullMetric(NamedMetric metric, String metricValue, String className) {
+    public FullMetric(NamedMetric metric, String metricValue, String qualifier) {
         this.metric = metric;
         this.metricValue = metricValue;
-        this.className = className;
+        this.qualifier = qualifier;
         this.gscPid = 0l;
     }
 
@@ -80,6 +81,6 @@ public class FullMetric {
     }
 
     public String getMetricName(){
-        return (className != null) ? (metric.displayName() + "_" + className) : metric.displayName();
+        return (qualifier != null) ? (metric.displayName() + "_" + qualifier) : metric.displayName();
     }
 }

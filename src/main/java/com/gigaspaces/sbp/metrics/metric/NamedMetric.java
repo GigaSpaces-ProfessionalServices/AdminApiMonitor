@@ -1,4 +1,4 @@
-package com.gigaspaces.sbp.metrics;
+package com.gigaspaces.sbp.metrics.metric;
 
 import com.gigaspaces.cluster.replication.async.mirror.MirrorStatistics;
 import com.gigaspaces.sbp.metrics.visitor.StatsVisitor;

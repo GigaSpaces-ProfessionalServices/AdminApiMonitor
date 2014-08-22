@@ -1,5 +1,8 @@
 package com.gigaspaces.sbp.metrics;
 
+import com.gigaspaces.sbp.metrics.metric.GigaSpaceMetric;
+import com.gigaspaces.sbp.metrics.metric.GigaSpaceProcess;
+import com.gigaspaces.sbp.metrics.metric.NamedMetric;
 import com.gigaspaces.sbp.metrics.visitor.StatsVisitor;
 
 import java.util.ArrayList;
