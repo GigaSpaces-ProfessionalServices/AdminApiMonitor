@@ -20,7 +20,7 @@ public enum GsMirrorInfo implements NamedMetric {
                 if( out == null ) return;
                 logSize += out.getRedoLogSize();
             }
-            statsVisitor.saveStat(new FullMetric(this, String.valueOf(logSize)));
+            statsVisitor.saveStat(new FullMetric.FullMetricBuilder().metric(this).metricValue(String.valueOf(logSize)).create());
         }
     }
     , REDO_LOG_SEND_BYTES_PER_SECOND("mirror_sent_bytes_per_sec"){
@@ -38,7 +38,7 @@ public enum GsMirrorInfo implements NamedMetric {
                     if( channel != null ) byteCount += channel.getSendBytesPerSecond();
                 }
             }
-            statsVisitor.saveStat(new FullMetric(this, String.valueOf(byteCount)));
+            statsVisitor.saveStat(new FullMetric.FullMetricBuilder().metric(this).metricValue(String.valueOf(byteCount)).create());
         }
     }
     , MIRROR_OPERATIONS("mirror_total_operations"){
@@ -52,7 +52,7 @@ public enum GsMirrorInfo implements NamedMetric {
                 if( operationCount == null ) return;
                 operationCountSum += operationCount;
             }
-            statsVisitor.saveStat(new FullMetric(this, operationCountSum.toString()));
+            statsVisitor.saveStat(new FullMetric.FullMetricBuilder().metric(this).metricValue(String.valueOf(operationCountSum)).create());
         }
     }
     , MIRROR_SUCCESSFUL_OPERATIONS("mirror_successes"){
@@ -66,7 +66,7 @@ public enum GsMirrorInfo implements NamedMetric {
                 if( successfulOperations == null ) return;
                 successfulOperationsSum += successfulOperations;
             }
-            statsVisitor.saveStat(new FullMetric(this, successfulOperationsSum.toString()));
+            statsVisitor.saveStat(new FullMetric.FullMetricBuilder().metric(this).metricValue(String.valueOf(successfulOperationsSum)).create());
         }
     }
     , MIRROR_FAILED_OPERATIONS("mirror_failures"){
@@ -80,7 +80,7 @@ public enum GsMirrorInfo implements NamedMetric {
                 if( failedOperations == null ) return;
                 failedOperationsSum += failedOperations;
             }
-            statsVisitor.saveStat(new FullMetric(this, failedOperationsSum.toString()));
+            statsVisitor.saveStat(new FullMetric.FullMetricBuilder().metric(this).metricValue(String.valueOf(failedOperationsSum)).create());
         }
     }
     ;

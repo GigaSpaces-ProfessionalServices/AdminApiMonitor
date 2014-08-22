@@ -22,7 +22,13 @@ public enum Memory implements NamedMetric {
                 Long nonHeap = details.getMemoryNonHeapInitInBytes();
                 if( heap == null || nonHeap == null ) return;
                 Long bytes = heap + nonHeap;
-                statsVisitor.saveStat(new FullMetric(this, bytes.toString(), gridServiceContainer));
+                FullMetric fullMetric = new FullMetric.FullMetricBuilder().
+                        metric(this).
+                        metricValue(bytes.toString()).
+                        hostName(gridServiceContainer.getMachine().getHostName()).
+                        gscPid(gridServiceContainer.getVirtualMachine().getDetails().getPid()).
+                        create();
+                statsVisitor.saveStat(fullMetric);
             }
         }
     }
@@ -36,7 +42,13 @@ public enum Memory implements NamedMetric {
                 if( details == null ) return;
                 Long nonHeap = details.getMemoryNonHeapInitInBytes();
                 if( nonHeap == null ) return;
-                statsVisitor.saveStat(new FullMetric(this, nonHeap.toString(), gridServiceContainer));
+                FullMetric fullMetric = new FullMetric.FullMetricBuilder().
+                        metric(this).
+                        metricValue(String.valueOf(nonHeap)).
+                        hostName(gridServiceContainer.getMachine().getHostName()).
+                        gscPid(gridServiceContainer.getVirtualMachine().getDetails().getPid()).
+                        create();
+                statsVisitor.saveStat(fullMetric);
             }
         }
     }
@@ -49,7 +61,12 @@ public enum Memory implements NamedMetric {
                 VirtualMachineDetails details = gridServiceContainer.getVirtualMachine().getDetails();
                 Long heap = details.getMemoryHeapInitInBytes();
                 if( heap == null ) return;
-                FullMetric fullMetric = new FullMetric(this, heap.toString(), gridServiceContainer);
+                FullMetric fullMetric = new FullMetric.FullMetricBuilder().
+                        metric(this).
+                        metricValue(String.valueOf(heap)).
+                        hostName(gridServiceContainer.getMachine().getHostName()).
+                        gscPid(gridServiceContainer.getVirtualMachine().getDetails().getPid()).
+                        create();
                 statsVisitor.saveStat(fullMetric);
             }
         }
@@ -63,7 +80,13 @@ public enum Memory implements NamedMetric {
                 VirtualMachineStatistics stats = gridServiceContainer.getVirtualMachine().getStatistics();
                 Long nonHeapCommitted = stats.getMemoryNonHeapCommittedInBytes();
                 if( nonHeapCommitted == null ) return;
-                statsVisitor.saveStat(new FullMetric(this, nonHeapCommitted.toString(), gridServiceContainer));
+                FullMetric fullMetric = new FullMetric.FullMetricBuilder().
+                        metric(this).
+                        metricValue(String.valueOf(nonHeapCommitted)).
+                        hostName(gridServiceContainer.getMachine().getHostName()).
+                        gscPid(gridServiceContainer.getVirtualMachine().getDetails().getPid()).
+                        create();
+                statsVisitor.saveStat(fullMetric);
             }
         }
     }
@@ -76,7 +99,13 @@ public enum Memory implements NamedMetric {
                 VirtualMachineStatistics stats = gridServiceContainer.getVirtualMachine().getStatistics();
                 Long heapCommitted = stats.getMemoryHeapCommittedInBytes();
                 if( heapCommitted == null ) return;
-                statsVisitor.saveStat(new FullMetric(this, heapCommitted.toString(), gridServiceContainer));
+                FullMetric fullMetric = new FullMetric.FullMetricBuilder().
+                        metric(this).
+                        metricValue(String.valueOf(heapCommitted)).
+                        hostName(gridServiceContainer.getMachine().getHostName()).
+                        gscPid(gridServiceContainer.getVirtualMachine().getDetails().getPid()).
+                        create();
+                statsVisitor.saveStat(fullMetric);
             }
         }
     }

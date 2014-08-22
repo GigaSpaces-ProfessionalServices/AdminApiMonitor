@@ -10,7 +10,7 @@ public enum GigaSpacesClusterInfo implements NamedMetric {
         public void accept(StatsVisitor statsVisitor){
             SpaceInstance spaceInstance = statsVisitor.spaceInstance().get(0);
             if( spaceInstance != null ){
-                statsVisitor.saveStat(new FullMetric(this, spaceInstance.getMode().name()));
+                statsVisitor.saveStat(new FullMetric.FullMetricBuilder().metric(this).metricValue(spaceInstance.getMode().name()).create());
             }
         }
     }

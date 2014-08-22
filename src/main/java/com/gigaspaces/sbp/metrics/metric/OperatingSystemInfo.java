@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.management.*;
+import javax.management.monitor.StringMonitor;
 import javax.management.openmbean.CompositeDataSupport;
 import java.io.IOException;
 import java.util.List;
@@ -29,7 +30,13 @@ public enum OperatingSystemInfo implements NamedMetric {
                     AttributeList list = server.getAttributes(objectName, new String[]{openFdCount});
                     for (Attribute attr : list.asList()){
                         if (attr.getName().equals(openFdCount)){
-                            statsVisitor.saveStat(new FullMetric(this, attr.getValue().toString(), gridServiceContainer));
+                            FullMetric fullMetric = new FullMetric.FullMetricBuilder().
+                                    metric(this).
+                                    metricValue(String.valueOf(attr.getValue().toString())).
+                                    hostName(gridServiceContainer.getMachine().getHostName()).
+                                    gscPid(gridServiceContainer.getVirtualMachine().getDetails().getPid()).
+                                    create();
+                            statsVisitor.saveStat(fullMetric);
                         }
                     }
                 } catch (IOException | MalformedObjectNameException | ReflectionException | InstanceNotFoundException e) {
@@ -54,7 +61,13 @@ public enum OperatingSystemInfo implements NamedMetric {
                     AttributeList list = server.getAttributes(objectName, new String[]{maxFdCount});
                     for( Attribute attr : list.asList() ){
                         if( attr.getName().equals(maxFdCount)){
-                            statsVisitor.saveOnce(new FullMetric(this, attr.getValue().toString(), gridServiceContainer));
+                            FullMetric fullMetric = new FullMetric.FullMetricBuilder().
+                                    metric(this).
+                                    metricValue(String.valueOf(attr.getValue().toString())).
+                                    hostName(gridServiceContainer.getMachine().getHostName()).
+                                    gscPid(gridServiceContainer.getVirtualMachine().getDetails().getPid()).
+                                    create();
+                            statsVisitor.saveStat(fullMetric);
                         }
                     }
                 } catch (IOException | MalformedObjectNameException | ReflectionException | InstanceNotFoundException e) {
@@ -91,7 +104,13 @@ public enum OperatingSystemInfo implements NamedMetric {
                             }
                         }
                     }
-                    statsVisitor.saveStat(new FullMetric(this, String.valueOf(lrmiThreadCount), gridServiceContainer));
+                    FullMetric fullMetric = new FullMetric.FullMetricBuilder().
+                            metric(this).
+                            metricValue(String.valueOf(lrmiThreadCount)).
+                            hostName(gridServiceContainer.getMachine().getHostName()).
+                            gscPid(gridServiceContainer.getVirtualMachine().getDetails().getPid()).
+                            create();
+                    statsVisitor.saveStat(fullMetric);
                 } catch (IOException | MalformedObjectNameException | ReflectionException | InstanceNotFoundException | AttributeNotFoundException | MBeanException e) {
                     LOGGER.error("Error determining " + this.displayName(), e);
                 }

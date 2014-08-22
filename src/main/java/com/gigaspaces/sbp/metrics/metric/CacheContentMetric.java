@@ -25,7 +25,9 @@ public enum CacheContentMetric implements NamedMetric{
                 }
             }
             for (String className : numberOfObjects.keySet()){
-                statsVisitor.saveStat(new FullMetric(this, String.valueOf(numberOfObjects.get(className)), className));
+                FullMetric.FullMetricBuilder builder = new FullMetric.FullMetricBuilder();
+                builder.metric(this).qualifier(className).metricValue(String.valueOf(numberOfObjects.get(className)));
+                statsVisitor.saveStat(builder.create());
             }
         }
     };

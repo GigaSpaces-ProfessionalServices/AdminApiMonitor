@@ -24,7 +24,13 @@ public enum JvmInfo implements NamedMetric {
                 if( stats == null ) return;
                 Long gcCount = stats.getGcCollectionCount();
                 if( gcCount == null ) return;
-                statsVisitor.saveStat(new FullMetric(this, gcCount.toString(), gridServiceContainer));
+                FullMetric fullMetric = new FullMetric.FullMetricBuilder().
+                        metric(this).
+                        metricValue(String.valueOf(gcCount)).
+                        hostName(gridServiceContainer.getMachine().getHostName()).
+                        gscPid(gridServiceContainer.getVirtualMachine().getDetails().getPid()).
+                        create();
+                statsVisitor.saveStat(fullMetric);
             }
         }
     }
@@ -39,7 +45,13 @@ public enum JvmInfo implements NamedMetric {
                 Long gcTime = stats.getGcCollectionTime();
                 if( gcTime == null ) return;
                 gcTime /= 1000l;
-                statsVisitor.saveStat(new FullMetric(this, gcTime.toString(), gridServiceContainer));
+                FullMetric fullMetric = new FullMetric.FullMetricBuilder().
+                        metric(this).
+                        metricValue(String.valueOf(gcTime)).
+                        hostName(gridServiceContainer.getMachine().getHostName()).
+                        gscPid(gridServiceContainer.getVirtualMachine().getDetails().getPid()).
+                        create();
+                statsVisitor.saveStat(fullMetric);
             }
         }
     }
@@ -53,7 +65,13 @@ public enum JvmInfo implements NamedMetric {
                 if( stats == null ) return;
                 Integer threads = stats.getThreadCount();
                 if( threads == null ) return;
-                statsVisitor.saveStat(new FullMetric(this, threads.toString(), gridServiceContainer));
+                FullMetric fullMetric = new FullMetric.FullMetricBuilder().
+                        metric(this).
+                        metricValue(String.valueOf(threads)).
+                        hostName(gridServiceContainer.getMachine().getHostName()).
+                        gscPid(gridServiceContainer.getVirtualMachine().getDetails().getPid()).
+                        create();
+                statsVisitor.saveStat(fullMetric);
             }
         }
     }
@@ -68,7 +86,13 @@ public enum JvmInfo implements NamedMetric {
                 Long upTime = stats.getUptime();
                 if( upTime == null ) return;
                 upTime /= 1000;
-                statsVisitor.saveStat(new FullMetric(this, upTime.toString(), gridServiceContainer));
+                FullMetric fullMetric = new FullMetric.FullMetricBuilder().
+                        metric(this).
+                        metricValue(String.valueOf(upTime)).
+                        hostName(gridServiceContainer.getMachine().getHostName()).
+                        gscPid(gridServiceContainer.getVirtualMachine().getDetails().getPid()).
+                        create();
+                statsVisitor.saveStat(fullMetric);
             }
         }
     }
@@ -86,7 +110,13 @@ public enum JvmInfo implements NamedMetric {
                     AttributeList list = server.getAttributes(objectName, new String[]{cpuLoad});
                     for( Attribute attr : list.asList() ){
                         if( attr.getName().equals(cpuLoad)){
-                            statsVisitor.saveStat(new FullMetric(this, attr.getValue().toString(), gridServiceContainer));
+                            FullMetric fullMetric = new FullMetric.FullMetricBuilder().
+                                    metric(this).
+                                    metricValue(String.valueOf(attr.getValue().toString())).
+                                    hostName(gridServiceContainer.getMachine().getHostName()).
+                                    gscPid(gridServiceContainer.getVirtualMachine().getDetails().getPid()).
+                                    create();
+                            statsVisitor.saveStat(fullMetric);
                         }
                     }
                 } catch (IOException | MalformedObjectNameException | ReflectionException | InstanceNotFoundException e) {

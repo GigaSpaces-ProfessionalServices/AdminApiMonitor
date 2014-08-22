@@ -15,40 +15,20 @@ public class FullMetric {
 
     private String hostName;
 
-    private Integer spaceInstanceID;
+    private String spaceInstanceID;
 
     private Long gscPid;
 
     private String qualifier;
 
-    public FullMetric(NamedMetric metric, String metricValue, GridServiceContainer gridServiceContainer) {
+    public FullMetric(NamedMetric metric, String metricValue, Date time, String hostName, String spaceInstanceID, Long gscPid, String qualifier) {
         this.metric = metric;
         this.metricValue = metricValue;
-        this.time = new Date();
-        this.hostName = gridServiceContainer.getMachine().getHostName();
-        this.gscPid = gridServiceContainer.getVirtualMachine().getDetails().getPid();
-    }
-
-    public FullMetric(NamedMetric metric, String metricValue, Integer spaceInstanceID) {
-        this.metric = metric;
-        this.metricValue = metricValue;
-        this.time = new Date();
-        this.gscPid = 0l;
+        this.time = time;
+        this.hostName = hostName;
         this.spaceInstanceID = spaceInstanceID;
-    }
-
-    public FullMetric(NamedMetric metric, String metricValue) {
-        this.metric = metric;
-        this.metricValue = metricValue;
-        this.time = new Date();
-        this.gscPid = 0l;
-    }
-
-    public FullMetric(NamedMetric metric, String metricValue, String qualifier) {
-        this.metric = metric;
-        this.metricValue = metricValue;
+        this.gscPid = gscPid;
         this.qualifier = qualifier;
-        this.gscPid = 0l;
     }
 
     public NamedMetric getMetric() {
@@ -67,7 +47,7 @@ public class FullMetric {
         return hostName;
     }
 
-    public Integer getSpaceInstanceID() {
+    public String getSpaceInstanceID() {
         return spaceInstanceID;
     }
 
@@ -81,5 +61,57 @@ public class FullMetric {
 
     public String getMetricName(){
         return (qualifier != null) ? (metric.displayName() + "_" + qualifier) : metric.displayName();
+    }
+
+    public static class FullMetricBuilder{
+
+        private NamedMetric metric;
+
+        private String metricValue;
+
+        private Date time;
+
+        private String hostName;
+
+        private String spaceInstanceID;
+
+        private Long gscPid = 0l;
+
+        private String qualifier;
+
+        public FullMetricBuilder metric(NamedMetric metric){
+            this.metric = metric;
+            return this;
+        }
+
+        public FullMetricBuilder metricValue(String metricValue){
+            this.metricValue = metricValue;
+            return this;
+        }
+
+        public FullMetricBuilder hostName(String hostName){
+            this.hostName = hostName;
+            return this;
+        }
+
+        public FullMetricBuilder spaceInstanceID(String spaceInstanceID){
+            this.spaceInstanceID = spaceInstanceID;
+            return this;
+        }
+
+        public FullMetricBuilder gscPid(Long gscPid){
+            this.gscPid = gscPid;
+            return this;
+        }
+
+        public FullMetricBuilder qualifier(String qualifier){
+            this.qualifier = qualifier;
+            return this;
+        }
+
+        public FullMetric create(){
+            return new FullMetric(metric, metricValue, new Date(), hostName, spaceInstanceID, gscPid, qualifier);
+        }
+
     }
 }
