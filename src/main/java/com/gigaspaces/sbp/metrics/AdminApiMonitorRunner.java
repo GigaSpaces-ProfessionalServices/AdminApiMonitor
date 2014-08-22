@@ -38,7 +38,6 @@ public class AdminApiMonitorRunner {
     private Map<Long,AdminApiMetrics> pidMetricMap = new HashMap<>();
 
     public void init(){
-        List<String> spaceNames = Arrays.asList(spaceName.split(","));
         AdminFactory factory = new AdminFactory();
         if(settings.contains(Settings.Secured)){
             factory.credentials(adminUser,adminPassword);
@@ -53,10 +52,6 @@ public class AdminApiMonitorRunner {
         GridServiceContainers gscs = admin.getGridServiceContainers();
 
         gscs.waitFor(1, 500, TimeUnit.MILLISECONDS);
-
-        // TODO I'm pretty sure this is wrong
-        Spaces spaces = admin.getSpaces();
-        spaces.waitFor(spaceNames.get(0));
     }
 
     public static void main(String[] args) throws InterruptedException {

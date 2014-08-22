@@ -31,10 +31,10 @@ public class PrintVisitor extends AbstractStatsVisitor {
     private String formatMetrics(FullMetric fullMetric) {
         SimpleDateFormat date = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
         String spaceInstanceID = (fullMetric.getSpaceInstanceID() != null) ? fullMetric.getSpaceInstanceID().toString() : " - ";
-        String gscPid = (fullMetric.getGscPid() != null) ? fullMetric.getGscPid().toString() : " - ";
+        String gscPid = (fullMetric.getGscPid() != null && fullMetric.getGscPid() != 0l) ? fullMetric.getGscPid().toString() : " - ";
         String hostName = (fullMetric.getHostName() != null) ? fullMetric.getHostName() : " - ";
         return "\n" + date.format(new Date()) + VALUE_SEPARATOR +  hostName + VALUE_SEPARATOR + spaceInstanceID + VALUE_SEPARATOR + gscPid +
-                VALUE_SEPARATOR + fullMetric.getMetricName() + VALUE_SEPARATOR + fullMetric.getMetricValue();
+                VALUE_SEPARATOR + fullMetric.getMetricFullName() + VALUE_SEPARATOR + fullMetric.getMetricValue();
     }
 
     @Override

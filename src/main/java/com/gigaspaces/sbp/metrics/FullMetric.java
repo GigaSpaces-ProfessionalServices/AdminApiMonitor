@@ -1,7 +1,6 @@
 package com.gigaspaces.sbp.metrics;
 
 import com.gigaspaces.sbp.metrics.metric.NamedMetric;
-import org.openspaces.admin.gsc.GridServiceContainer;
 
 import java.util.Date;
 
@@ -59,13 +58,16 @@ public class FullMetric {
         this.metricValue = metricValue;
     }
 
-    public String getMetricName(){
-        return (qualifier != null) ? (metric.displayName() + "_" + qualifier) : metric.displayName();
-    }
-
     public String getMetricFullName(){
-        StringBuffer result = new StringBuffer();
-        result.append(metric.displayName()).append("_").append(gscPid).append("_").append(spaceInstanceID);
+        StringBuilder result = new StringBuilder();
+        result.append(metric.displayName()).append("_");
+        if (spaceInstanceID != null){
+            result.append(spaceInstanceID);
+        }   else if (getGscPid() != null && gscPid != 0l){
+            result.append(gscPid);
+        }   else if (qualifier != null){
+            result.append(qualifier);
+        }
         return result.toString();
     }
 
