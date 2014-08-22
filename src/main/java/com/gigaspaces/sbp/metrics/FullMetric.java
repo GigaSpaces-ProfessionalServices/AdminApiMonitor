@@ -63,6 +63,12 @@ public class FullMetric {
         return (qualifier != null) ? (metric.displayName() + "_" + qualifier) : metric.displayName();
     }
 
+    public String getMetricFullName(){
+        StringBuffer result = new StringBuffer();
+        result.append(metric.displayName()).append("_").append(gscPid).append("_").append(spaceInstanceID);
+        return result.toString();
+    }
+
     public static class FullMetricBuilder{
 
         private NamedMetric metric;
