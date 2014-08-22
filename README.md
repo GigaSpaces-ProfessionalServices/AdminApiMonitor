@@ -33,3 +33,6 @@ If the space is secured, use -s in addition to the properties settings:
 For csv output, use -csv:
 
 `java -Dproperties=/full/path/to/admin_api.properties -jar AdminApiMonitor.jar -c`
+
+## Fuller specs are in the specs directory...
+
