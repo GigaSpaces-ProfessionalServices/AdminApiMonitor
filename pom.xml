@@ -8,6 +8,7 @@
     <packaging>jar</packaging>
 
     <properties>
+        <gigaspaces.version>9.7.0-10496-RELEASE</gigaspaces.version>
         <logback.version>1.0.13</logback.version>
     </properties>
 
@@ -20,7 +21,7 @@
         <dependency>
             <groupId>com.gigaspaces</groupId>
             <artifactId>gs-openspaces</artifactId>
-            <version>9.7.0-10496-RELEASE</version>
+            <version>${gigaspaces.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
