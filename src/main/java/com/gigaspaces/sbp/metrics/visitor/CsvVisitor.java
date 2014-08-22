@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class CsvVisitor extends AbstractStatsVisitor{
@@ -19,7 +20,7 @@ public class CsvVisitor extends AbstractStatsVisitor{
 
     private boolean saveHeaders = false;
 
-    public CsvVisitor(Admin admin, String spaceName, Map<Long, Map<NamedMetric, String>> pidMetricMap, ExponentialMovingAverage average){
+    public CsvVisitor(Admin admin, List<String> spaceName, Map<Long, Map<NamedMetric, String>> pidMetricMap, ExponentialMovingAverage average){
         super(admin, spaceName, pidMetricMap, average);
     }
 

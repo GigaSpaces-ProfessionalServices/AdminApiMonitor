@@ -18,7 +18,7 @@ public class PrintVisitor extends AbstractStatsVisitor {
 
     private Set<NamedMetric> savedOnceMetrics = new HashSet<>();
 
-    public PrintVisitor(Admin admin, String spaceName, Map<Long, Map<NamedMetric, String>> pidMetricMap, ExponentialMovingAverage average){
+    public PrintVisitor(Admin admin, List<String> spaceName, Map<Long, Map<NamedMetric, String>> pidMetricMap, ExponentialMovingAverage average){
         super(admin, spaceName, pidMetricMap, average);
     }
 

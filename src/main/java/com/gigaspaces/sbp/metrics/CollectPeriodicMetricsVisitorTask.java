@@ -31,8 +31,9 @@ public class CollectPeriodicMetricsVisitorTask {
         metrics.addAll(Arrays.asList(Memory.values()));
         metrics.addAll(Arrays.asList(OperatingSystemInfo.values()));
         metrics.addAll(Arrays.asList(CacheContentMetric.values()));
+        List<String> spaceNames = Arrays.asList(spaceName.split(","));
         if (csv){
-            CsvVisitor visitor = new CsvVisitor(adminMonitor.getAdmin(), spaceName, pidMetricMap, exponentialMovingAverage);
+            CsvVisitor visitor = new CsvVisitor(adminMonitor.getAdmin(), spaceNames, pidMetricMap, exponentialMovingAverage);
             if (!headersSaved){
                 visitor.setSaveHeaders(true);
                 headersSaved = true;
@@ -42,7 +43,7 @@ public class CollectPeriodicMetricsVisitorTask {
             }
             visitor.printCsvMetrics();
         }   else {
-            StatsVisitor visitor = new PrintVisitor(adminMonitor.getAdmin(), spaceName, pidMetricMap, exponentialMovingAverage);
+            StatsVisitor visitor = new PrintVisitor(adminMonitor.getAdmin(), spaceNames, pidMetricMap, exponentialMovingAverage);
             for (NamedMetric metric : metrics){
                 metric.accept(visitor);
             }

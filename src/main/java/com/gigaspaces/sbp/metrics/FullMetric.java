@@ -26,7 +26,6 @@ public class FullMetric {
         this.metricValue = metricValue;
         this.time = new Date();
         this.hostName = gridServiceContainer.getMachine().getHostName();
-        this.spaceInstanceID = gridServiceContainer.getMachine().getSpaceInstances()[0].getInstanceId();
         this.gscPid = gridServiceContainer.getVirtualMachine().getDetails().getPid();
     }
 

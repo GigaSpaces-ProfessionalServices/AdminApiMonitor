@@ -48,23 +48,30 @@ public abstract class AbstractStatsVisitor implements StatsVisitor {
     });
 
 
-    protected AbstractStatsVisitor(Admin admin, String spaceName, Map<Long, Map<NamedMetric, String>> pidMetricMap, ExponentialMovingAverage average) {
+    protected AbstractStatsVisitor(Admin admin, List<String> spaceNames, Map<Long, Map<NamedMetric, String>> pidMetricMap, ExponentialMovingAverage average) {
         this.pidMetricMap = pidMetricMap;
         this.average = average;
+        //whole grid
         gridServiceContainers = asList(admin.getGridServiceContainers().getContainers());
-        Space targetSpace = admin.getSpaces().getSpaceByName(spaceName);
+
         vmDetails = new ArrayList<>(gridServiceContainers.size());
         vmStatistics = new ArrayList<>(gridServiceContainers.size());
         replicationStatistics = new ArrayList<>();
         mirrorStatistics = new ArrayList<>();
-        spaceInstances = asList(targetSpace.getInstances());
-        for (GridServiceContainer gsc : gridServiceContainers) {
-            vmDetails.add(gsc.getVirtualMachine().getDetails());
-            vmStatistics.add(gsc.getVirtualMachine().getStatistics());
-        }
-        for (SpacePartition partition : targetSpace.getPartitions()) {
-            replicationStatistics.add(partition.getPrimary().getStatistics().getReplicationStatistics());
-            mirrorStatistics.add(partition.getPrimary().getStatistics().getMirrorStatistics());
+        spaceInstances = new ArrayList<>();
+
+        // separate spaces
+        for (String spaceName : spaceNames){
+            Space targetSpace = admin.getSpaces().getSpaceByName(spaceName);
+            spaceInstance().addAll(asList(targetSpace.getInstances()));
+            for (GridServiceContainer gsc : gridServiceContainers) {
+                vmDetails.add(gsc.getVirtualMachine().getDetails());
+                vmStatistics.add(gsc.getVirtualMachine().getStatistics());
+            }
+            for (SpacePartition partition : targetSpace.getPartitions()) {
+                replicationStatistics.add(partition.getPrimary().getStatistics().getReplicationStatistics());
+                mirrorStatistics.add(partition.getPrimary().getStatistics().getMirrorStatistics());
+            }
         }
     }
 
