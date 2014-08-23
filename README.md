@@ -11,7 +11,7 @@ In default mode, one metric is emitted per line.
 
 For example:
 
-22-8-2014 11:11:29 :: belkecaral63.belk.com :: 2 :: 63706 :: gc_count :: 44
+22-8-2014 11:11:29 :: hostname.yourcompany.com :: 2 :: 63706 :: gc_count :: 44
 
 In csv mode, all metrics are emitted on the same line, as comma separated values.
 
@@ -35,6 +35,8 @@ For csv output, use -csv:
 
 `java -Dproperties=/full/path/to/admin_api.properties -jar AdminApiMonitor.jar -c`
 
-To change logging behavior, configure a logback configuration file and point the tool at it:
+To change logging behavior (non-csv output), configure a logback configuration file and point the tool at it:
 
-`java -Dproperties=/full/path/to/admin_api.properties -Dlogback.configurationFile=/path/to/config.xml -jar AdminApiMonitorjar -c`
+`java -Dproperties=/full/path/to/admin_api.properties -Dlogback.configurationFile=/path/to/config.xml -jar AdminApiMonitor.jar`
+
+-- the end
