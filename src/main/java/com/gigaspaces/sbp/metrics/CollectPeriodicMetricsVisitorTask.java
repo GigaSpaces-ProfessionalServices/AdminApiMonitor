@@ -22,7 +22,7 @@ public class CollectPeriodicMetricsVisitorTask {
 
     private ExponentialMovingAverage exponentialMovingAverage;
 
-    private void collectMetrics(){
+    public void collectMetrics(){
         List<NamedMetric> metrics = new ArrayList<>();
         metrics.addAll(Arrays.asList(GigaSpacesActivity.values()));
         metrics.addAll(Arrays.asList(GigaSpacesClusterInfo.values()));
