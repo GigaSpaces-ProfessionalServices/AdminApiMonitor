@@ -63,14 +63,17 @@ public abstract class AbstractStatsVisitor implements StatsVisitor {
         // separate spaces
         for (String spaceName : spaceNames){
             Space targetSpace = admin.getSpaces().getSpaceByName(spaceName);
-            spaceInstance().addAll(asList(targetSpace.getInstances()));
-            for (GridServiceContainer gsc : gridServiceContainers) {
-                vmDetails.add(gsc.getVirtualMachine().getDetails());
-                vmStatistics.add(gsc.getVirtualMachine().getStatistics());
-            }
-            for (SpacePartition partition : targetSpace.getPartitions()) {
-                replicationStatistics.add(partition.getPrimary().getStatistics().getReplicationStatistics());
-                mirrorStatistics.add(partition.getPrimary().getStatistics().getMirrorStatistics());
+            if(targetSpace == null) System.err.println("Error connecting to space with spaceName: " + spaceName );
+            else {
+                spaceInstance().addAll(asList(targetSpace.getInstances()));
+                for (GridServiceContainer gsc : gridServiceContainers) {
+                    vmDetails.add(gsc.getVirtualMachine().getDetails());
+                    vmStatistics.add(gsc.getVirtualMachine().getStatistics());
+                }
+                for (SpacePartition partition : targetSpace.getPartitions()) {
+                    replicationStatistics.add(partition.getPrimary().getStatistics().getReplicationStatistics());
+                    mirrorStatistics.add(partition.getPrimary().getStatistics().getMirrorStatistics());
+                }
             }
         }
     }
