@@ -29,7 +29,7 @@ public class PrintVisitor extends AbstractStatsVisitor {
     }
 
     private String formatMetrics(FullMetric fullMetric) {
-        SimpleDateFormat date = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
+        SimpleDateFormat date = new SimpleDateFormat("dd-M-yyyy HH:mm:ss");
         String spaceInstanceID = (fullMetric.getSpaceInstanceID() != null) ? fullMetric.getSpaceInstanceID().toString() : " - ";
         String gscPid = (fullMetric.getGscPid() != null && fullMetric.getGscPid() != 0l) ? fullMetric.getGscPid().toString() : " - ";
         String hostName = (fullMetric.getHostName() != null) ? fullMetric.getHostName() : " - ";
