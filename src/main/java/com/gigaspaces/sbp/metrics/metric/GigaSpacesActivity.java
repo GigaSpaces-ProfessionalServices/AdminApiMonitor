@@ -18,7 +18,7 @@ public enum GigaSpacesActivity implements NamedMetric {
                     FullMetric fullMetric = new FullMetric.FullMetricBuilder().
                             metric(this).
                             metricValue(String.valueOf(readCount)).
-                            spaceInstanceID(spaceInstance.getSpaceInstanceName()).
+                            spaceInstanceID(spaceInstance.getSpaceInstanceName() + "_" + spaceInstance.getMode()).
                             create();
                     visitor.saveStat(fullMetric);
                 }
@@ -36,7 +36,7 @@ public enum GigaSpacesActivity implements NamedMetric {
                     FullMetric fullMetric = new FullMetric.FullMetricBuilder().
                             metric(this).
                             metricValue(String.valueOf(readsPerSec)).
-                            spaceInstanceID(spaceInstance.getSpaceInstanceName()).
+                            spaceInstanceID(spaceInstance.getSpaceInstanceName() + "_" + spaceInstance.getMode()).
                             create();
                     visitor.saveStat(fullMetric);
                 }
@@ -54,7 +54,7 @@ public enum GigaSpacesActivity implements NamedMetric {
                     FullMetric fullMetric = new FullMetric.FullMetricBuilder().
                             metric(this).
                             metricValue(String.valueOf(writeCount)).
-                            spaceInstanceID(spaceInstance.getSpaceInstanceName()).
+                            spaceInstanceID(spaceInstance.getSpaceInstanceName() + "_" + spaceInstance.getMode()).
                             create();
                     visitor.saveStat(fullMetric);
                 }
@@ -72,7 +72,7 @@ public enum GigaSpacesActivity implements NamedMetric {
                     FullMetric fullMetric = new FullMetric.FullMetricBuilder().
                             metric(this).
                             metricValue(String.valueOf(writesPerSec)).
-                            spaceInstanceID(spaceInstance.getSpaceInstanceName()).
+                            spaceInstanceID(spaceInstance.getSpaceInstanceName() + "_" + spaceInstance.getMode()).
                             create();
                     visitor.saveStat(fullMetric);
                 }
@@ -90,7 +90,7 @@ public enum GigaSpacesActivity implements NamedMetric {
                     FullMetric fullMetric = new FullMetric.FullMetricBuilder().
                             metric(this).
                             metricValue(String.valueOf(executeCount)).
-                            spaceInstanceID(spaceInstance.getSpaceInstanceName()).
+                            spaceInstanceID(spaceInstance.getSpaceInstanceName() + "_" + spaceInstance.getMode()).
                             create();
                     visitor.saveStat(fullMetric);
                 }
@@ -108,7 +108,7 @@ public enum GigaSpacesActivity implements NamedMetric {
                     FullMetric fullMetric = new FullMetric.FullMetricBuilder().
                             metric(this).
                             metricValue(String.valueOf(execPerSec)).
-                            spaceInstanceID(spaceInstance.getSpaceInstanceName()).
+                            spaceInstanceID(spaceInstance.getSpaceInstanceName() + "_" + spaceInstance.getMode()).
                             create();
                     visitor.saveStat(fullMetric);
                 }
@@ -126,7 +126,7 @@ public enum GigaSpacesActivity implements NamedMetric {
                     FullMetric fullMetric = new FullMetric.FullMetricBuilder().
                             metric(this).
                             metricValue(String.valueOf(takeCount)).
-                            spaceInstanceID(spaceInstance.getSpaceInstanceName()).
+                            spaceInstanceID(spaceInstance.getSpaceInstanceName() + "_" + spaceInstance.getMode()).
                             create();
                     visitor.saveStat(fullMetric);
                 }
@@ -145,7 +145,7 @@ public enum GigaSpacesActivity implements NamedMetric {
                     FullMetric fullMetric = new FullMetric.FullMetricBuilder().
                             metric(this).
                             metricValue(String.valueOf(takePerSec)).
-                            spaceInstanceID(spaceInstance.getSpaceInstanceName()).
+                            spaceInstanceID(spaceInstance.getSpaceInstanceName() + "_" + spaceInstance.getMode()).
                             create();
                     visitor.saveStat(fullMetric);
                 }
@@ -163,7 +163,7 @@ public enum GigaSpacesActivity implements NamedMetric {
                     FullMetric fullMetric = new FullMetric.FullMetricBuilder().
                             metric(this).
                             metricValue(String.valueOf(updateCount)).
-                            spaceInstanceID(spaceInstance.getSpaceInstanceName()).
+                            spaceInstanceID(spaceInstance.getSpaceInstanceName() + "_" + spaceInstance.getMode()).
                             create();
                     visitor.saveStat(fullMetric);
                 }
@@ -181,7 +181,7 @@ public enum GigaSpacesActivity implements NamedMetric {
                     FullMetric fullMetric = new FullMetric.FullMetricBuilder().
                             metric(this).
                             metricValue(String.valueOf(updatesPerSec)).
-                            spaceInstanceID(spaceInstance.getSpaceInstanceName()).
+                            spaceInstanceID(spaceInstance.getSpaceInstanceName() + "_" + spaceInstance.getMode()).
                             create();
                     visitor.saveStat(fullMetric);
                 }
