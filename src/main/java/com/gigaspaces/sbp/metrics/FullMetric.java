@@ -20,7 +20,9 @@ public class FullMetric {
 
     private String qualifier;
 
-    public FullMetric(NamedMetric metric, String metricValue, Date time, String hostName, String spaceInstanceID, Long gscPid, String qualifier) {
+    private String spaceMode;
+
+    public FullMetric(NamedMetric metric, String metricValue, Date time, String hostName, String spaceInstanceID, Long gscPid, String qualifier, String spaceMode) {
         this.metric = metric;
         this.metricValue = metricValue;
         this.time = time;
@@ -28,6 +30,7 @@ public class FullMetric {
         this.spaceInstanceID = spaceInstanceID;
         this.gscPid = gscPid;
         this.qualifier = qualifier;
+        this.spaceMode = spaceMode;
     }
 
     public NamedMetric getMetric() {
@@ -56,6 +59,10 @@ public class FullMetric {
 
     public void setMetricValue(String metricValue) {
         this.metricValue = metricValue;
+    }
+
+    public String getSpaceMode() {
+        return spaceMode;
     }
 
     public String getMetricFullName(){
@@ -87,6 +94,8 @@ public class FullMetric {
 
         private String qualifier;
 
+        private String spaceMode;
+
         public FullMetricBuilder metric(NamedMetric metric){
             this.metric = metric;
             return this;
@@ -117,8 +126,13 @@ public class FullMetric {
             return this;
         }
 
+        public FullMetricBuilder spaceMode(String spaceMode){
+            this.spaceMode = spaceMode;
+            return this;
+        }
+
         public FullMetric create(){
-            return new FullMetric(metric, metricValue, new Date(), hostName, spaceInstanceID, gscPid, qualifier);
+            return new FullMetric(metric, metricValue, new Date(), hostName, spaceInstanceID, gscPid, qualifier, spaceMode);
         }
 
     }
