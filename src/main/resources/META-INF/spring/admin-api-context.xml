@@ -10,14 +10,8 @@
        http://www.openspaces.org/schema/remoting http://www.openspaces.org/schema/9.7/remoting/openspaces-remoting.xsd">
 
     <context:annotation-config />
-    <!--<os-core:giga-space-context/>-->
-    <!--<os-remoting:annotation-support />-->
 
     <context:property-placeholder location="file:///${properties}" />
-
-    <!--<os-core:space id="space" url="jini://*/*/${spaceMonitor.spaceName}?locators=${spaceMonitor.locators}" />-->
-    <!--<os-core:distributed-tx-manager id="transactionManager"/>-->
-    <!--<os-core:giga-space id="real_gigaSpace" space="space" tx-manager="transactionManager"/>-->
 
     <bean id="spaceMonitor" class="com.gigaspaces.sbp.metrics.AdminApiMonitorRunner" init-method="init">
         <property name="adminUser" value="${spaceMonitor.adminUser}" />
@@ -37,6 +31,7 @@
         <property name="spaceName" value="${spaceMonitor.spaceName}" />
         <property name="csv" value="${csv_format}" />
         <property name="exponentialMovingAverage" ref="averageCounter" />
+        <property name="period" value="${stat.periodic.sample.interval}" />
     </bean>
 
     <bean id="schedulerPeriodicTask" class="org.springframework.scheduling.timer.MethodInvokingTimerTaskFactoryBean">

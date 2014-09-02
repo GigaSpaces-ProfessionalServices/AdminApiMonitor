@@ -28,21 +28,21 @@ public enum GigaSpacesActivity implements NamedMetric {
     }
     , READ_PER_SEC("reads_per_sec"){
         public void accept(StatsVisitor visitor){
-            if( visitor == null ) return;
-            Double readsPerSec = 0.0;
-            for (SpaceInstance spaceInstance : visitor.spaceInstance()){
-                if( spaceInstance != null ){
-                    SpaceInstanceStatistics stats = spaceInstance.getStatistics();
-                    readsPerSec = stats.getReadPerSecond();
-                    FullMetric fullMetric = new FullMetric.FullMetricBuilder().
-                            metric(this).
-                            metricValue(String.valueOf(readsPerSec)).
-                            spaceInstanceID(spaceInstance.getSpaceInstanceName()).
-                            spaceMode(String.valueOf(spaceInstance.getMode())).
-                            create();
-                    visitor.saveStat(fullMetric);
-                }
-            }
+//            if( visitor == null ) return;
+//            Double readsPerSec = 0.0;
+//            for (SpaceInstance spaceInstance : visitor.spaceInstance()){
+//                if( spaceInstance != null ){
+//                    SpaceInstanceStatistics stats = spaceInstance.getStatistics();
+//                    readsPerSec = stats.getReadPerSecond();
+//                    FullMetric fullMetric = new FullMetric.FullMetricBuilder().
+//                            metric(this).
+//                            metricValue(String.valueOf(readsPerSec)).
+//                            spaceInstanceID(spaceInstance.getSpaceInstanceName()).
+//                            spaceMode(String.valueOf(spaceInstance.getMode())).
+//                            create();
+//                    visitor.saveStat(fullMetric);
+//                }
+//            }
         }
     }
     , WRITE_COUNT("writes"){
@@ -66,21 +66,21 @@ public enum GigaSpacesActivity implements NamedMetric {
     }
     , WRITES_PER_SEC("writes_per_sec"){
         public void accept(StatsVisitor visitor){
-            if( visitor == null ) return;
-            Double writesPerSec = 0.0;
-            for (SpaceInstance spaceInstance : visitor.spaceInstance()){
-                if( spaceInstance != null ){
-                    SpaceInstanceStatistics stats = spaceInstance.getStatistics();
-                    writesPerSec = stats.getWritePerSecond();
-                    FullMetric fullMetric = new FullMetric.FullMetricBuilder().
-                            metric(this).
-                            metricValue(String.valueOf(writesPerSec)).
-                            spaceInstanceID(spaceInstance.getSpaceInstanceName()).
-                            spaceMode(String.valueOf(spaceInstance.getMode())).
-                            create();
-                    visitor.saveStat(fullMetric);
-                }
-            }
+//            if( visitor == null ) return;
+//            Double writesPerSec = 0.0;
+//            for (SpaceInstance spaceInstance : visitor.spaceInstance()){
+//                if( spaceInstance != null ){
+//                    SpaceInstanceStatistics stats = spaceInstance.getStatistics();
+//                    writesPerSec = stats.getWritePerSecond();
+//                    FullMetric fullMetric = new FullMetric.FullMetricBuilder().
+//                            metric(this).
+//                            metricValue(String.valueOf(writesPerSec)).
+//                            spaceInstanceID(spaceInstance.getSpaceInstanceName()).
+//                            spaceMode(String.valueOf(spaceInstance.getMode())).
+//                            create();
+//                    visitor.saveStat(fullMetric);
+//                }
+//            }
         }
     }
     , EXECUTE_COUNT("executes"){
@@ -104,21 +104,21 @@ public enum GigaSpacesActivity implements NamedMetric {
     }
     , EXECUTES_PER_SEC("executes_per_sec"){
         public void accept(StatsVisitor visitor){
-            if( visitor == null ) return;
-            Double execPerSec = 0.0;
-            for (SpaceInstance spaceInstance : visitor.spaceInstance()){
-                if( spaceInstance != null ){
-                    SpaceInstanceStatistics stats = spaceInstance.getStatistics();
-                    execPerSec = stats.getExecutePerSecond();
-                    FullMetric fullMetric = new FullMetric.FullMetricBuilder().
-                            metric(this).
-                            metricValue(String.valueOf(execPerSec)).
-                            spaceInstanceID(spaceInstance.getSpaceInstanceName()).
-                            spaceMode(String.valueOf(spaceInstance.getMode())).
-                            create();
-                    visitor.saveStat(fullMetric);
-                }
-            }
+//            if( visitor == null ) return;
+//            Double execPerSec = 0.0;
+//            for (SpaceInstance spaceInstance : visitor.spaceInstance()){
+//                if( spaceInstance != null ){
+//                    SpaceInstanceStatistics stats = spaceInstance.getStatistics();
+//                    execPerSec = stats.getExecutePerSecond();
+//                    FullMetric fullMetric = new FullMetric.FullMetricBuilder().
+//                            metric(this).
+//                            metricValue(String.valueOf(execPerSec)).
+//                            spaceInstanceID(spaceInstance.getSpaceInstanceName()).
+//                            spaceMode(String.valueOf(spaceInstance.getMode())).
+//                            create();
+//                    visitor.saveStat(fullMetric);
+//                }
+//            }
         }
     }
     , TAKE_COUNT("takes"){
@@ -143,21 +143,21 @@ public enum GigaSpacesActivity implements NamedMetric {
     }
     , TAKES_PER_SECOND("takes_per_sec"){
         public void accept(StatsVisitor visitor){
-            if( visitor == null ) return;
-            Double takePerSec;
-            for (SpaceInstance spaceInstance : visitor.spaceInstance()){
-                if( spaceInstance != null ){
-                    SpaceInstanceStatistics stats = spaceInstance.getStatistics();
-                    takePerSec = stats.getTakePerSecond();
-                    FullMetric fullMetric = new FullMetric.FullMetricBuilder().
-                            metric(this).
-                            metricValue(String.valueOf(takePerSec)).
-                            spaceInstanceID(spaceInstance.getSpaceInstanceName()).
-                            spaceMode(String.valueOf(spaceInstance.getMode())).
-                            create();
-                    visitor.saveStat(fullMetric);
-                }
-            }
+//            if( visitor == null ) return;
+//            Double takePerSec;
+//            for (SpaceInstance spaceInstance : visitor.spaceInstance()){
+//                if( spaceInstance != null ){
+//                    SpaceInstanceStatistics stats = spaceInstance.getStatistics();
+//                    takePerSec = stats.getTakePerSecond();
+//                    FullMetric fullMetric = new FullMetric.FullMetricBuilder().
+//                            metric(this).
+//                            metricValue(String.valueOf(takePerSec)).
+//                            spaceInstanceID(spaceInstance.getSpaceInstanceName()).
+//                            spaceMode(String.valueOf(spaceInstance.getMode())).
+//                            create();
+//                    visitor.saveStat(fullMetric);
+//                }
+//            }
         }
     }
     , UPDATE_COUNT("updates") { // also applies to "change'
@@ -181,21 +181,21 @@ public enum GigaSpacesActivity implements NamedMetric {
     }
     , UPDATES_PER_SEC("updates_per_sec") { // also applies to "change'
         public void accept(StatsVisitor visitor){
-            if( visitor == null ) return;
-            Double updatesPerSec = 0.0;
-            for (SpaceInstance spaceInstance : visitor.spaceInstance()){
-                if( spaceInstance != null ){
-                    SpaceInstanceStatistics stats = spaceInstance.getStatistics();
-                    updatesPerSec = stats.getUpdatePerSecond();
-                    FullMetric fullMetric = new FullMetric.FullMetricBuilder().
-                            metric(this).
-                            metricValue(String.valueOf(updatesPerSec)).
-                            spaceInstanceID(spaceInstance.getSpaceInstanceName()).
-                            spaceMode(String.valueOf(spaceInstance.getMode())).
-                            create();
-                    visitor.saveStat(fullMetric);
-                }
-            }
+//            if( visitor == null ) return;
+//            Double updatesPerSec = 0.0;
+//            for (SpaceInstance spaceInstance : visitor.spaceInstance()){
+//                if( spaceInstance != null ){
+//                    SpaceInstanceStatistics stats = spaceInstance.getStatistics();
+//                    updatesPerSec = stats.getUpdatePerSecond();
+//                    FullMetric fullMetric = new FullMetric.FullMetricBuilder().
+//                            metric(this).
+//                            metricValue(String.valueOf(updatesPerSec)).
+//                            spaceInstanceID(spaceInstance.getSpaceInstanceName()).
+//                            spaceMode(String.valueOf(spaceInstance.getMode())).
+//                            create();
+//                    visitor.saveStat(fullMetric);
+//                }
+//            }
         }
     }
     , TRANSACTION_COUNT("active_transactions"){

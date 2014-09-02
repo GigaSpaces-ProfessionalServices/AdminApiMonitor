@@ -14,6 +14,7 @@ import org.openspaces.admin.vm.VirtualMachineStatistics;
 
 import java.util.*;
 
+import static java.lang.Double.parseDouble;
 import static java.util.Arrays.*;
 
 public abstract class AbstractStatsVisitor implements StatsVisitor {
@@ -30,11 +31,7 @@ public abstract class AbstractStatsVisitor implements StatsVisitor {
 
     protected List<SpaceInstance> spaceInstances;
 
-    protected Set<NamedMetric> savedMetrics;
-
-    protected Map<Long, Map<NamedMetric, String>> pidMetricMap;
-
-    protected ExponentialMovingAverage average;
+    protected Long period;
 
     protected List<NamedMetric> emas = asList(new NamedMetric[]{GigaSpacesActivity.READ_PER_SEC,
             GigaSpacesActivity.WRITES_PER_SEC,
@@ -47,10 +44,17 @@ public abstract class AbstractStatsVisitor implements StatsVisitor {
             OperatingSystemInfo.LRMI_CONNECTIONS
     });
 
+    // value metric has to be derived from key metric
+    protected Map<NamedMetric, NamedMetric> derivedMetricsMap = new HashMap<>();
 
-    protected AbstractStatsVisitor(Admin admin, List<String> spaceNames, Map<Long, Map<NamedMetric, String>> pidMetricMap, ExponentialMovingAverage average) {
-        this.pidMetricMap = pidMetricMap;
+    protected Map<String, FullMetric> metricMap;
+
+    protected ExponentialMovingAverage average;
+
+    protected AbstractStatsVisitor(Admin admin, List<String> spaceNames, Map<String, FullMetric> metricMap, ExponentialMovingAverage average, Long period) {
+        this.metricMap = metricMap;
         this.average = average;
+        this.period = period;
         //whole grid
         gridServiceContainers = asList(admin.getGridServiceContainers().getContainers());
 
@@ -76,27 +80,57 @@ public abstract class AbstractStatsVisitor implements StatsVisitor {
                 }
             }
         }
+
+        derivedMetricsMap.put(GigaSpacesActivity.WRITE_COUNT, GigaSpacesActivity.WRITES_PER_SEC);
+        derivedMetricsMap.put(GigaSpacesActivity.READ_COUNT, GigaSpacesActivity.READ_PER_SEC);
+        derivedMetricsMap.put(GigaSpacesActivity.UPDATE_COUNT, GigaSpacesActivity.UPDATES_PER_SEC);
+        derivedMetricsMap.put(GigaSpacesActivity.EXECUTE_COUNT, GigaSpacesActivity.EXECUTES_PER_SEC);
+        derivedMetricsMap.put(GigaSpacesActivity.TAKE_COUNT, GigaSpacesActivity.TAKES_PER_SECOND);
     }
 
-    protected void prepareMetric(FullMetric fullMetric) {
-        NamedMetric metricName = fullMetric.getMetric();
-        Map<NamedMetric, String> namedMetricStringMap = pidMetricMap.get(fullMetric.getGscPid());
-        if (namedMetricStringMap == null){
-            namedMetricStringMap = new HashMap<>();
-            pidMetricMap.put(fullMetric.getGscPid(), namedMetricStringMap);
-        }
-        if (exponentialMovingAverage(metricName)){
-            if (namedMetricStringMap.get(metricName) == null){
-                namedMetricStringMap.put(metricName, fullMetric.getMetricValue());
+    protected List<FullMetric> prepareMetric(FullMetric fullMetric) {
+        List<FullMetric> result = new ArrayList<>();
+        NamedMetric namedMetric = fullMetric.getMetric();
+        String metricFullName = fullMetric.getMetricFullName();
+
+        if (calculateAverage(namedMetric)){
+            FullMetric previous = metricMap.get(metricFullName);
+            Double metricValue = parseDouble(fullMetric.getMetricValue());
+            Double diff = (previous != null) ? metricValue - parseDouble(previous.getMetricValue()) : metricValue;
+            Double currentValue = diff / (period/1000);
+            NamedMetric calculatedMetricName = derivedMetricsMap.get(fullMetric.getMetric());
+            FullMetric calculatedMetric = new FullMetric.FullMetricBuilder().
+                                            metric(calculatedMetricName).
+                                            metricValue(String.valueOf(currentValue)).
+                                            spaceInstanceID(fullMetric.getSpaceInstanceID()).
+                                            spaceMode(fullMetric.getSpaceMode()).
+                                            create();
+            if (exponentialMovingAverage(calculatedMetricName)){
+                movingAverage(calculatedMetric);
             }
-            Double oldValue = Double.parseDouble(namedMetricStringMap.get(metricName));
-            Double collectedValue = Double.parseDouble(fullMetric.getMetricValue());
-            Double averagedValue = average.average(oldValue, collectedValue);
-            fullMetric.setMetricValue(String.format("%.3f", averagedValue));
-            namedMetricStringMap.put(metricName, averagedValue.toString());
-        }   else {
-            namedMetricStringMap.put(metricName, fullMetric.getMetricValue());
+            result.add(calculatedMetric);
+            metricMap.put(calculatedMetric.getMetricFullName(), calculatedMetric);
+        }   else if (exponentialMovingAverage(namedMetric)){
+            movingAverage(fullMetric);
         }
+        result.add(fullMetric);
+        metricMap.put(metricFullName, fullMetric);
+        return result;
+    }
+
+    private void movingAverage(FullMetric metric) {
+        String metricFullName = metric.getMetricFullName();
+        if (metricMap.get(metricFullName) == null){
+            metricMap.put(metricFullName, metric);
+        }
+        Double oldValue = parseDouble(metricMap.get(metricFullName).getMetricValue());
+        Double collectedValue = parseDouble(metric.getMetricValue());
+        Double averagedValue = average.average(oldValue, collectedValue);
+        metric.setMetricValue(String.format("%.3f", averagedValue));
+    }
+
+    private boolean calculateAverage(NamedMetric metricName) {
+        return derivedMetricsMap.keySet().contains(metricName);
     }
 
     protected boolean exponentialMovingAverage(NamedMetric metric) {

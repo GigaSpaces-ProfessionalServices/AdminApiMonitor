@@ -1,4 +1,3 @@
-
 package com.gigaspaces.sbp.metrics.visitor;
 
 import com.gigaspaces.sbp.metrics.ExponentialMovingAverage;
@@ -18,19 +17,21 @@ public class PrintVisitor extends AbstractStatsVisitor {
 
     private Set<NamedMetric> savedOnceMetrics = new HashSet<>();
 
-    public PrintVisitor(Admin admin, List<String> spaceName, Map<Long, Map<NamedMetric, String>> pidMetricMap, ExponentialMovingAverage average){
-        super(admin, spaceName, pidMetricMap, average);
+    public PrintVisitor(Admin admin, List<String> spaceName, Map<String, FullMetric> pidMetricMap, ExponentialMovingAverage average, Long period){
+        super(admin, spaceName, pidMetricMap, average, period);
     }
 
     @Override
     public void saveStat(FullMetric fullMetric) {
-        prepareMetric(fullMetric);
-        logger.info(formatMetrics(fullMetric));
+        List<FullMetric> fullMetrics = prepareMetric(fullMetric);
+        for (FullMetric metric : fullMetrics){
+            logger.info(formatMetrics(metric));
+        }
     }
 
     private String formatMetrics(FullMetric fullMetric) {
         SimpleDateFormat date = new SimpleDateFormat("dd-M-yyyy HH:mm:ss");
-        String spaceInstanceID = (fullMetric.getSpaceInstanceID() != null) ? fullMetric.getSpaceInstanceID().toString() : " - ";
+        String spaceInstanceID = (fullMetric.getSpaceInstanceID() != null) ? fullMetric.getSpaceInstanceID() : " - ";
         String gscPid = (fullMetric.getGscPid() != null && fullMetric.getGscPid() != 0l) ? fullMetric.getGscPid().toString() : " - ";
         String hostName = (fullMetric.getHostName() != null) ? fullMetric.getHostName() : " - ";
         String spaceMode = (fullMetric.getSpaceMode() != null) ? fullMetric.getSpaceMode() : " - ";

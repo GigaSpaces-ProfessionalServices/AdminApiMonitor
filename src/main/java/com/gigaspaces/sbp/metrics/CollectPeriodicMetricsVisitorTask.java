@@ -18,9 +18,11 @@ public class CollectPeriodicMetricsVisitorTask {
 
     private boolean csv;
 
-    private Map<Long,Map<NamedMetric, String>> pidMetricMap = new HashMap<>();
+    private Map<String, FullMetric> pidMetricMap = new LinkedHashMap<>();
 
     private ExponentialMovingAverage exponentialMovingAverage;
+
+    private Long period;
 
     public void collectMetrics(){
         List<NamedMetric> metrics = new ArrayList<>();
@@ -36,7 +38,7 @@ public class CollectPeriodicMetricsVisitorTask {
             spaceNames.add(name.trim());
         }
         if (csv){
-            CsvVisitor visitor = new CsvVisitor(adminMonitor.getAdmin(), spaceNames, pidMetricMap, exponentialMovingAverage);
+            CsvVisitor visitor = new CsvVisitor(adminMonitor.getAdmin(), spaceNames, pidMetricMap, exponentialMovingAverage, period);
             if (!headersSaved){
                 visitor.setSaveHeaders(true);
                 headersSaved = true;
@@ -46,7 +48,7 @@ public class CollectPeriodicMetricsVisitorTask {
             }
             visitor.printCsvMetrics();
         }   else {
-            StatsVisitor visitor = new PrintVisitor(adminMonitor.getAdmin(), spaceNames, pidMetricMap, exponentialMovingAverage);
+            StatsVisitor visitor = new PrintVisitor(adminMonitor.getAdmin(), spaceNames, pidMetricMap, exponentialMovingAverage, period);
             for (NamedMetric metric : metrics){
                 metric.accept(visitor);
             }
@@ -71,5 +73,10 @@ public class CollectPeriodicMetricsVisitorTask {
     @Required
     public void setExponentialMovingAverage(ExponentialMovingAverage exponentialMovingAverage) {
         this.exponentialMovingAverage = exponentialMovingAverage;
+    }
+
+    @Required
+    public void setPeriod(Long period) {
+        this.period = period;
     }
 }
