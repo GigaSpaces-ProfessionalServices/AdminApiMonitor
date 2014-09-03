@@ -76,7 +76,9 @@ public abstract class AbstractStatsVisitor implements StatsVisitor {
                 }
                 for (SpacePartition partition : targetSpace.getPartitions()) {
                     replicationStatistics.add(partition.getPrimary().getStatistics().getReplicationStatistics());
-                    mirrorStatistics.add(partition.getPrimary().getStatistics().getMirrorStatistics());
+                }
+                for (SpaceInstance spaceInstance : spaceInstance()){
+                    mirrorStatistics.add(spaceInstance.getStatistics().getMirrorStatistics());
                 }
             }
         }
