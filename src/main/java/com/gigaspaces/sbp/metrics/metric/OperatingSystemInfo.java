@@ -97,6 +97,7 @@ public enum OperatingSystemInfo implements NamedMetric {
                                 String[] signatures = new String[]{"long"};
                                 CompositeDataSupport threadInfo =
                                         (CompositeDataSupport) server.invoke(name, "getThreadInfo", new Long[]{threadId}, signatures);
+                                if( threadInfo == null ) continue;
                                 Object threadName = threadInfo.get("threadName");
                                 if( threadName == null ) continue;
                                 if (threadName.toString().contains("LRMI Connection"))
