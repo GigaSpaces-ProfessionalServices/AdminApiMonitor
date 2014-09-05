@@ -108,6 +108,27 @@ public enum Memory implements NamedMetric {
                 statsVisitor.saveStat(fullMetric);
             }
         }
+    }, USED_BYTES("heap_available_pct") {
+        @Override
+        public void accept(StatsVisitor statsVisitor) {
+            if( statsVisitor == null ) return;
+            List<GridServiceContainer> gridServiceContainers = statsVisitor.gridServiceContainers();
+            for (GridServiceContainer gridServiceContainer : gridServiceContainers){
+                VirtualMachineStatistics stats = gridServiceContainer.getVirtualMachine().getStatistics();
+                Long heapUsed = stats.getMemoryHeapUsedInBytes();
+                VirtualMachineDetails details = gridServiceContainer.getVirtualMachine().getDetails();
+                Long heapMax = details.getMemoryHeapMaxInBytes();
+                if( heapUsed == null || heapMax == null) return;
+                Double freeMemory = (heapMax - heapUsed) / Double.valueOf(heapMax) * 100;
+                FullMetric fullMetric = new FullMetric.FullMetricBuilder().
+                        metric(this).
+                        metricValue(String.format("%.3f", (freeMemory))).
+                        hostName(gridServiceContainer.getMachine().getHostName()).
+                        gscPid(gridServiceContainer.getVirtualMachine().getDetails().getPid()).
+                        create();
+                statsVisitor.saveStat(fullMetric);
+            }
+        }
     }
     ;
 
