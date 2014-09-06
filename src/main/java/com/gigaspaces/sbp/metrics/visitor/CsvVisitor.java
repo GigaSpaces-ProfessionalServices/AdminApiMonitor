@@ -1,5 +1,6 @@
 package com.gigaspaces.sbp.metrics.visitor;
 
+import com.gigaspaces.sbp.metrics.Constants;
 import com.gigaspaces.sbp.metrics.ExponentialMovingAverage;
 import com.gigaspaces.sbp.metrics.FullMetric;
 import com.gigaspaces.sbp.metrics.metric.NamedMetric;
@@ -39,13 +40,13 @@ public class CsvVisitor extends AbstractStatsVisitor{
 
     public void printCsvMetrics(){
         if (saveHeaders){
-            StringBuilder headers = new StringBuilder();
+            StringBuilder headers = new StringBuilder("timestamp, ");
             for (String metric : metricMap.keySet()){
                 headers.append(metric).append(", ");
             }
             logger.info(headers.toString().substring(0, headers.length()-2));
         }
-        StringBuilder values = new StringBuilder();
+        StringBuilder values = new StringBuilder(Constants.DATE_FORMAT.format(new Date())).append(", ");
         for (FullMetric metric : metricMap.values()){
             values.append(metric.getMetricValue()).append(", ");
         }

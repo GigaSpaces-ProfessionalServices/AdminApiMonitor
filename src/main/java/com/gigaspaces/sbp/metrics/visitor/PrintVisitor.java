@@ -1,5 +1,6 @@
 package com.gigaspaces.sbp.metrics.visitor;
 
+import com.gigaspaces.sbp.metrics.Constants;
 import com.gigaspaces.sbp.metrics.ExponentialMovingAverage;
 import com.gigaspaces.sbp.metrics.FullMetric;
 import com.gigaspaces.sbp.metrics.metric.NamedMetric;
@@ -7,7 +8,6 @@ import org.openspaces.admin.Admin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class PrintVisitor extends AbstractStatsVisitor {
@@ -30,12 +30,11 @@ public class PrintVisitor extends AbstractStatsVisitor {
     }
 
     private String formatMetrics(FullMetric fullMetric) {
-        SimpleDateFormat date = new SimpleDateFormat("dd-M-yyyy HH:mm:ss");
         String spaceInstanceID = (fullMetric.getSpaceInstanceID() != null) ? fullMetric.getSpaceInstanceID() : " - ";
         String gscPid = (fullMetric.getGscPid() != null && fullMetric.getGscPid() != 0l) ? fullMetric.getGscPid().toString() : " - ";
         String hostName = (fullMetric.getHostName() != null) ? fullMetric.getHostName() : " - ";
         String spaceMode = (fullMetric.getSpaceMode() != null) ? fullMetric.getSpaceMode() : " - ";
-        return "\n" + date.format(new Date()) + VALUE_SEPARATOR +  hostName + VALUE_SEPARATOR + spaceInstanceID + VALUE_SEPARATOR + gscPid +
+        return "\n" + Constants.DATE_FORMAT.format(new Date()) + VALUE_SEPARATOR +  hostName + VALUE_SEPARATOR + spaceInstanceID + VALUE_SEPARATOR + gscPid +
                 VALUE_SEPARATOR + fullMetric.getMetricFullName() + VALUE_SEPARATOR + fullMetric.getMetricValue() + VALUE_SEPARATOR + spaceMode;
     }
 
