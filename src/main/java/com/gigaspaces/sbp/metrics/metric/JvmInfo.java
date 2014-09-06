@@ -96,7 +96,13 @@ public enum JvmInfo implements NamedMetric {
             }
         }
     }
-    , JVM_CPU_LOAD("cpu_usage"){
+    ,
+    /**
+     * There is currently not a good way to do this in Java, particularly across a network.
+     * We're going to hack it for now with the bash script gsc_cpu_monitor.sh instead.
+     */
+    @Deprecated
+    JVM_CPU_LOAD("cpu_usage"){
         @Override
         public void accept(StatsVisitor statsVisitor) {
             if( statsVisitor == null ) return;

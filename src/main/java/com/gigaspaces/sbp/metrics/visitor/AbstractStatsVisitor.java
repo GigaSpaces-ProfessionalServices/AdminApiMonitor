@@ -45,7 +45,8 @@ public abstract class AbstractStatsVisitor implements StatsVisitor {
             GsMirrorInfo.REDO_LOG_SIZE,
             GsMirrorInfo.REDO_LOG_SEND_BYTES_PER_SECOND,
 
-            JvmInfo.THREAD_COUNT, JvmInfo.JVM_CPU_LOAD,
+            JvmInfo.THREAD_COUNT,
+//            JvmInfo.JVM_CPU_LOAD,
 
             Memory.TOTAL_BYTES,
             Memory.HEAP_USED_BYTES,
