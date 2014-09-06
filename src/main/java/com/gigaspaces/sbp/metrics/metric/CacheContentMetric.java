@@ -9,7 +9,7 @@ import java.util.Map;
 
 public enum CacheContentMetric implements NamedMetric{
 
-    NUMBER_OF_OBJECTS_IN_CACHE("cacheNum"){
+    NUMBER_OF_OBJECTS_IN_CACHE("instanceCount"){
         @Override
         public void accept(StatsVisitor statsVisitor) {
             Map<String, Integer> numberOfObjects = new HashMap<>();
