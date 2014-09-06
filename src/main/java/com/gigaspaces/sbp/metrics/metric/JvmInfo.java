@@ -106,7 +106,7 @@ public enum JvmInfo implements NamedMetric {
                 final String cpuLoad = "ProcessCpuLoad";
                 try {
                     ObjectName objectName = new ObjectName(JmxUtils.OS_SEARCH_STRING);
-                    MBeanServerConnection server = JMX_UTILS.mbeanServer(details, JmxUtils.OS_SEARCH_STRING);
+                    MBeanServerConnection server = JMX_UTILS.mbeanServer(details);
                     AttributeList list = server.getAttributes(objectName, new String[]{cpuLoad});
                     for( Attribute attr : list.asList() ){
                         if( attr.getName().equals(cpuLoad)){

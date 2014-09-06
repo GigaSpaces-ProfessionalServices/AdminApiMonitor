@@ -3,8 +3,6 @@ package com.gigaspaces.sbp.metrics;
 import com.gigaspaces.cluster.activeelection.SpaceMode;
 import com.gigaspaces.cluster.replication.async.mirror.MirrorStatistics;
 import com.gigaspaces.sbp.metrics.cli.ProcessArgs;
-import com.gigaspaces.sbp.metrics.visitor.PrintVisitor;
-import com.gigaspaces.sbp.metrics.visitor.StatsVisitor;
 import com.j_spaces.core.filters.ReplicationStatistics;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.ParseException;

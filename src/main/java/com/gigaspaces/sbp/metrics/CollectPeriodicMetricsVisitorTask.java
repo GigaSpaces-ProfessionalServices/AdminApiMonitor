@@ -79,4 +79,5 @@ public class CollectPeriodicMetricsVisitorTask {
     public void setPeriod(Long period) {
         this.period = period;
     }
+
 }

@@ -33,14 +33,26 @@ public abstract class AbstractStatsVisitor implements StatsVisitor {
 
     protected Long period;
 
-    protected List<NamedMetric> emas = asList(new NamedMetric[]{GigaSpacesActivity.READ_PER_SEC,
+    protected List<NamedMetric> movingAverages = asList(new NamedMetric[]{
+
+            GigaSpacesActivity.READ_PER_SEC,
             GigaSpacesActivity.WRITES_PER_SEC,
             GigaSpacesActivity.TAKES_PER_SECOND,
             GigaSpacesActivity.UPDATES_PER_SEC,
-            GigaSpacesActivity.EXECUTES_PER_SEC, GigaSpacesActivity.TRANSACTION_COUNT,
-            GsMirrorInfo.REDO_LOG_SIZE, GsMirrorInfo.REDO_LOG_SEND_BYTES_PER_SECOND,
+            GigaSpacesActivity.EXECUTES_PER_SEC,
+            GigaSpacesActivity.TRANSACTION_COUNT,
+
+            GsMirrorInfo.REDO_LOG_SIZE,
+            GsMirrorInfo.REDO_LOG_SEND_BYTES_PER_SECOND,
+
             JvmInfo.THREAD_COUNT, JvmInfo.JVM_CPU_LOAD,
-            Memory.TOTAL_BYTES, Memory.HEAP_USED_BYTES, Memory.HEAP_COMMITTED_BYTES, Memory.NON_HEAP_USED_BYTES, Memory.NON_HEAP_COMMITTED_BYTES,
+
+            Memory.TOTAL_BYTES,
+            Memory.HEAP_USED_BYTES,
+            Memory.HEAP_COMMITTED_BYTES,
+            Memory.NON_HEAP_USED_BYTES,
+            Memory.NON_HEAP_COMMITTED_BYTES,
+
             OperatingSystemInfo.LRMI_CONNECTIONS
     });
 
@@ -136,7 +148,7 @@ public abstract class AbstractStatsVisitor implements StatsVisitor {
     }
 
     protected boolean exponentialMovingAverage(NamedMetric metric) {
-        return emas.contains(metric);
+        return movingAverages.contains(metric);
     }
 
     @Override

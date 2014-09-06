@@ -43,7 +43,7 @@ class JmxUtils{
 
     static final Map<String,MBeanServerConnection> connections = new HashMap<>();
 
-    MBeanServerConnection mbeanServer(VirtualMachineDetails details, String queryString) throws IOException, MalformedObjectNameException {
+    MBeanServerConnection mbeanServer(VirtualMachineDetails details) throws IOException, MalformedObjectNameException {
         String jmxUrl1 = details.getJmxUrl();
         if (!connections.containsKey(jmxUrl1)){
             JMXServiceURL jmxUrl = new JMXServiceURL(jmxUrl1);

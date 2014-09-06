@@ -18,11 +18,6 @@ public class AdminApiMetrics {
     Long changePerSecond;
     Long executePerSecond;
 
-    Long totalReads; // 4
-    Long totalWrites; // 5
-    Long totalTakes; // 6
-    Long totalExecutions; // 7
-    Long objectCountOnHost; // 8
     Long activeTransactionCount;
     Long processorQueueSize;
 
@@ -30,10 +25,7 @@ public class AdminApiMetrics {
     Long totalMemoryInBytes;
     Long nonHeapUsedMemoryInBytes; // 9
     Long heapUsedMemoryInBytes; // 10
-    Long heapNonCommittedInBytes; // 11
-    Long heapCommittedInBytes; // 12
     Long gcCollectionCount; // 13
-    Long gcTimeInSeconds; // 14
 
     // MIRROR STATS
     Double redoLogSize;
@@ -44,7 +36,5 @@ public class AdminApiMetrics {
 
     Double cpuPercent;
     Double totalThreads; // 15
-
-    Long upTime; // 16
 
 }

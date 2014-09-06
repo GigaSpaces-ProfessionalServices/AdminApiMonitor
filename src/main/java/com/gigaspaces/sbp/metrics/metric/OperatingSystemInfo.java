@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.management.*;
-import javax.management.monitor.StringMonitor;
 import javax.management.openmbean.CompositeDataSupport;
 import java.io.IOException;
 import java.util.List;
@@ -26,7 +25,7 @@ public enum OperatingSystemInfo implements NamedMetric {
                 VirtualMachineDetails details = gridServiceContainer.getVirtualMachine().getDetails();
                 try {
                     ObjectName objectName = new ObjectName(JmxUtils.OS_SEARCH_STRING);
-                    MBeanServerConnection server = JMX_UTILS.mbeanServer(details, JmxUtils.OS_SEARCH_STRING);
+                    MBeanServerConnection server = JMX_UTILS.mbeanServer(details);
                     AttributeList list = server.getAttributes(objectName, new String[]{openFdCount});
                     for (Attribute attr : list.asList()){
                         if (attr.getName().equals(openFdCount)){
@@ -57,7 +56,7 @@ public enum OperatingSystemInfo implements NamedMetric {
                 VirtualMachineDetails details = gridServiceContainer.getVirtualMachine().getDetails();
                 try {
                     ObjectName objectName = new ObjectName(osSearchString);
-                    MBeanServerConnection server = JMX_UTILS.mbeanServer(details, osSearchString);
+                    MBeanServerConnection server = JMX_UTILS.mbeanServer(details);
                     AttributeList list = server.getAttributes(objectName, new String[]{maxFdCount});
                     for( Attribute attr : list.asList() ){
                         if( attr.getName().equals(maxFdCount)){
@@ -86,7 +85,7 @@ public enum OperatingSystemInfo implements NamedMetric {
                 VirtualMachineDetails details = gridServiceContainer.getVirtualMachine().getDetails();
                 try {
                     ObjectName objectName = new ObjectName(threading);
-                    MBeanServerConnection server = JMX_UTILS.mbeanServer(details, JmxUtils.OS_SEARCH_STRING);
+                    MBeanServerConnection server = JMX_UTILS.mbeanServer(details);
                     Set<ObjectInstance> mBeans = server.queryMBeans(objectName, null);
                     long lrmiThreadCount = 0;
                     for( ObjectInstance mbean : mBeans ){
