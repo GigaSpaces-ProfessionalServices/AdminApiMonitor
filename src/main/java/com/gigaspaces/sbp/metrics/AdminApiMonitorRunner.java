@@ -31,7 +31,6 @@ public class AdminApiMonitorRunner {
     private String adminPassword;
     private String locators;
     private String groups;
-    private String spaceName;
 
     // Fields to hold data that we'll report on
     private ExponentialMovingAverage averageCounter;
@@ -65,7 +64,7 @@ public class AdminApiMonitorRunner {
             System.err.println("ERROR: User error. Please try again...");
             final PrintWriter writer = new PrintWriter(System.err);
             final HelpFormatter usageFormatter = new HelpFormatter();
-            usageFormatter.printUsage(writer, TERMINAL_WIDTH, "java -DjavaOpt=foo -jar " + AdminApiMonitor.class.getSimpleName() + ".jar", processArgs.getOptions());
+            usageFormatter.printUsage(writer, TERMINAL_WIDTH, "java -DjavaOpt=foo -jar " + AdminApiMonitorRunner.class.getSimpleName() + ".jar", processArgs.getOptions());
             writer.flush();
             System.exit(666);
         }
@@ -81,7 +80,7 @@ public class AdminApiMonitorRunner {
             applicationContextStarted = true;
         }  catch (BeanCreationException e){
             System.out.println("===================================================");
-            System.out.println("Unable to start " + AdminApiMonitor.class.getSimpleName() + ". Retrying in " + WAITING_FOR_GRID_PAUSE / 1000 + " seconds.");
+            System.out.println("Unable to start " + AdminApiMonitorRunner.class.getSimpleName() + ". Retrying in " + WAITING_FOR_GRID_PAUSE / 1000 + " seconds.");
             System.out.println("===================================================");
             Thread.sleep(WAITING_FOR_GRID_PAUSE);
         }
@@ -109,10 +108,6 @@ public class AdminApiMonitorRunner {
 
     public void setGroups(String groups) {
         this.groups = groups;
-    }
-
-    public void setSpaceName(String spaceName) {
-        this.spaceName = spaceName;
     }
 
     public void setAverageCounter(ExponentialMovingAverage averageCounter) {
