@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class PrintVisitor extends AbstractStatsVisitor {
 
@@ -17,8 +18,8 @@ public class PrintVisitor extends AbstractStatsVisitor {
 
     private Set<NamedMetric> savedOnceMetrics = new HashSet<>();
 
-    public PrintVisitor(Admin admin, List<String> spaceName, Map<String, FullMetric> pidMetricMap, ExponentialMovingAverage average, Long period){
-        super(admin, spaceName, pidMetricMap, average, period);
+    public PrintVisitor(Admin admin, List<String> spaceName, Map<String, FullMetric> pidMetricMap, ExponentialMovingAverage average, Map<String, AtomicInteger> alerts, Long period){
+        super(admin, spaceName, pidMetricMap, average, alerts, period);
     }
 
     @Override

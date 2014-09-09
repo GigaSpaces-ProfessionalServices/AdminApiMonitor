@@ -5,10 +5,8 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.ParseException;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;
-import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.gsc.GridServiceContainers;
 import org.openspaces.admin.machine.Machines;
-import org.openspaces.admin.space.Spaces;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -31,10 +29,6 @@ public class AdminApiMonitorRunner {
     private String adminPassword;
     private String locators;
     private String groups;
-
-    // Fields to hold data that we'll report on
-    private ExponentialMovingAverage averageCounter;
-    private Map<Long,AdminApiMetrics> pidMetricMap = new HashMap<>();
 
     public void init(){
         AdminFactory factory = new AdminFactory();
@@ -110,7 +104,4 @@ public class AdminApiMonitorRunner {
         this.groups = groups;
     }
 
-    public void setAverageCounter(ExponentialMovingAverage averageCounter) {
-        this.averageCounter = averageCounter;
-    }
 }

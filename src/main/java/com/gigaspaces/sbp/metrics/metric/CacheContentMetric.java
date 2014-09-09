@@ -2,10 +2,10 @@ package com.gigaspaces.sbp.metrics.metric;
 
 import com.gigaspaces.sbp.metrics.FullMetric;
 import com.gigaspaces.sbp.metrics.visitor.StatsVisitor;
+import org.openspaces.admin.space.Space;
 import org.openspaces.admin.space.SpaceInstance;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public enum CacheContentMetric implements NamedMetric{
 
@@ -30,7 +30,53 @@ public enum CacheContentMetric implements NamedMetric{
                 statsVisitor.saveStat(builder.create());
             }
         }
-    };
+    },
+    TOTAL_NOTIFY_TEMPLATES("total_notify_templates"){
+        @Override
+        public void accept(StatsVisitor statsVisitor) {
+            Long templateCount = 0l;
+            for (SpaceInstance spaceInstance : statsVisitor.spaceInstance()){
+                templateCount += spaceInstance.getStatistics().getNotifyTemplateCount();
+            }
+            FullMetric metric = new FullMetric.FullMetricBuilder().metric(this).metricValue(String.valueOf(templateCount)).create();
+            statsVisitor.saveStat(metric);
+        }
+    },
+    NOTIFY_TEMPLATES("notify_templates"){
+        @Override
+        public void accept(StatsVisitor statsVisitor) {
+            for (SpaceInstance spaceInstance : statsVisitor.spaceInstance()){
+                Long templateCount = spaceInstance.getStatistics().getNotifyTemplateCount();
+                FullMetric metric = new FullMetric.FullMetricBuilder().metric(this).metricValue(String.valueOf(templateCount)).
+                        spaceInstanceID(spaceInstance.getSpaceInstanceName()).create();
+                statsVisitor.saveStat(metric);
+            }
+        }
+    },
+    TOTAL_CLASSES("total_classes"){
+        @Override
+        public void accept(StatsVisitor statsVisitor) {
+            Set<String> classes = new HashSet<>();
+            for (Space space : statsVisitor.admin().getSpaces()){
+                String[] classNames = space.getRuntimeDetails().getClassNames();
+                classes.addAll(Arrays.asList(classNames));
+            }
+            FullMetric metric = new FullMetric.FullMetricBuilder().metric(this).metricValue(String.valueOf(classes.size())).create();
+            statsVisitor.saveStat(metric);
+        }
+    },
+    CLASSES("classes"){
+        @Override
+        public void accept(StatsVisitor statsVisitor) {
+            for (Space space : statsVisitor.admin().getSpaces()){
+                Integer classesCount = space.getRuntimeDetails().getClassNames().length;
+                FullMetric metric = new FullMetric.FullMetricBuilder().metric(this).metricValue(String.valueOf(classesCount))
+                        .qualifier(space.getName()).create();
+                statsVisitor.saveStat(metric);
+            }
+        }
+    }
+    ;
 
 
 

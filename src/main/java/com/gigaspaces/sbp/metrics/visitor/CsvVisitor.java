@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class CsvVisitor extends AbstractStatsVisitor{
 
@@ -17,8 +18,8 @@ public class CsvVisitor extends AbstractStatsVisitor{
 
     private boolean saveHeaders = false;
 
-    public CsvVisitor(Admin admin, List<String> spaceName, Map<String, FullMetric> pidMetricMap, ExponentialMovingAverage average, Long period){
-        super(admin, spaceName, pidMetricMap, average, period);
+    public CsvVisitor(Admin admin, List<String> spaceName, Map<String, FullMetric> pidMetricMap, ExponentialMovingAverage average, Map<String, AtomicInteger> alerts, Long period){
+        super(admin, spaceName, pidMetricMap, average, alerts, period);
     }
 
     @Override
