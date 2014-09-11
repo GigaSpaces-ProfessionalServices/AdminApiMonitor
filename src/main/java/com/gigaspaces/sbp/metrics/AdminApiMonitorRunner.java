@@ -52,6 +52,15 @@ public class AdminApiMonitorRunner {
         GridServiceContainers gscs = admin.getGridServiceContainers();
 
         gscs.waitFor(1, 500, TimeUnit.MILLISECONDS);
+
+        List<String> spaceNames = new ArrayList<>();
+        for (String name : Arrays.asList(spaceName.split(","))){
+            spaceNames.add(name.trim());
+        }
+        Spaces spaces = admin.getSpaces();
+        for (String spaceName : spaceNames){
+            spaces.waitFor(spaceName, 1000, TimeUnit.MILLISECONDS);
+        }
     }
 
     public static void main(String[] args) throws InterruptedException {
