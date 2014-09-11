@@ -59,7 +59,7 @@ public class AdminApiMonitorRunner {
         }
         Spaces spaces = admin.getSpaces();
         for (String spaceName : spaceNames){
-            spaces.waitFor(spaceName, 1000, TimeUnit.MILLISECONDS);
+            spaces.waitFor(spaceName, 15, TimeUnit.SECONDS);
         }
     }
 
