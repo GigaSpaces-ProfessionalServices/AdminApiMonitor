@@ -2,16 +2,10 @@ package com.gigaspaces.sbp.metrics.metric;
 
 import com.gigaspaces.sbp.metrics.FullMetric;
 import com.gigaspaces.sbp.metrics.visitor.StatsVisitor;
-import org.openspaces.admin.gsc.GridServiceContainer;
-import org.openspaces.admin.pu.ProcessingUnit;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.openspaces.pu.service.ServiceDetails;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
-
 
 public enum InstanceCount implements NamedMetric{
 
@@ -98,41 +92,17 @@ public enum InstanceCount implements NamedMetric{
     TOTAL_CONNECTED_MACHINES("total_connected_machines"){ //TODO
         @Override
         public void accept(StatsVisitor statsVisitor) {
-            Set<String> classes = new HashSet<>();
-            for (GridServiceContainer gsc : statsVisitor.gridServiceContainers()){
-//                String[] classNames =
-//                classes.addAll(Arrays.asList(classNames));
-                gsc.getGridServiceAgent();
-                ProcessingUnit processingUnit = gsc.getProcessingUnitInstances()[0].getProcessingUnit();
-            }
-            FullMetric metric = new FullMetric.FullMetricBuilder().metric(this).metricValue(String.valueOf(classes.size())).create();
-            statsVisitor.saveStat(metric);
+
         }
     },
     CONNECTED_MACHINES("connected_machines"){ //TODO
         @Override
         public void accept(StatsVisitor statsVisitor) {
-//            for (Space space : statsVisitor.admin().getSpaces()){
-//                Integer classesCount = space.getRuntimeDetails().getClassNames().length;
-//                FullMetric metric = new FullMetric.FullMetricBuilder().metric(this).metricValue(String.valueOf(classesCount))
-//                        .qualifier(space.getName()).create();
-//                statsVisitor.saveStat(metric);
-//            }
-//            Admin admin = statsVisitor.admin();
-//            SpaceInstance spaceInstance = statsVisitor.spaceInstance().get(0);
-//            spaceInstance.getRuntimeDetails().getLocalCacheDetails();
         }
     },
     WEB_PU("web_pu"){ //TODO
         @Override
         public void accept(StatsVisitor statsVisitor) {
-//            for (GridServiceContainer gsc : statsVisitor.gridServiceContainers()){
-//                for (ProcessingUnitInstance processingUnit : gsc.getProcessingUnitInstances()){
-//                    Map<String, ServiceDetails[]> serviceDetailsByServiceType = processingUnit.getServiceDetailsByServiceType();
-//                }
-//                gsc.getGridServiceAgent();
-//                ProcessingUnit processingUnit = gsc.getProcessingUnitInstances()[0].getProcessingUnit();
-//            }
         }
     },
     ;

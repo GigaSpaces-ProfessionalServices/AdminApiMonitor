@@ -53,6 +53,10 @@ public class CsvVisitor extends AbstractStatsVisitor{
         logger.info(values.toString().substring(0, values.length()-2));
     }
 
+    public Map<String, FullMetric> getMetrics(){
+        return metricMap;
+    }
+
     public void setSaveHeaders(boolean saveHeaders) {
         this.saveHeaders = saveHeaders;
     }
