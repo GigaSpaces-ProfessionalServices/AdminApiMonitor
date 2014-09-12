@@ -44,10 +44,9 @@
         <appender-ref ref="EMAIL" />
     </logger>
 
-
-    <root level="info">
+    <logger name="file">
         <appender-ref ref="FILE" />
         <appender-ref ref="STDOUT" />
-    </root>
+    </logger>
 
 </configuration>

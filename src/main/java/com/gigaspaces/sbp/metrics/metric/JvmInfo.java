@@ -127,7 +127,7 @@ public enum JvmInfo implements NamedMetric {
     }
     ;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JvmInfo.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger("file");
     private static final JmxUtils JMX_UTILS = new JmxUtils();
     private final String displayName;
 

@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class CsvVisitor extends AbstractStatsVisitor{
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private Logger logger = LoggerFactory.getLogger("file");
 
     private Set<NamedMetric> savedOnce = new HashSet<>();
 

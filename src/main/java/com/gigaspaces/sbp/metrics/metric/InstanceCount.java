@@ -100,11 +100,7 @@ public enum InstanceCount implements NamedMetric{
         public void accept(StatsVisitor statsVisitor) {
         }
     },
-    WEB_PU("web_pu"){ //TODO
-        @Override
-        public void accept(StatsVisitor statsVisitor) {
-        }
-    },
+
     ;
 
     private final String displayName;
