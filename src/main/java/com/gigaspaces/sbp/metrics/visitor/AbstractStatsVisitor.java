@@ -6,6 +6,7 @@ import com.gigaspaces.sbp.metrics.metric.*;
 import com.j_spaces.core.filters.ReplicationStatistics;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.gsc.GridServiceContainer;
+import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.openspaces.admin.space.Space;
 import org.openspaces.admin.space.SpaceInstance;
 import org.openspaces.admin.space.SpacePartition;
@@ -13,11 +14,14 @@ import org.openspaces.admin.vm.VirtualMachineDetails;
 import org.openspaces.admin.vm.VirtualMachineStatistics;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.lang.Double.parseDouble;
 import static java.util.Arrays.*;
 
 public abstract class AbstractStatsVisitor implements StatsVisitor {
+
+    protected Admin admin;
 
     protected List<GridServiceContainer> gridServiceContainers;
 
@@ -31,29 +35,21 @@ public abstract class AbstractStatsVisitor implements StatsVisitor {
 
     protected List<SpaceInstance> spaceInstances;
 
+    protected List<ProcessingUnitInstance> processingUnitInstances;
+
     protected Long period;
 
-    protected List<NamedMetric> movingAverages = asList(new NamedMetric[]{
+    private Map<String, AtomicInteger> alerts;
 
-            GigaSpacesActivity.READ_PER_SEC,
+    protected List<NamedMetric> emas = asList(new NamedMetric[]{GigaSpacesActivity.READ_PER_SEC,
             GigaSpacesActivity.WRITES_PER_SEC,
             GigaSpacesActivity.TAKES_PER_SECOND,
             GigaSpacesActivity.UPDATES_PER_SEC,
-            GigaSpacesActivity.EXECUTES_PER_SEC,
-            GigaSpacesActivity.TRANSACTION_COUNT,
-
-            GsMirrorInfo.REDO_LOG_SIZE,
-            GsMirrorInfo.REDO_LOG_SEND_BYTES_PER_SECOND,
-
-            JvmInfo.THREAD_COUNT,
-//            JvmInfo.JVM_CPU_LOAD,
-
-            Memory.TOTAL_BYTES,
-            Memory.HEAP_USED_BYTES,
-            Memory.HEAP_COMMITTED_BYTES,
-            Memory.NON_HEAP_USED_BYTES,
-            Memory.NON_HEAP_COMMITTED_BYTES,
-
+            GigaSpacesActivity.EXECUTES_PER_SEC, GigaSpacesActivity.TRANSACTION_COUNT,
+            GsMirrorInfo.REDO_LOG_SIZE, GsMirrorInfo.REDO_LOG_SEND_BYTES_PER_SECOND,
+            JvmInfo.THREAD_COUNT, 
+            //JvmInfo.JVM_CPU_LOAD,
+            Memory.TOTAL_BYTES, Memory.HEAP_USED_BYTES, Memory.HEAP_COMMITTED_BYTES, Memory.NON_HEAP_USED_BYTES, Memory.NON_HEAP_COMMITTED_BYTES,
             OperatingSystemInfo.LRMI_CONNECTIONS
     });
 
@@ -64,8 +60,11 @@ public abstract class AbstractStatsVisitor implements StatsVisitor {
 
     protected ExponentialMovingAverage average;
 
-    protected AbstractStatsVisitor(Admin admin, List<String> spaceNames, Map<String, FullMetric> metricMap, ExponentialMovingAverage average, Long period) {
+    protected AbstractStatsVisitor(Admin admin, List<String> spaceNames, Map<String, FullMetric> metricMap, ExponentialMovingAverage average,
+                                   Map<String, AtomicInteger> alerts, Long period) {
         this.metricMap = metricMap;
+        this.admin=admin;
+        this.alerts=alerts;
         this.average = average;
         this.period = period;
         //whole grid
@@ -76,6 +75,7 @@ public abstract class AbstractStatsVisitor implements StatsVisitor {
         replicationStatistics = new ArrayList<>();
         mirrorStatistics = new ArrayList<>();
         spaceInstances = new ArrayList<>();
+        processingUnitInstances = new ArrayList<>();
 
         // separate spaces
         for (String spaceName : spaceNames){
@@ -86,9 +86,12 @@ public abstract class AbstractStatsVisitor implements StatsVisitor {
                 for (GridServiceContainer gsc : gridServiceContainers) {
                     vmDetails.add(gsc.getVirtualMachine().getDetails());
                     vmStatistics.add(gsc.getVirtualMachine().getStatistics());
+                    processingUnitInstances.addAll(Arrays.asList(gsc.getProcessingUnitInstances()));
                 }
                 for (SpacePartition partition : targetSpace.getPartitions()) {
-                    replicationStatistics.add(partition.getPrimary().getStatistics().getReplicationStatistics());
+                    if (partition.getPrimary() != null && partition.getPrimary().getStatistics() != null){
+                        replicationStatistics.add(partition.getPrimary().getStatistics().getReplicationStatistics());
+                    }
                 }
                 for (SpaceInstance spaceInstance : spaceInstance()){
                     mirrorStatistics.add(spaceInstance.getStatistics().getMirrorStatistics());
@@ -144,12 +147,25 @@ public abstract class AbstractStatsVisitor implements StatsVisitor {
         metric.setMetricValue(String.format("%.3f", averagedValue));
     }
 
+    public Map<String, Integer> alerts(){
+        Map<String, Integer> result = new HashMap<>();
+        for (String key : alerts.keySet()){
+            result.put(key, alerts.get(key).intValue());
+        }
+        return result;
+    }
+
     private boolean calculateAverage(NamedMetric metricName) {
         return derivedMetricsMap.keySet().contains(metricName);
     }
 
     protected boolean exponentialMovingAverage(NamedMetric metric) {
-        return movingAverages.contains(metric);
+        return emas.contains(metric);
+    }
+
+    @Override
+    public Admin admin() {
+        return admin;
     }
 
     @Override
@@ -180,5 +196,10 @@ public abstract class AbstractStatsVisitor implements StatsVisitor {
     @Override
     public List<GridServiceContainer> gridServiceContainers() {
         return gridServiceContainers;
+    }
+
+    @Override
+    public List<ProcessingUnitInstance> processingUnitInstances() {
+        return processingUnitInstances;
     }
 }

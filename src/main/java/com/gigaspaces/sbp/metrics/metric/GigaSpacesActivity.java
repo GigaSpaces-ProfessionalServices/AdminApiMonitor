@@ -2,8 +2,10 @@ package com.gigaspaces.sbp.metrics.metric;
 
 import com.gigaspaces.sbp.metrics.FullMetric;
 import com.gigaspaces.sbp.metrics.visitor.StatsVisitor;
+import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.openspaces.admin.space.SpaceInstance;
 import org.openspaces.admin.space.SpaceInstanceStatistics;
+import org.openspaces.pu.container.jee.stats.WebRequestsServiceMonitors;
 
 public enum GigaSpacesActivity implements NamedMetric {
 
@@ -225,7 +227,37 @@ public enum GigaSpacesActivity implements NamedMetric {
             FullMetric fullMetric = new FullMetric.FullMetricBuilder().metric(this).metricValue(String.valueOf(connectionCount)).create();
             visitor.saveStat(fullMetric);
         }
-    }
+    },
+    WEB_LATENCY("latency"){
+        @Override
+        public void accept(StatsVisitor statsVisitor){
+            for (ProcessingUnitInstance processingUnitInstance : statsVisitor.processingUnitInstances()){
+                WebRequestsServiceMonitors webRequests = processingUnitInstance.getStatistics().getWebRequests();
+                if (webRequests != null){
+                    float averageRequestsLatency = webRequests.getAverageRequestsLatency();
+                    FullMetric fullMetric = new FullMetric.FullMetricBuilder().metric(this).metricValue(String.valueOf(averageRequestsLatency)).
+                            qualifier(processingUnitInstance.getName()).create();
+                    statsVisitor.saveStat(fullMetric);
+                }
+            }
+
+        }
+    },
+    WEB_THROUGHPUT("throughtput"){
+        @Override
+        public void accept(StatsVisitor statsVisitor){
+            for (ProcessingUnitInstance processingUnitInstance : statsVisitor.processingUnitInstances()){
+                WebRequestsServiceMonitors webRequests = processingUnitInstance.getStatistics().getWebRequests();
+                if (webRequests != null){
+                    float throughput = webRequests.getRequestsThroughput();
+                    FullMetric fullMetric = new FullMetric.FullMetricBuilder().metric(this).metricValue(String.valueOf(throughput)).
+                            qualifier(processingUnitInstance.getName()).create();
+                    statsVisitor.saveStat(fullMetric);
+                }
+            }
+
+        }
+    },
     ;
 
     private final String displayName;

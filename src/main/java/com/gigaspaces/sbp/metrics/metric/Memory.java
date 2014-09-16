@@ -108,18 +108,18 @@ public enum Memory implements NamedMetric {
                 statsVisitor.saveStat(fullMetric);
             }
         }
-    }, USED_BYTES("heap_available_pct") {
+    }, COMMITTED_BYTES_PCT("heap_committed_pct") {
         @Override
         public void accept(StatsVisitor statsVisitor) {
             if( statsVisitor == null ) return;
             List<GridServiceContainer> gridServiceContainers = statsVisitor.gridServiceContainers();
             for (GridServiceContainer gridServiceContainer : gridServiceContainers){
                 VirtualMachineStatistics stats = gridServiceContainer.getVirtualMachine().getStatistics();
-                Long heapUsed = stats.getMemoryHeapUsedInBytes();
+                Long heapCommitted = stats.getMemoryHeapCommittedInBytes();
                 VirtualMachineDetails details = gridServiceContainer.getVirtualMachine().getDetails();
                 Long heapMax = details.getMemoryHeapMaxInBytes();
-                if( heapUsed == null || heapMax == null) return;
-                Double freeMemory = (heapMax - heapUsed) / Double.valueOf(heapMax) * 100;
+                if( heapCommitted == null || heapMax == null) return;
+                Double freeMemory = (heapCommitted / Double.valueOf(heapMax)) * 100;
                 FullMetric fullMetric = new FullMetric.FullMetricBuilder().
                         metric(this).
                         metricValue(String.format("%.3f", (freeMemory))).

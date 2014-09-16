@@ -4,12 +4,15 @@ import com.gigaspaces.cluster.replication.async.mirror.MirrorStatistics;
 import com.gigaspaces.sbp.metrics.FullMetric;
 import com.gigaspaces.sbp.metrics.metric.NamedMetric;
 import com.j_spaces.core.filters.ReplicationStatistics;
+import org.openspaces.admin.Admin;
 import org.openspaces.admin.gsc.GridServiceContainer;
+import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.openspaces.admin.space.SpaceInstance;
 import org.openspaces.admin.vm.VirtualMachineDetails;
 import org.openspaces.admin.vm.VirtualMachineStatistics;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
@@ -33,6 +36,12 @@ public interface StatsVisitor {
     List<MirrorStatistics> mirrorStatistics();
 
     List<SpaceInstance> spaceInstance();
+
+    List<ProcessingUnitInstance> processingUnitInstances();
+
+    Map<String, Integer> alerts();
+
+    Admin admin();
 
     // For possible, future use...
     //    SpaceStatistics spaceStatistics();

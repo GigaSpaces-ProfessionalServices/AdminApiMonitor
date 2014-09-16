@@ -9,16 +9,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class PrintVisitor extends AbstractStatsVisitor {
 
     public static final String VALUE_SEPARATOR = " :: ";
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private Logger logger = LoggerFactory.getLogger("file");
 
     private Set<NamedMetric> savedOnceMetrics = new HashSet<>();
 
-    public PrintVisitor(Admin admin, List<String> spaceName, Map<String, FullMetric> pidMetricMap, ExponentialMovingAverage average, Long period){
-        super(admin, spaceName, pidMetricMap, average, period);
+    public PrintVisitor(Admin admin, List<String> spaceName, Map<String, FullMetric> pidMetricMap, ExponentialMovingAverage average, Map<String, AtomicInteger> alerts, Long period){
+        super(admin, spaceName, pidMetricMap, average, alerts, period);
     }
 
     @Override

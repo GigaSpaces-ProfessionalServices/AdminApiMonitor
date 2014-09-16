@@ -8,37 +8,16 @@ import org.springframework.beans.factory.annotation.Required;
 
 import java.util.*;
 
-public class CollectPeriodicMetricsVisitorTask {
-
-    private AdminApiMonitorRunner adminMonitor;
-
-    private String spaceName;
-
-    private boolean headersSaved = false;
-
-    private boolean csv;
-
-    private Map<String, FullMetric> pidMetricMap = new LinkedHashMap<>();
-
-    private ExponentialMovingAverage exponentialMovingAverage;
-
-    private Long period;
+public class CollectPeriodicMetricsVisitorTask extends AbstractPeriodicVisitorTask {
 
     public void collectMetrics(){
-        List<NamedMetric> metrics = new ArrayList<>();
-        metrics.addAll(Arrays.asList(GigaSpacesActivity.values()));
-        metrics.addAll(Arrays.asList(GigaSpacesClusterInfo.values()));
-        metrics.addAll(Arrays.asList(GsMirrorInfo.values()));
-        metrics.addAll(Arrays.asList(JvmInfo.values()));
-        metrics.addAll(Arrays.asList(Memory.values()));
-        metrics.addAll(Arrays.asList(OperatingSystemInfo.values()));
-        metrics.addAll(Arrays.asList(CacheContentMetric.values()));
+
         List<String> spaceNames = new ArrayList<>();
         for (String name : Arrays.asList(spaceName.split(","))){
             spaceNames.add(name.trim());
         }
         if (csv){
-            CsvVisitor visitor = new CsvVisitor(adminMonitor.getAdmin(), spaceNames, pidMetricMap, exponentialMovingAverage, period);
+            CsvVisitor visitor = new CsvVisitor(adminMonitor.getAdmin(), spaceNames, pidMetricMap, exponentialMovingAverage, alerts, period);
             if (!headersSaved){
                 visitor.setSaveHeaders(true);
                 headersSaved = true;
@@ -48,7 +27,7 @@ public class CollectPeriodicMetricsVisitorTask {
             }
             visitor.printCsvMetrics();
         }   else {
-            StatsVisitor visitor = new PrintVisitor(adminMonitor.getAdmin(), spaceNames, pidMetricMap, exponentialMovingAverage, period);
+            StatsVisitor visitor = new PrintVisitor(adminMonitor.getAdmin(), spaceNames, pidMetricMap, exponentialMovingAverage, alerts, period);
             for (NamedMetric metric : metrics){
                 metric.accept(visitor);
             }
@@ -79,5 +58,4 @@ public class CollectPeriodicMetricsVisitorTask {
     public void setPeriod(Long period) {
         this.period = period;
     }
-
 }

@@ -120,7 +120,7 @@ public enum OperatingSystemInfo implements NamedMetric {
     ;
 
     private static final JmxUtils JMX_UTILS = new JmxUtils();
-    private static final Logger LOGGER = LoggerFactory.getLogger(OperatingSystemInfo.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger("file");
     private final String displayName;
 
     OperatingSystemInfo(String displayName){
