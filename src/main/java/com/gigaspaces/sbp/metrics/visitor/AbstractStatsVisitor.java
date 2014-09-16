@@ -88,7 +88,9 @@ public abstract class AbstractStatsVisitor implements StatsVisitor {
                     processingUnitInstances.addAll(Arrays.asList(gsc.getProcessingUnitInstances()));
                 }
                 for (SpacePartition partition : targetSpace.getPartitions()) {
-                    replicationStatistics.add(partition.getPrimary().getStatistics().getReplicationStatistics());
+                    if (partition.getPrimary() != null && partition.getPrimary().getStatistics() != null){
+                        replicationStatistics.add(partition.getPrimary().getStatistics().getReplicationStatistics());
+                    }
                 }
                 for (SpaceInstance spaceInstance : spaceInstance()){
                     mirrorStatistics.add(spaceInstance.getStatistics().getMirrorStatistics());
