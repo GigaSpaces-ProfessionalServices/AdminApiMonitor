@@ -68,12 +68,12 @@ public class FullMetric {
     public String getMetricFullName(){
         StringBuilder result = new StringBuilder();
         result.append(metric.displayName()).append("_");
-        if (spaceInstanceID != null){
-            result.append(spaceInstanceID);
+        if (qualifier != null){
+            result.append(qualifier);
         }   else if (getGscPid() != null && gscPid != 0l){
             result.append(gscPid);
-        }   else if (qualifier != null){
-            result.append(qualifier);
+        }   else if (spaceInstanceID != null){
+            result.append(spaceInstanceID);
         }
         return result.toString();
     }

@@ -31,6 +31,19 @@ public enum CacheContentMetric implements NamedMetric{
             }
         }
     },
+    NUMBER_OF_OBJECTS_IN_CACHE_BY_SPACE_INSTANCE("cacheNum"){
+        @Override
+        public void accept(StatsVisitor statsVisitor) {
+            for (SpaceInstance spaceInstance : statsVisitor.spaceInstance()){
+                Map<String, Integer> countPerClassName = spaceInstance.getRuntimeDetails().getCountPerClassName();
+                for (String className : countPerClassName.keySet()){
+                    FullMetric metric = new FullMetric.FullMetricBuilder().metric(this).metricValue(String.valueOf(countPerClassName.get(className)))
+                            .qualifier(className).spaceInstanceID(spaceInstance.getSpaceInstanceName()).create();
+                    statsVisitor.saveStat(metric);
+                }
+            }
+        }
+    },
     TOTAL_NOTIFY_TEMPLATES("total_notify_templates"){
         @Override
         public void accept(StatsVisitor statsVisitor) {
