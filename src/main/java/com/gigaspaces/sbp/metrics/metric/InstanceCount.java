@@ -3,18 +3,40 @@ package com.gigaspaces.sbp.metrics.metric;
 import com.gigaspaces.sbp.metrics.FullMetric;
 import com.gigaspaces.sbp.metrics.visitor.StatsVisitor;
 import org.openspaces.admin.pu.ProcessingUnitInstance;
+import org.openspaces.admin.pu.ProcessingUnitType;
 import org.openspaces.pu.service.ServiceDetails;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public enum InstanceCount implements NamedMetric{
 
-    PU("pu_count"){
+    PU("pu_total_count"){
         @Override
         public void accept(StatsVisitor statsVisitor) {
-            int puCount = statsVisitor.admin().getProcessingUnits().getSize();
+            int puCount = statsVisitor.processingUnitInstances().size();
             FullMetric metric = new FullMetric.FullMetricBuilder().metric(this).metricValue(String.valueOf(puCount)).create();
             statsVisitor.saveStat(metric);
+        }
+    },
+    PU_COUNT_BY_TYPE("pu_count"){
+        @Override
+        public void accept(StatsVisitor statsVisitor) {
+            Map<ProcessingUnitType, Integer> processingUnitCountByType = new HashMap<>();
+            for (ProcessingUnitInstance processingUnitInstance : statsVisitor.processingUnitInstances()){
+                ProcessingUnitType type = processingUnitInstance.getProcessingUnit().getType();
+                Integer count = processingUnitCountByType.get(type);
+                if (count != null){
+                    processingUnitCountByType.put(type, count + 1);
+                }   else {
+                    processingUnitCountByType.put(type, 1);
+                }
+            }
+            for (ProcessingUnitType type : processingUnitCountByType.keySet()){
+                Integer count = processingUnitCountByType.get(type);
+                FullMetric metric = new FullMetric.FullMetricBuilder().metric(this).metricValue(String.valueOf(count)).qualifier(type.toString()).create();
+                statsVisitor.saveStat(metric);
+            }
         }
     },
     GSMS("gsm_count"){
