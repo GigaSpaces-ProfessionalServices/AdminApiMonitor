@@ -40,13 +40,13 @@ public class CsvVisitor extends AbstractStatsVisitor{
 
     public void printCsvMetrics(){
         if (saveHeaders){
-            StringBuilder headers = new StringBuilder();
+            StringBuilder headers = new StringBuilder("timestamp, ");
             for (String metric : metricMap.keySet()){
                 headers.append(metric).append(", ");
             }
             logger.info(headers.toString().substring(0, headers.length()-2));
         }
-        StringBuilder values = new StringBuilder();
+        StringBuilder values = new StringBuilder(new Date().toString()).append(", ");
         for (FullMetric metric : metricMap.values()){
             values.append(metric.getMetricValue()).append(", ");
         }
