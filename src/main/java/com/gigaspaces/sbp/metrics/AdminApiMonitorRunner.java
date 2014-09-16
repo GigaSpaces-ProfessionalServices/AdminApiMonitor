@@ -30,6 +30,7 @@ public class AdminApiMonitorRunner {
     private String adminPassword;
     private String locators;
     private String groups;
+    private String spaceName;
 
     public void init(){
         AdminFactory factory = new AdminFactory();
@@ -114,4 +115,7 @@ public class AdminApiMonitorRunner {
         this.groups = groups;
     }
 
+    public void setSpaceName(String spaceName) {
+        this.spaceName = spaceName;
+    }
 }
