@@ -128,7 +128,7 @@
     <distributionManagement>
         <repository>
             <id>nexus-site</id>
-            <url>dav:http://repository-jasonnerothin.forge.cloudbees.com/release/</url>
+            <url>scp://repository-jasonnerothin.forge.cloudbees.com/release/</url>
         </repository>
     </distributionManagement>
 
