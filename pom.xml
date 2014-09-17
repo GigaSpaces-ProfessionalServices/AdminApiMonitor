@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.gigaspaces.sbp</groupId>
     <artifactId>AdminApiMonitor</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0-m07</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -134,7 +134,7 @@
 
     <scm>
         <connection>scm:git:https://github.com/GigaSpaces-ProfessionalServices/AdminApiMonitor</connection>
-      <tag>HEAD</tag>
+      <tag>AdminApiMonitor-1.0-m07</tag>
   </scm>
 
     <repositories>
