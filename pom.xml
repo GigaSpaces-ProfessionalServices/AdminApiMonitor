@@ -125,6 +125,13 @@
 
     </build>
 
+    <distributionManagement>
+        <repository>
+            <id>nexus-site</id>
+            <url> http://repository-jasonnerothin.forge.cloudbees.com/release/</url>
+        </repository>
+    </distributionManagement>
+
     <scm>
         <connection>scm:git:https://github.com/GigaSpaces-ProfessionalServices/AdminApiMonitor</connection>
       <tag>HEAD</tag>
