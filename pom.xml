@@ -136,7 +136,7 @@
     <distributionManagement>
         <repository>
             <id>nexus-site</id>
-            <url>dav:http://repository-jasonnerothin.forge.cloudbees.com/release/</url>
+            <url>dav:https://repository-jasonnerothin.forge.cloudbees.com/release/</url>
         </repository>
     </distributionManagement>
 
