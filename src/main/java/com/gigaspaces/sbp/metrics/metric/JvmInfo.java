@@ -3,6 +3,8 @@ package com.gigaspaces.sbp.metrics.metric;
 import com.gigaspaces.sbp.metrics.FullMetric;
 import com.gigaspaces.sbp.metrics.visitor.StatsVisitor;
 import org.openspaces.admin.gsc.GridServiceContainer;
+import org.openspaces.admin.os.OperatingSystem;
+import org.openspaces.admin.vm.VirtualMachine;
 import org.openspaces.admin.vm.VirtualMachineDetails;
 import org.openspaces.admin.vm.VirtualMachineStatistics;
 import org.slf4j.Logger;
@@ -108,26 +110,22 @@ public enum JvmInfo implements NamedMetric {
             if( statsVisitor == null ) return;
             List<GridServiceContainer> gridServiceContainers = statsVisitor.gridServiceContainers();
             for (GridServiceContainer gridServiceContainer : gridServiceContainers){
-                VirtualMachineDetails details = gridServiceContainer.getVirtualMachine().getDetails();
-                final String cpuLoad = "ProcessCpuLoad";
-                try {
-                    ObjectName objectName = new ObjectName(JmxUtils.OS_SEARCH_STRING);
-                    MBeanServerConnection server = JMX_UTILS.mbeanServer(details);
-                    AttributeList list = server.getAttributes(objectName, new String[]{cpuLoad});
-                    for( Attribute attr : list.asList() ){
-                        if( attr.getName().equals(cpuLoad)){
-                            FullMetric fullMetric = new FullMetric.FullMetricBuilder().
+                VirtualMachine virtualMachine = gridServiceContainer.getVirtualMachine();
+                VirtualMachineStatistics statistics = virtualMachine.getStatistics();
+                OperatingSystem operatingSystem = virtualMachine.getMachine().getOperatingSystem();
+                int cpuNum = operatingSystem.getDetails().getAvailableProcessors();
+                double cpuPerc = statistics.getCpuPerc();
+                if( cpuPerc >= 0 ){
+                    //divide to number of CPUs
+                    cpuPerc = (cpuPerc/cpuNum) * 100;
+                }
+                FullMetric fullMetric = new FullMetric.FullMetricBuilder().
                                     metric(this).
-                                    metricValue(String.valueOf(attr.getValue().toString())).
+                                    metricValue(String.format("%.3f", cpuPerc)).
                                     hostName(gridServiceContainer.getMachine().getHostName()).
                                     gscPid(gridServiceContainer.getVirtualMachine().getDetails().getPid()).
                                     create();
                             statsVisitor.saveStat(fullMetric);
-                        }
-                    }
-                } catch (IOException | MalformedObjectNameException | ReflectionException | InstanceNotFoundException e) {
-                    LOGGER.error("Error determining " + this.displayName(), e);
-                }
             }
         }
     }
