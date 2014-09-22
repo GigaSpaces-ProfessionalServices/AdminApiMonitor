@@ -11,6 +11,6 @@ import java.text.SimpleDateFormat;
  */
 public interface Constants {
 
-    SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-M-yyyy HH:mm:ss");
+    String DATE_FORMAT = "dd-M-yyyy HH:mm:ss";
 
 }

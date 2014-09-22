@@ -35,7 +35,7 @@ public class PrintVisitor extends AbstractStatsVisitor {
         String gscPid = (fullMetric.getGscPid() != null && fullMetric.getGscPid() != 0l) ? fullMetric.getGscPid().toString() : " - ";
         String hostName = (fullMetric.getHostName() != null) ? fullMetric.getHostName() : " - ";
         String spaceMode = (fullMetric.getSpaceMode() != null) ? fullMetric.getSpaceMode() : " - ";
-        return "\n" + Constants.DATE_FORMAT.format(new Date()) + VALUE_SEPARATOR +  hostName + VALUE_SEPARATOR + spaceInstanceID + VALUE_SEPARATOR + gscPid +
+        return "\n" + dateFormat.format(new Date()) + VALUE_SEPARATOR +  hostName + VALUE_SEPARATOR + spaceInstanceID + VALUE_SEPARATOR + gscPid +
                 VALUE_SEPARATOR + fullMetric.getMetricFullName() + VALUE_SEPARATOR + fullMetric.getMetricValue() + VALUE_SEPARATOR + spaceMode;
     }
 

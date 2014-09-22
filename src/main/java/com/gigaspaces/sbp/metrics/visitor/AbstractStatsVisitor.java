@@ -13,6 +13,7 @@ import org.openspaces.admin.space.SpacePartition;
 import org.openspaces.admin.vm.VirtualMachineDetails;
 import org.openspaces.admin.vm.VirtualMachineStatistics;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -59,6 +60,8 @@ public abstract class AbstractStatsVisitor implements StatsVisitor {
     protected Map<String, FullMetric> metricMap;
 
     protected ExponentialMovingAverage average;
+
+    protected SimpleDateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT);
 
     protected AbstractStatsVisitor(Admin admin, List<String> spaceNames, Map<String, FullMetric> metricMap, ExponentialMovingAverage average,
                                    Map<String, AtomicInteger> alerts, Long period) {
