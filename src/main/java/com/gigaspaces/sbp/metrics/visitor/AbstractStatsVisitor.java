@@ -85,7 +85,7 @@ public abstract class AbstractStatsVisitor implements StatsVisitor {
             Space targetSpace = admin.getSpaces().getSpaceByName(spaceName);
             if(targetSpace == null) System.err.println("Error connecting to space with spaceName: " + spaceName );
             else {
-                spaceInstance().addAll(asList(targetSpace.getInstances()));
+                spaceInstances.addAll(asList(targetSpace.getInstances()));
                 for (GridServiceContainer gsc : gridServiceContainers) {
                     vmDetails.add(gsc.getVirtualMachine().getDetails());
                     vmStatistics.add(gsc.getVirtualMachine().getStatistics());

@@ -110,19 +110,6 @@ public enum InstanceCount implements NamedMetric{
         }
     }
     ,
-    //TODO move to another enums
-    TOTAL_CONNECTED_MACHINES("total_connected_machines"){ //TODO
-        @Override
-        public void accept(StatsVisitor statsVisitor) {
-
-        }
-    },
-    CONNECTED_MACHINES("connected_machines"){ //TODO
-        @Override
-        public void accept(StatsVisitor statsVisitor) {
-        }
-    },
-
     ;
 
     private final String displayName;

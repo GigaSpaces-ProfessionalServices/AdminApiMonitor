@@ -1,5 +1,9 @@
 package com.gigaspaces.sbp.metrics;
 
+import com.gigaspaces.lrmi.LRMIMonitoringDetails;
+import com.gigaspaces.lrmi.LRMIServiceClientMonitoringDetails;
+import com.gigaspaces.lrmi.LRMIServiceClientMonitoringId;
+import com.gigaspaces.lrmi.LRMIServiceMonitoringDetails;
 import com.gigaspaces.sbp.metrics.alert.EmailAlertTriggeredEventListener;
 import com.gigaspaces.sbp.metrics.cli.ProcessArgs;
 import org.apache.commons.cli.HelpFormatter;
@@ -10,7 +14,11 @@ import org.openspaces.admin.alert.AlertManager;
 import org.openspaces.admin.alert.config.parser.XmlAlertConfigurationParser;
 import org.openspaces.admin.gsc.GridServiceContainers;
 import org.openspaces.admin.machine.Machines;
+import org.openspaces.admin.space.Space;
+import org.openspaces.admin.space.SpaceInstance;
 import org.openspaces.admin.space.Spaces;
+import org.openspaces.admin.transport.Transport;
+import org.openspaces.admin.transport.TransportLRMIMonitoring;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -63,6 +71,13 @@ public class AdminApiMonitorRunner {
         Spaces spaces = admin.getSpaces();
         for (String spaceName : spaceNames){
             spaces.waitFor(spaceName, 15, TimeUnit.SECONDS);
+        }
+        for (Space space : admin.getSpaces()){
+            for (SpaceInstance spaceInstance : space.getInstances()) {
+                Transport transport = spaceInstance.getTransport();
+                TransportLRMIMonitoring lrmiMonitoring = transport.getLRMIMonitoring();
+                lrmiMonitoring.enableMonitoring();
+            }
         }
     }
 
