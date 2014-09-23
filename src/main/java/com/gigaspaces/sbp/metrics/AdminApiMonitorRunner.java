@@ -1,10 +1,13 @@
 package com.gigaspaces.sbp.metrics;
 
+import com.gigaspaces.sbp.metrics.alert.EmailAlertTriggeredEventListener;
 import com.gigaspaces.sbp.metrics.cli.ProcessArgs;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.ParseException;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;
+import org.openspaces.admin.alert.AlertManager;
+import org.openspaces.admin.alert.config.parser.XmlAlertConfigurationParser;
 import org.openspaces.admin.gsc.GridServiceContainers;
 import org.openspaces.admin.machine.Machines;
 import org.openspaces.admin.space.Spaces;
@@ -31,6 +34,7 @@ public class AdminApiMonitorRunner {
     private String locators;
     private String groups;
     private String spaceName;
+    private String alertsConfiguration;
 
     public void init(){
         AdminFactory factory = new AdminFactory();
@@ -41,6 +45,10 @@ public class AdminApiMonitorRunner {
         factory.addGroups(groups);
         factory.discoverUnmanagedSpaces();
         admin = factory.createAdmin();
+
+        AlertManager alertManager = admin.getAlertManager();
+        alertManager.configure(new XmlAlertConfigurationParser(alertsConfiguration).parse());
+        alertManager.getAlertTriggered().add(new EmailAlertTriggeredEventListener());
 
         Machines machines = admin.getMachines();
         machines.waitFor(1);
@@ -117,5 +125,9 @@ public class AdminApiMonitorRunner {
 
     public void setSpaceName(String spaceName) {
         this.spaceName = spaceName;
+    }
+
+    public void setAlertsConfiguration(String alertsConfiguration) {
+        this.alertsConfiguration = alertsConfiguration;
     }
 }
