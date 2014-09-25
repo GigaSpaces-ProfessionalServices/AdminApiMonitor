@@ -1,7 +1,5 @@
 <configuration>
 
-    <property file="admin_api.properties" />
-
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${java.io.tmpdir}</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
@@ -14,7 +12,7 @@
             <maxFileSize>5GB</maxFileSize>
         </triggeringPolicy>
         <encoder>
-            <pattern>%date{YYYY-MM-dd HH:mm:ss} %level [%thread] %logger{10} [%file:%line] %msg%n</pattern>
+            <pattern>YYYY-MM-dd HH:mm:ss,%msg%n</pattern>
         </encoder>
     </appender>
 
@@ -23,6 +21,31 @@
             <pattern>%msg%n</pattern>
         </encoder>
     </appender>
+
+    <appender name="EMAIL" class="ch.qos.logback.classic.net.SMTPAppender">
+        <smtpHost>smtp.gmail.com</smtpHost>
+        <smtpPort>587</smtpPort>
+        <STARTTLS>true</STARTTLS>
+
+        <username>alerts.belk.test@gmail.com</username>
+        <password>alerts123</password>
+
+        <to>alerts.belk.test@gmail.com</to>
+        <from>alerts.belk.test@gmail.com</from>
+        <subject>%date - Metrics</subject>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%message%n</pattern>
+        </layout>
+    </appender>
+
+    <logger name="email_reports">
+        <appender-ref ref="EMAIL" />
+    </logger>
+
+    <logger name="file">
+        <appender-ref ref="FILE" />
+        <appender-ref ref="STDOUT" />
+    </logger>
 
     <root level="info">
         <appender-ref ref="FILE" />

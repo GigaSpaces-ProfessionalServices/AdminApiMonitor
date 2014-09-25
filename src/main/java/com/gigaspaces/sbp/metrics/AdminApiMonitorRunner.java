@@ -43,6 +43,7 @@ public class AdminApiMonitorRunner {
     private String groups;
     private String spaceName;
     private String alertsConfiguration;
+    private Boolean alertsEmailReporting;
 
     public void init(){
         AdminFactory factory = new AdminFactory();
@@ -56,12 +57,13 @@ public class AdminApiMonitorRunner {
 
         AlertManager alertManager = admin.getAlertManager();
         alertManager.configure(new XmlAlertConfigurationParser(alertsConfiguration).parse());
-        alertManager.getAlertTriggered().add(new EmailAlertTriggeredEventListener());
+        if (alertsEmailReporting){
+            alertManager.getAlertTriggered().add(new EmailAlertTriggeredEventListener());
+        }
 
         Machines machines = admin.getMachines();
         machines.waitFor(1);
         GridServiceContainers gscs = admin.getGridServiceContainers();
-
         gscs.waitFor(1, 500, TimeUnit.MILLISECONDS);
 
         List<String> spaceNames = new ArrayList<>();
@@ -144,5 +146,9 @@ public class AdminApiMonitorRunner {
 
     public void setAlertsConfiguration(String alertsConfiguration) {
         this.alertsConfiguration = alertsConfiguration;
+    }
+
+    public void setAlertsEmailReporting(Boolean alertsEmailReporting) {
+        this.alertsEmailReporting = alertsEmailReporting;
     }
 }
