@@ -21,7 +21,7 @@
         <property name="groups" value="${spaceMonitor.lookupGroups}" />
         <property name="spaceName" value="${spaceMonitor.spaceName}" />
         <property name="alertsConfiguration" value="${alerts.config}" />
-        <property name="alertsEmailReporting" value="${alerts.email.reporting}" />
+        <property name="alertsEmailReporting" value="${alerts.email.reporting}" /> 
     </bean>
 
     <bean id="averageCounter" class="com.gigaspaces.sbp.metrics.ExponentialMovingAverage">
