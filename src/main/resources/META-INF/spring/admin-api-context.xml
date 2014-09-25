@@ -28,7 +28,7 @@
         <property name="alpha" value="${stat.sample.alpha}" />
     </bean>
 
-    <bean id="collectPeriodicMetricsTask" class="com.gigaspaces.sbp.metrics.CollectPeriodicMetricsVisitorTask" init-method="init" >
+    <bean id="collectPeriodicMetricsTask" class="com.gigaspaces.sbp.metrics.CollectPeriodicMetricsVisitorTask" init-method="init">
         <property name="adminMonitor" ref="spaceMonitor" />
         <property name="spaceName" value="${spaceMonitor.spaceName}" />
         <property name="csv" value="${csv_format}" />
