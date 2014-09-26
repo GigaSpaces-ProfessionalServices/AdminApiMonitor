@@ -76,7 +76,8 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
                     <excludes>
-                        <exclude>**/*.properties</exclude>
+                        <exclude>**/properties/</exclude>
+                        <exclude>**/logback/</exclude>
                     </excludes>
                     <archive>
                         <manifest>
@@ -132,6 +133,13 @@
                                 <copy todir="target/logback">
                                     <fileset dir="src/main/resources/logback"/>
                                 </copy>
+                                <copy todir="target/properties">
+                                    <fileset dir="src/main/resources/properties"/>
+                                </copy>
+                                    <zip destfile="target/AdminApiMonitor-ConfigurationFiles.zip" >
+                                    <fileset dir="src/main/resources/logback" />
+                                    <fileset dir="src/main/resources/properties" />
+                                </zip>
                             </target>
                         </configuration>
                         <goals>

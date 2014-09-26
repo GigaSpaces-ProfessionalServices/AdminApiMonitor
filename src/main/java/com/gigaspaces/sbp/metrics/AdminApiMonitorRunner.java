@@ -88,6 +88,7 @@ public class AdminApiMonitorRunner {
         ProcessArgs processArgs = new ProcessArgs();
 
         try {
+            checkConfigurationProvided();
             settings = processArgs.invoke(args);
             System.setProperty("csv_format", String.valueOf(settings.contains(Settings.Csv)));
         } catch (ParseException e) {
@@ -102,6 +103,21 @@ public class AdminApiMonitorRunner {
         while (!applicationContextStarted)
             attemptStart();
 
+    }
+
+    private static void checkMandatoryPropertyExistst(String propertyName){
+        if (System.getProperty(propertyName) == null){
+            System.out.println("===================================================");
+            System.out.println("Failed to start AdminApiMonitor");
+            System.out.println(propertyName + " property has to be provided. Please take a look at readme.md");
+            System.out.println("===================================================");
+            System.exit(1);
+        }
+    }
+
+    private static void checkConfigurationProvided() {
+        checkMandatoryPropertyExistst("properties");
+        checkMandatoryPropertyExistst("logback.configurationFile");
     }
 
     private static void attemptStart() throws InterruptedException {

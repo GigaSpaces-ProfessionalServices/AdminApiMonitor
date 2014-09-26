@@ -33,7 +33,6 @@ public class ProcessArgs {
         if( commandLine.hasOption(Settings.Secured.getOptionCharacter())){
             settings = addTo(settings, Settings.Secured);
         }
-
         return settings;
     }
 
