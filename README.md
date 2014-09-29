@@ -45,22 +45,24 @@ To change logging behavior (non-csv output), configure a logback configuration f
 Application and logging configuration examples are provided in **target/AdminApiMonitor-ConfigurationFiles.zip**.
 
 Few different logging configurations are provided in target/logback directory. Formats:
+
 1. default-logback.xml sends emails produces lines like
 `25-9-2014 13:38:38 ::  -  :: inventorySpace.2 [1] ::  -  :: cacheNum_com.belk.inventory.domain.InventoryItem :: 50048 ::  - `
-2. csv-logback is soppesed to be used with -c command line argument, it sends emails and produces:
+1. csv-logback is soppesed to be used with -c command line argument, it sends emails and produces:
  `timestamp, reads_per_sec_inventorySpace.2 [1], reads_inventorySpace.2 [1], reads_per_sec_inventorySpace.1 [2], reads_inventorySpace.1 [2], (more metric headers here),
   25-9-2014 13:50:28, 0.300, 3, 0.000, 0, (more metrics values here) 
   25-9-2014 13:50:37, 0.060, 3, 0.000, 0, (more metrics values here)`
-3. logback-email.xml - sends emails and doesn't write to any file.
-4  logback-stdout - writes output to console.
-5. logback-wily.xml  
+1. logback-email.xml - sends emails and doesn't write to any file.
+1. logback-stdout - writes output to console.
+1. logback-wily.xml  
+
 Logback documentation:
 http://logback.qos.ch/manual/configuration.html
 
 Application configuration property files:
 1. admin_api_email.properties - contains alerts.email.reporting=true.
-2. admin_api_multiple_spaces.properties - contains example of spaceMonitor.spaceName property format for few spaces monitoring.
-3. admin_api_secured.properties - contains spaceMonitor.secured=true.
-4. admin_api_simple.properties - supposed to be used in common cases.
+1. admin_api_multiple_spaces.properties - contains example of spaceMonitor.spaceName property format for few spaces monitoring.
+1. admin_api_secured.properties - contains spaceMonitor.secured=true.
+1. admin_api_simple.properties - supposed to be used in common cases.
 
 -- the end
