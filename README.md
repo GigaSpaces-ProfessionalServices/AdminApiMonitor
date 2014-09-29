@@ -60,6 +60,7 @@ Logback documentation:
 http://logback.qos.ch/manual/configuration.html
 
 Application configuration property files:
+
 1. admin_api_email.properties - contains alerts.email.reporting=true.
 1. admin_api_multiple_spaces.properties - contains example of spaceMonitor.spaceName property format for few spaces monitoring.
 1. admin_api_secured.properties - contains spaceMonitor.secured=true.
