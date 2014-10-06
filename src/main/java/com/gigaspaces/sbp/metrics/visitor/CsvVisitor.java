@@ -43,7 +43,9 @@ public class CsvVisitor extends AbstractStatsVisitor{
         if (saveHeaders){
             StringBuilder headers = new StringBuilder("timestamp, ");
             for (String metric : metricMap.keySet()){
-                headers.append(metric).append(", ");
+                headers.append(metric);
+                appendHostName(headers, metric);
+                headers.append(", ");
             }
             logger.info(headers.toString().substring(0, headers.length()-2));
         }
@@ -52,6 +54,13 @@ public class CsvVisitor extends AbstractStatsVisitor{
             values.append(metric.getMetricValue()).append(", ");
         }
         logger.info(values.toString().substring(0, values.length()-2));
+    }
+
+    private void appendHostName(StringBuilder headers, String metric) {
+        String hostName = metricMap.get(metric).getHostName();
+        if (hostName != null){
+            headers.append("_").append(hostName);
+        }
     }
 
     public Map<String, FullMetric> getMetrics(){
