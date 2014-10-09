@@ -17,15 +17,14 @@ echo $spacename
 read -p "Please enter locators (format: 10.0.2.15:4174,10.0.2.16:4174) : " locators
 echo $locators
 
-read -p "Please enter is space secured (y/n) : " secured
+read -p "Please enter is space secured (y/n) : " RESP
 if [ "$RESP" = "y" ]; then
-  $secured="true"
+  secured="true"
   echo "Secured space" 
   read -p "Please enter admin's username : " username  
   read -p "Please enter admin's password : " password
-  echo $locators
 else
-  $secured=false
+  secured=false
   echo "space is not secured"
 fi
 
