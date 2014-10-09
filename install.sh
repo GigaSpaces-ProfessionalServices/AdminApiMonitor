@@ -81,6 +81,7 @@ mkdir $installDir/AdminApiMonitor
 installDir=$installDir/AdminApiMonitor
 cp target/AdminApiMonitor.jar $installDir
 cp target/logback/$LOGGING_CONFIG $installDir 
+unzip target/AdminApiMonitor-ConfigurationFiles.zip -d $installDir/config
 cd $installDir
 echo "spaceMonitor.spaceName=$spacename" > 'admin-api.properties'
 echo "spaceMonitor.locators=$locators" >> 'admin-api.properties'
