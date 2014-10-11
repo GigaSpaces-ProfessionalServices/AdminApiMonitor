@@ -147,7 +147,7 @@ public abstract class AbstractStatsVisitor implements StatsVisitor {
         Double oldValue = parseDouble(metricMap.get(metricFullName).getMetricValue());
         Double collectedValue = parseDouble(metric.getMetricValue());
         Double averagedValue = average.average(oldValue, collectedValue);
-        metric.setMetricValue(String.format("%.3f", averagedValue));
+        metric.setMetricValue(String.format(Locale.ENGLISH, "%.3f", averagedValue));
     }
 
     public Map<String, Integer> alerts(){

@@ -102,7 +102,7 @@ public class FullMetric {
         }
 
         public FullMetricBuilder metricValue(String metricValue){
-            this.metricValue = metricValue;
+            this.metricValue = metricValue.replace(",",".");
             return this;
         }
 

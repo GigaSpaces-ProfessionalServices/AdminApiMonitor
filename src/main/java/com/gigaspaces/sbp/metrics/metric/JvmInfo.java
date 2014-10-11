@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import javax.management.*;
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
 public enum JvmInfo implements NamedMetric {
 
@@ -121,7 +122,7 @@ public enum JvmInfo implements NamedMetric {
                 }
                 FullMetric fullMetric = new FullMetric.FullMetricBuilder().
                                     metric(this).
-                                    metricValue(String.format("%.3f", cpuPerc)).
+                                    metricValue(String.format(Locale.ENGLISH, "%.3f", cpuPerc)).
                                     hostName(gridServiceContainer.getMachine().getHostName()).
                                     gscPid(gridServiceContainer.getVirtualMachine().getDetails().getPid()).
                                     create();
