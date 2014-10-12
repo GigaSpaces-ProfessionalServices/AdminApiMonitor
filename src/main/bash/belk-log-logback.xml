@@ -1,0 +1,23 @@
+<configuration>
+    <!-- csv-based file logging -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>/belk/WilyMonitoring/logs/admin-api.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>/belk/WilyMonitoring/logs//admin-api.%i.log.zip</fileNamePattern>
+            <minIndex>1</minIndex>
+            <maxIndex>99</maxIndex>
+        </rollingPolicy>
+        <triggeringPolicy class ="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <!-- 5GB -->
+            <maxFileSize>5000000000</maxFileSize>
+        </triggeringPolicy>
+        <encoder>
+            <pattern>%msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="info">
+        <appender-ref ref="FILE" />
+    </root>
+
+</configuration>
