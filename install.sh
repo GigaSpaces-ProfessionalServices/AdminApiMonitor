@@ -126,7 +126,8 @@ echo ""
 
 echo ">>>>>>>>>>> <<<<<<<<<<<"
 
-read -p "Proceed? (y/n)[n]" proceed
+read -p "Proceed? (y/n) [n]: " proceed
+echo proceed
 if [ "${proceed}" != "y" ]; then
     echo "goodbye"
     exit 666
