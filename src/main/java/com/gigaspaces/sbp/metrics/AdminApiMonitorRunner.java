@@ -1,13 +1,24 @@
 package com.gigaspaces.sbp.metrics;
 
+import com.gigaspaces.lrmi.LRMIMonitoringDetails;
+import com.gigaspaces.lrmi.LRMIServiceClientMonitoringDetails;
+import com.gigaspaces.lrmi.LRMIServiceClientMonitoringId;
+import com.gigaspaces.lrmi.LRMIServiceMonitoringDetails;
+import com.gigaspaces.sbp.metrics.alert.EmailAlertTriggeredEventListener;
 import com.gigaspaces.sbp.metrics.cli.ProcessArgs;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.ParseException;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;
+import org.openspaces.admin.alert.AlertManager;
+import org.openspaces.admin.alert.config.parser.XmlAlertConfigurationParser;
 import org.openspaces.admin.gsc.GridServiceContainers;
 import org.openspaces.admin.machine.Machines;
+import org.openspaces.admin.space.Space;
+import org.openspaces.admin.space.SpaceInstance;
 import org.openspaces.admin.space.Spaces;
+import org.openspaces.admin.transport.Transport;
+import org.openspaces.admin.transport.TransportLRMIMonitoring;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -31,6 +42,8 @@ public class AdminApiMonitorRunner {
     private String locators;
     private String groups;
     private String spaceName;
+    private String alertsConfiguration;
+    private Boolean alertsEmailReporting;
 
     public void init(){
         AdminFactory factory = new AdminFactory();
@@ -42,10 +55,15 @@ public class AdminApiMonitorRunner {
         factory.discoverUnmanagedSpaces();
         admin = factory.createAdmin();
 
+        AlertManager alertManager = admin.getAlertManager();
+        alertManager.configure(new XmlAlertConfigurationParser(alertsConfiguration).parse());
+        if (alertsEmailReporting){
+            alertManager.getAlertTriggered().add(new EmailAlertTriggeredEventListener());
+        }
+
         Machines machines = admin.getMachines();
         machines.waitFor(1);
         GridServiceContainers gscs = admin.getGridServiceContainers();
-
         gscs.waitFor(1, 500, TimeUnit.MILLISECONDS);
 
         List<String> spaceNames = new ArrayList<>();
@@ -56,6 +74,13 @@ public class AdminApiMonitorRunner {
         for (String spaceName : spaceNames){
             spaces.waitFor(spaceName, 15, TimeUnit.SECONDS);
         }
+        /*for (Space space : admin.getSpaces()){
+            for (SpaceInstance spaceInstance : space.getInstances()) {
+                Transport transport = spaceInstance.getTransport();
+                TransportLRMIMonitoring lrmiMonitoring = transport.getLRMIMonitoring();
+                lrmiMonitoring.enableMonitoring();
+            }
+        }*/
     }
 
     public static void main(String[] args) throws InterruptedException {
@@ -63,6 +88,7 @@ public class AdminApiMonitorRunner {
         ProcessArgs processArgs = new ProcessArgs();
 
         try {
+            checkConfigurationProvided();
             settings = processArgs.invoke(args);
             System.setProperty("csv_format", String.valueOf(settings.contains(Settings.Csv)));
         } catch (ParseException e) {
@@ -77,6 +103,21 @@ public class AdminApiMonitorRunner {
         while (!applicationContextStarted)
             attemptStart();
 
+    }
+
+    private static void checkMandatoryPropertyExistst(String propertyName){
+        if (System.getProperty(propertyName) == null){
+            System.out.println("===================================================");
+            System.out.println("Failed to start AdminApiMonitor");
+            System.out.println(propertyName + " property has to be provided. Please take a look at readme.md");
+            System.out.println("===================================================");
+            System.exit(1);
+        }
+    }
+
+    private static void checkConfigurationProvided() {
+        checkMandatoryPropertyExistst("properties");
+        checkMandatoryPropertyExistst("logback.configurationFile");
     }
 
     private static void attemptStart() throws InterruptedException {
@@ -117,5 +158,13 @@ public class AdminApiMonitorRunner {
 
     public void setSpaceName(String spaceName) {
         this.spaceName = spaceName;
+    }
+
+    public void setAlertsConfiguration(String alertsConfiguration) {
+        this.alertsConfiguration = alertsConfiguration;
+    }
+
+    public void setAlertsEmailReporting(Boolean alertsEmailReporting) {
+        this.alertsEmailReporting = alertsEmailReporting;
     }
 }

@@ -7,6 +7,7 @@ import org.openspaces.admin.vm.VirtualMachineDetails;
 import org.openspaces.admin.vm.VirtualMachineStatistics;
 
 import java.util.List;
+import java.util.Locale;
 
 public enum Memory implements NamedMetric {
 
@@ -122,7 +123,7 @@ public enum Memory implements NamedMetric {
                 Double freeMemory = (heapCommitted / Double.valueOf(heapMax)) * 100;
                 FullMetric fullMetric = new FullMetric.FullMetricBuilder().
                         metric(this).
-                        metricValue(String.format("%.3f", (freeMemory))).
+                        metricValue(String.format(Locale.ENGLISH, "%.3f", (freeMemory))).
                         hostName(gridServiceContainer.getMachine().getHostName()).
                         gscPid(gridServiceContainer.getVirtualMachine().getDetails().getPid()).
                         create();

@@ -47,10 +47,11 @@ public enum GsMirrorInfo implements NamedMetric {
             if( statsVisitor == null ) return;
             Long operationCountSum = 0l;
             for (MirrorStatistics mirrorStatistics : statsVisitor.mirrorStatistics()){
-                if( mirrorStatistics == null ) return;
-                Long operationCount = mirrorStatistics.getOperationCount();
-                if( operationCount == null ) return;
-                operationCountSum += operationCount;
+                if( mirrorStatistics != null ){
+                    Long operationCount = mirrorStatistics.getOperationCount();
+                    if( operationCount == null ) return;
+                    operationCountSum += operationCount;
+                }
             }
             statsVisitor.saveStat(new FullMetric.FullMetricBuilder().metric(this).metricValue(String.valueOf(operationCountSum)).create());
         }
@@ -61,10 +62,11 @@ public enum GsMirrorInfo implements NamedMetric {
             if( statsVisitor == null ) return;
             Long successfulOperationsSum = 0l;
             for (MirrorStatistics mirrorStatistics : statsVisitor.mirrorStatistics()){
-                if( mirrorStatistics == null ) return;
-                Long successfulOperations = mirrorStatistics.getSuccessfulOperationCount();
-                if( successfulOperations == null ) return;
-                successfulOperationsSum += successfulOperations;
+                if( mirrorStatistics != null ){
+                    Long successfulOperations = mirrorStatistics.getSuccessfulOperationCount();
+                    if( successfulOperations == null ) return;
+                    successfulOperationsSum += successfulOperations;
+                }
             }
             statsVisitor.saveStat(new FullMetric.FullMetricBuilder().metric(this).metricValue(String.valueOf(successfulOperationsSum)).create());
         }
@@ -75,10 +77,11 @@ public enum GsMirrorInfo implements NamedMetric {
             if( statsVisitor == null ) return;
             Long failedOperationsSum = 0l;
             for (MirrorStatistics mirrorStatistics : statsVisitor.mirrorStatistics()){
-                if( mirrorStatistics == null ) return;
-                Long failedOperations = mirrorStatistics.getFailedOperationCount();
-                if( failedOperations == null ) return;
-                failedOperationsSum += failedOperations;
+                if( mirrorStatistics != null ){
+                    Long failedOperations = mirrorStatistics.getFailedOperationCount();
+                    if( failedOperations == null ) return;
+                    failedOperationsSum += failedOperations;
+                }
             }
             statsVisitor.saveStat(new FullMetric.FullMetricBuilder().metric(this).metricValue(String.valueOf(failedOperationsSum)).create());
         }

@@ -35,7 +35,6 @@ public class AbstractPeriodicVisitorTask {
     public void init(){
         Admin admin = adminMonitor.getAdmin();
         AlertManager alertManager = admin.getAlertManager();
-        alertManager.configure(new XmlAlertConfigurationParser("alerts-config.xml").parse());
         alertManager.getAlertTriggered().add(new AlertTriggeredEventListener() {
             @Override
             public void alertTriggered(Alert alert) {

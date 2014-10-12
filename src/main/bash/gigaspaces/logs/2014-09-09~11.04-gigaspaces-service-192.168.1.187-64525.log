@@ -1,0 +1,114 @@
+Sep 09, 2014 11:42:38 AM net.jini.discovery.LookupLocatorDiscovery$LocatorReg tryGetProxy
+WARNING: Failed to connect to LUS on localhost:4174, retry in 5002ms
+java.net.ConnectException: Connection refused
+	at java.net.PlainSocketImpl.socketConnect(Native Method)
+	at java.net.AbstractPlainSocketImpl.doConnect(AbstractPlainSocketImpl.java:339)
+	at java.net.AbstractPlainSocketImpl.connectToAddress(AbstractPlainSocketImpl.java:200)
+	at java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:182)
+	at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:391)
+	at java.net.Socket.connect(Socket.java:579)
+	at java.net.Socket.connect(Socket.java:528)
+	at com.sun.jini.discovery.internal.MultiIPDiscovery.getSingleResponse(MultiIPDiscovery.java:150)
+	at com.sun.jini.discovery.internal.MultiIPDiscovery.getResponse(MultiIPDiscovery.java:99)
+	at net.jini.discovery.LookupLocatorDiscovery$LocatorReg.doUnicastDiscovery(LookupLocatorDiscovery.java:588)
+	at net.jini.discovery.LookupLocatorDiscovery$LocatorReg.tryGetProxy(LookupLocatorDiscovery.java:540)
+	at net.jini.discovery.LookupLocatorDiscovery.regTryGetProxy(LookupLocatorDiscovery.java:1376)
+	at net.jini.discovery.LookupLocatorDiscovery.access$900(LookupLocatorDiscovery.java:307)
+	at net.jini.discovery.LookupLocatorDiscovery$DiscoveryTask.tryOnce(LookupLocatorDiscovery.java:804)
+	at com.sun.jini.thread.RetryTask.run(RetryTask.java:92)
+	at com.sun.jini.thread.TaskManager$TaskThread.run(TaskManager.java:408)
+
+Sep 09, 2014 11:45:28 AM net.jini.lookup.ServiceDiscoveryManager$LeaseListenerImpl notify
+INFO: failure occurred while renewing an event lease
+java.rmi.ConnectException: LRMI transport protocol over NIO broken connection with ServerEndPoint: [NIO://macattack.attlocal.net:59512/pid[64023]/1410277802619515232_2_6893913534464141946_details[class com.sun.jini.reggie.GigaRegistrar]]; nested exception is: 
+	java.nio.channels.ClosedChannelException
+	at com.gigaspaces.lrmi.nio.CPeer.invoke(CPeer.java:725)
+	at com.gigaspaces.lrmi.ConnPoolInvocationHandler.invoke(ConnPoolInvocationHandler.java:49)
+	at com.gigaspaces.lrmi.MethodCachedInvocationHandler.invoke(MethodCachedInvocationHandler.java:71)
+	at com.gigaspaces.lrmi.DynamicSmartStub.invokeRemote(DynamicSmartStub.java:438)
+	at com.gigaspaces.lrmi.DynamicSmartStub.invoke(DynamicSmartStub.java:419)
+	at com.gigaspaces.reflect.$GSProxy0.renewLeases(Unknown Source)
+	at com.sun.jini.reggie.RegistrarLeaseMap.renewAll(RegistrarLeaseMap.java:90)
+	at net.jini.lease.LeaseRenewalManager.renewAll(LeaseRenewalManager.java:1438)
+	at net.jini.lease.LeaseRenewalManager.access$600(LeaseRenewalManager.java:322)
+	at net.jini.lease.LeaseRenewalManager$RenewTask.run(LeaseRenewalManager.java:461)
+	at com.sun.jini.thread.TaskManager$TaskThread.run(TaskManager.java:408)
+Caused by: java.nio.channels.ClosedChannelException
+	at com.gigaspaces.lrmi.nio.Reader.throwCloseConnection(Reader.java:500)
+	at com.gigaspaces.lrmi.nio.Reader.readBytesFromChannelBlocking(Reader.java:242)
+	at com.gigaspaces.lrmi.nio.Reader.readBytesBlocking(Reader.java:655)
+	at com.gigaspaces.lrmi.nio.Reader.bytesToPacket(Reader.java:574)
+	at com.gigaspaces.lrmi.nio.Reader.readReply(Reader.java:151)
+	at com.gigaspaces.lrmi.nio.CPeer.invoke(CPeer.java:661)
+	... 10 more
+Caused by: java.io.IOException: Connection has been closed by peer
+	at com.gigaspaces.lrmi.nio.Reader.throwCloseConnection(Reader.java:501)
+	... 15 more
+
+Sep 09, 2014 11:45:28 AM net.jini.lookup.ServiceDiscoveryManager$LeaseListenerImpl notify
+INFO: failure occurred while renewing an event lease
+java.rmi.ConnectException: LRMI transport protocol over NIO broken connection with ServerEndPoint: [NIO://macattack.attlocal.net:59512/pid[64023]/1410277802619515232_2_6893913534464141946_details[class com.sun.jini.reggie.GigaRegistrar]]; nested exception is: 
+	java.nio.channels.ClosedChannelException
+	at com.gigaspaces.lrmi.nio.CPeer.invoke(CPeer.java:725)
+	at com.gigaspaces.lrmi.ConnPoolInvocationHandler.invoke(ConnPoolInvocationHandler.java:49)
+	at com.gigaspaces.lrmi.MethodCachedInvocationHandler.invoke(MethodCachedInvocationHandler.java:71)
+	at com.gigaspaces.lrmi.DynamicSmartStub.invokeRemote(DynamicSmartStub.java:438)
+	at com.gigaspaces.lrmi.DynamicSmartStub.invoke(DynamicSmartStub.java:419)
+	at com.gigaspaces.reflect.$GSProxy0.renewLeases(Unknown Source)
+	at com.sun.jini.reggie.RegistrarLeaseMap.renewAll(RegistrarLeaseMap.java:90)
+	at net.jini.lease.LeaseRenewalManager.renewAll(LeaseRenewalManager.java:1438)
+	at net.jini.lease.LeaseRenewalManager.access$600(LeaseRenewalManager.java:322)
+	at net.jini.lease.LeaseRenewalManager$RenewTask.run(LeaseRenewalManager.java:461)
+	at com.sun.jini.thread.TaskManager$TaskThread.run(TaskManager.java:408)
+Caused by: java.nio.channels.ClosedChannelException
+	at com.gigaspaces.lrmi.nio.Reader.throwCloseConnection(Reader.java:500)
+	at com.gigaspaces.lrmi.nio.Reader.readBytesFromChannelBlocking(Reader.java:242)
+	at com.gigaspaces.lrmi.nio.Reader.readBytesBlocking(Reader.java:655)
+	at com.gigaspaces.lrmi.nio.Reader.bytesToPacket(Reader.java:574)
+	at com.gigaspaces.lrmi.nio.Reader.readReply(Reader.java:151)
+	at com.gigaspaces.lrmi.nio.CPeer.invoke(CPeer.java:661)
+	... 10 more
+Caused by: java.io.IOException: Connection has been closed by peer
+	at com.gigaspaces.lrmi.nio.Reader.throwCloseConnection(Reader.java:501)
+	... 15 more
+
+Sep 09, 2014 11:45:28 AM net.jini.discovery.LookupLocatorDiscovery$LocatorReg tryGetProxy
+WARNING: Failed to connect to LUS on localhost:4174, retry in 5003ms
+java.net.ConnectException: Connection refused
+	at java.net.PlainSocketImpl.socketConnect(Native Method)
+	at java.net.AbstractPlainSocketImpl.doConnect(AbstractPlainSocketImpl.java:339)
+	at java.net.AbstractPlainSocketImpl.connectToAddress(AbstractPlainSocketImpl.java:200)
+	at java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:182)
+	at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:391)
+	at java.net.Socket.connect(Socket.java:579)
+	at java.net.Socket.connect(Socket.java:528)
+	at com.sun.jini.discovery.internal.MultiIPDiscovery.getSingleResponse(MultiIPDiscovery.java:150)
+	at com.sun.jini.discovery.internal.MultiIPDiscovery.getResponse(MultiIPDiscovery.java:99)
+	at net.jini.discovery.LookupLocatorDiscovery$LocatorReg.doUnicastDiscovery(LookupLocatorDiscovery.java:588)
+	at net.jini.discovery.LookupLocatorDiscovery$LocatorReg.tryGetProxy(LookupLocatorDiscovery.java:540)
+	at net.jini.discovery.LookupLocatorDiscovery.regTryGetProxy(LookupLocatorDiscovery.java:1376)
+	at net.jini.discovery.LookupLocatorDiscovery.access$900(LookupLocatorDiscovery.java:307)
+	at net.jini.discovery.LookupLocatorDiscovery$DiscoveryTask.tryOnce(LookupLocatorDiscovery.java:804)
+	at com.sun.jini.thread.RetryTask.run(RetryTask.java:92)
+	at com.sun.jini.thread.TaskManager$TaskThread.run(TaskManager.java:408)
+
+Sep 09, 2014 11:45:33 AM net.jini.discovery.LookupLocatorDiscovery$LocatorReg tryGetProxy
+WARNING: Failed to connect to LUS on localhost:4174, retry in 10007ms
+java.net.ConnectException: Connection refused
+	at java.net.PlainSocketImpl.socketConnect(Native Method)
+	at java.net.AbstractPlainSocketImpl.doConnect(AbstractPlainSocketImpl.java:339)
+	at java.net.AbstractPlainSocketImpl.connectToAddress(AbstractPlainSocketImpl.java:200)
+	at java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:182)
+	at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:391)
+	at java.net.Socket.connect(Socket.java:579)
+	at java.net.Socket.connect(Socket.java:528)
+	at com.sun.jini.discovery.internal.MultiIPDiscovery.getSingleResponse(MultiIPDiscovery.java:150)
+	at com.sun.jini.discovery.internal.MultiIPDiscovery.getResponse(MultiIPDiscovery.java:99)
+	at net.jini.discovery.LookupLocatorDiscovery$LocatorReg.doUnicastDiscovery(LookupLocatorDiscovery.java:588)
+	at net.jini.discovery.LookupLocatorDiscovery$LocatorReg.tryGetProxy(LookupLocatorDiscovery.java:540)
+	at net.jini.discovery.LookupLocatorDiscovery.regTryGetProxy(LookupLocatorDiscovery.java:1376)
+	at net.jini.discovery.LookupLocatorDiscovery.access$900(LookupLocatorDiscovery.java:307)
+	at net.jini.discovery.LookupLocatorDiscovery$DiscoveryTask.tryOnce(LookupLocatorDiscovery.java:804)
+	at com.sun.jini.thread.RetryTask.run(RetryTask.java:92)
+	at com.sun.jini.thread.TaskManager$TaskThread.run(TaskManager.java:408)
+

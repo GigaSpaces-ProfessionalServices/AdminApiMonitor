@@ -74,9 +74,11 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
                 <configuration>
                     <excludes>
-                        <exclude>**/*.properties</exclude>
+                        <exclude>**/properties/</exclude>
+                        <exclude>**/logback/</exclude>
                     </excludes>
                     <archive>
                         <manifest>
@@ -117,6 +119,33 @@
                         <configuration>
                             <pomFileName>pom.xml</pomFileName>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <phase> package </phase>
+                        <configuration>
+                            <target>
+                                <copy todir="target/logback">
+                                    <fileset dir="src/main/resources/logback"/>
+                                </copy>
+                                <copy todir="target/properties">
+                                    <fileset dir="src/main/resources/properties"/>
+                                </copy>
+                                    <zip destfile="target/AdminApiMonitor-ConfigurationFiles.zip" >
+                                    <fileset dir="src/main/resources/logback" />
+                                    <fileset dir="src/main/resources/properties" />
+                                </zip>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>

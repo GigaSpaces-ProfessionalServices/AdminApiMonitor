@@ -20,13 +20,15 @@
         <property name="locators" value="${spaceMonitor.locators}" />
         <property name="groups" value="${spaceMonitor.lookupGroups}" />
         <property name="spaceName" value="${spaceMonitor.spaceName}" />
+        <property name="alertsConfiguration" value="${alerts.config}" />
+        <property name="alertsEmailReporting" value="${alerts.email.reporting}" />
     </bean>
 
     <bean id="averageCounter" class="com.gigaspaces.sbp.metrics.ExponentialMovingAverage">
         <property name="alpha" value="${stat.sample.alpha}" />
     </bean>
 
-    <bean id="collectPeriodicMetricsTask" class="com.gigaspaces.sbp.metrics.CollectPeriodicMetricsVisitorTask" init-method="init" >
+    <bean id="collectPeriodicMetricsTask" class="com.gigaspaces.sbp.metrics.CollectPeriodicMetricsVisitorTask" init-method="init">
         <property name="adminMonitor" ref="spaceMonitor" />
         <property name="spaceName" value="${spaceMonitor.spaceName}" />
         <property name="csv" value="${csv_format}" />
@@ -45,30 +47,10 @@
         <property name="delay" value="${stat.periodic.sample.delay}" />
     </bean>
 
-    <bean id="sendReportPeriodicTask" class="com.gigaspaces.sbp.metrics.ReportEmailMetricsTask" init-method="init" >
-        <property name="adminMonitor" ref="spaceMonitor" />
-        <property name="spaceName" value="${spaceMonitor.spaceName}" />
-        <property name="csv" value="${csv_format}" />
-        <property name="exponentialMovingAverage" ref="averageCounter" />
-        <property name="period" value="${stat.periodic.sample.interval}" />
-    </bean>
-
-    <bean id="schedulerPeriodicReportTask" class="org.springframework.scheduling.timer.MethodInvokingTimerTaskFactoryBean">
-        <property name="targetObject" ref="sendReportPeriodicTask" />
-        <property name="targetMethod" value="reportMetrics" />
-    </bean>
-
-    <bean id="timerPeriodicReportTask" class="org.springframework.scheduling.timer.ScheduledTimerTask">
-        <property name="timerTask" ref="schedulerPeriodicReportTask" />
-        <property name="period" value="${email.periodic.sample.interval}" />
-        <property name="delay" value="${email.periodic.sample.delay}" />
-    </bean>
-
     <bean class="org.springframework.scheduling.timer.TimerFactoryBean">
         <property name="scheduledTimerTasks">
             <list>
                 <ref local="timerPeriodicTask" />
-                <ref local="timerPeriodicReportTask" />
             </list>
         </property>
     </bean>
