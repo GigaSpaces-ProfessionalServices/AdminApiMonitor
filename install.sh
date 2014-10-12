@@ -135,6 +135,8 @@ cp target/logback/${LOGGING_CONFIG} ${installDir}
 unzip target/AdminApiMonitor-ConfigurationFiles.zip -d ${installDir}/config
 cd ${installDir}
 
+mvn clean # can cause problems for non-sudo user later, otherwise...
+
 echo "spaceMonitor.spaceName=${spacename}" > 'admin-api.properties'
 echo "spaceMonitor.locators=${locators}" >> 'admin-api.properties'
 echo "spaceMonitor.secured=${secured}" >> 'admin-api.properties'
