@@ -6,15 +6,15 @@ DEFAULT_COLLECTIONINTERVAL=60000
 DEFAULT_COLLECTIONDELAY=10000
 DEFAULT_EMA_ALPHA=0.8
 DEFAULT_LOGFILE="/tmp/AdminApiMonitor.log"
-DEFAULT_INSTALLDIR="/tmp/"
-RUN_SCRIPT="run-adminapimonitor.sh"
+DEFAULT_INSTALLDIR="/tmp/AdminApiMonitor"
 
+RUN_SCRIPT="run-monitor.sh"
 CWD=$(pwd)
 
 # check root
 
-if [[ $EUID -ne 0 ]]; then
-    echo "This script should be run using sudo or as the root user"
+if [[ $EUID -eq 0 ]]; then
+    echo "This script should not be run using sudo or as the root user."
     exit 1
 fi
 
@@ -106,6 +106,7 @@ echo ${installDir}
 echo "###################"
 echo "## CONFIGURATION ##"
 echo "###################"
+echo ""
 echo "space(s): ${spacename}"
 echo "locator(s): ${locators}"
 echo "lookup groups: '${lookupGroups}"
@@ -120,22 +121,23 @@ echo "logfile: ${logfile}"
 echo "install directory: %{installDir}"
 echo "output format: ${result}"
 echo ""
+
+echo ">>>>>>>>>>> <<<<<<<<<<<"
+
 read -p "Proceed? (y/n)[n]" proceed
 if [ "${proceed}" != "y" ]; then
     echo "goodbye"
     exit 666
 fi
 
-mvn clean install || echo "XXXXXXX > MAVEN BUILD FAILURE < XXXXXXXX" && exit 1
+mvn clean install || echo "XXXXXXX > MAVEN BUILD FAILURE < XXXXXXXX"
 
-mkdir -p ${installDir}/AdminApiMonitor
-installDir=${installDir}/AdminApiMonitor
+mkdir -p ${installDir}
+#installDir=${installDir}
 cp target/AdminApiMonitor.jar ${installDir}
 cp target/logback/${LOGGING_CONFIG} ${installDir}
 unzip target/AdminApiMonitor-ConfigurationFiles.zip -d ${installDir}/config
 cd ${installDir}
-
-mvn clean # can cause problems for non-sudo user later, otherwise...
 
 echo "spaceMonitor.spaceName=${spacename}" > 'admin-api.properties'
 echo "spaceMonitor.locators=${locators}" >> 'admin-api.properties'
@@ -149,8 +151,8 @@ echo "stat.periodic.sample.delay=${delay}" >> 'admin-api.properties'
 echo "alerts.config=alerts-config.xml" >> 'admin-api.properties'
 echo "alerts.email.reporting=false" >> 'admin-api.properties'
 
-echo "sudo sed -i "s/admin-api\.log/${logfile}/g" ${LOGGING_CONFIG}"
-sudo sed -i "s#admin-api\.log#$logfile#g" ${LOGGING_CONFIG}
+echo "sed -i "s/admin-api.log/${logfile}/g" ${LOGGING_CONFIG}"
+sed -i '' "s#admin-api.log#${logfile}#g" ${LOGGING_CONFIG}
 
 if [ -f ${RUN_SCRIPT} ]; then
     rm -f ${RUN_SCRIPT}
@@ -163,6 +165,6 @@ fi
 
 echo "java -Dproperties=${installDir}/admin-api.properties -Dlog.file=${logfile} -Dlogback.configurationFile=${installDir}/${LOGGING_CONFIG} -jar AdminApiMonitor.jar ${SECURED_FLAG} ${CSV}" > ${RUN_SCRIPT}
 chmod +x ${RUN_SCRIPT}
-./${RUN_SCRIPT}
+#./${RUN_SCRIPT}
 
 cd ${CWD} # in case of run script failure
