@@ -8,6 +8,8 @@ DEFAULT_EMA_ALPHA=0.8
 DEFAULT_LOGFILE="/tmp/AdminApiMonitor.log"
 DEFAULT_INSTALLDIR="/tmp/AdminApiMonitor"
 
+DEFAULT_OBLITERATE_EXISTING_INSTALL="y"
+
 RUN_SCRIPT="run-monitor.sh"
 CWD=$(pwd)
 
@@ -132,6 +134,16 @@ fi
 
 mvn clean install || echo "XXXXXXX > MAVEN BUILD FAILURE < XXXXXXXX"
 
+if [ -e ${installDir} ]; then
+    read -p "Directory already exists. Replace? (y/n) [${DEFAULT_OBLITERATE_EXISTING_INSTALL}]: " obliterate
+fi
+if [ "${obliterate}" == "" ]; then
+    obliterate="${DEFAULT_OBLITERATE_EXISTING_INSTALL}"
+fi
+if [ "${obliterate}" == "y" ]; then
+    rm -rf ${installDir}
+fi
+
 mkdir -p ${installDir}
 #installDir=${installDir}
 cp target/AdminApiMonitor.jar ${installDir}
@@ -166,5 +178,8 @@ fi
 echo "java -Dproperties=${installDir}/admin-api.properties -Dlog.file=${logfile} -Dlogback.configurationFile=${installDir}/${LOGGING_CONFIG} -jar AdminApiMonitor.jar ${SECURED_FLAG} ${CSV}" > ${RUN_SCRIPT}
 chmod +x ${RUN_SCRIPT}
 #./${RUN_SCRIPT}
+
+echo "INSTALL SUCCEEDED."
+echo "Run script created: [ ${installDir}/${RUN_SCRIPT} ]"
 
 cd ${CWD} # in case of run script failure
