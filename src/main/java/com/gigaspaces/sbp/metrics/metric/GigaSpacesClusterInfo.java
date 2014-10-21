@@ -24,7 +24,7 @@ public enum GigaSpacesClusterInfo implements NamedMetric {
     GSC_CONNECTED_MACHINES("connected_machines"){
         @Override
         public void accept(StatsVisitor statsVisitor) {
-            /*Map<GridServiceContainer, Set<String>> connections = new HashMap<>();
+            Map<GridServiceContainer, Set<String>> connections = new HashMap<>();
             for(SpaceInstance spaceInstance : statsVisitor.spaceInstance()){
                 Transport transport = spaceInstance.getTransport();
                 GridServiceContainer gscPid = transport.getVirtualMachine().getGridServiceContainer();
@@ -69,13 +69,13 @@ public enum GigaSpacesClusterInfo implements NamedMetric {
                         gscPid(gridServiceContainer.getVirtualMachine().getDetails().getPid()).
                         create();
                 statsVisitor.saveStat(fullMetric);
-            }*/
+            }
         }
     },
     TOTAl_CONNECTED_MACHINES("total_connected_machines"){
         @Override
         public void accept(StatsVisitor statsVisitor) {
-           /* Set<String> connections = new HashSet<>();
+            Set<String> connections = new HashSet<>();
             for(SpaceInstance spaceInstance : statsVisitor.spaceInstance()){
                 Transport transport = spaceInstance.getTransport();
                 GridServiceContainer gscPid = transport.getVirtualMachine().getGridServiceContainer();
@@ -115,7 +115,6 @@ public enum GigaSpacesClusterInfo implements NamedMetric {
                     metricValue(String.valueOf(connections.size())).
                     create();
             statsVisitor.saveStat(fullMetric);
-*/
         }
     }
     ;

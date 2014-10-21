@@ -243,7 +243,7 @@ public enum GigaSpacesActivity implements NamedMetric {
 
         }
     },
-    WEB_THROUGHPUT("throughtput"){
+    WEB_THROUGHPUT("throughput"){
         @Override
         public void accept(StatsVisitor statsVisitor){
             for (ProcessingUnitInstance processingUnitInstance : statsVisitor.processingUnitInstances()){

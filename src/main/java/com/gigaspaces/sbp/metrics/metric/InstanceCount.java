@@ -19,7 +19,7 @@ public enum InstanceCount implements NamedMetric{
             statsVisitor.saveStat(metric);
         }
     },
-    PU_COUNT_BY_TYPE("pu_count"){
+    PU_COUNT_BY_TYPE("pu_count_by_type"){
         @Override
         public void accept(StatsVisitor statsVisitor) {
             Map<ProcessingUnitType, Integer> processingUnitCountByType = new HashMap<>();

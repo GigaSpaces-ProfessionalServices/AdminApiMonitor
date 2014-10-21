@@ -74,13 +74,13 @@ public class AdminApiMonitorRunner {
         for (String spaceName : spaceNames){
             spaces.waitFor(spaceName, 15, TimeUnit.SECONDS);
         }
-        /*for (Space space : admin.getSpaces()){
+        for (Space space : admin.getSpaces()){
             for (SpaceInstance spaceInstance : space.getInstances()) {
                 Transport transport = spaceInstance.getTransport();
                 TransportLRMIMonitoring lrmiMonitoring = transport.getLRMIMonitoring();
                 lrmiMonitoring.enableMonitoring();
             }
-        }*/
+        }
     }
 
     public static void main(String[] args) throws InterruptedException {
