@@ -18,7 +18,7 @@ public enum OperatingSystemInfo implements NamedMetric {
     OPEN_FILE_DESCRIPTOR_COUNT("open_file_descriptors"){
         @Override
         public void accept(StatsVisitor statsVisitor) {
-            /*if( statsVisitor == null ) return;
+            if( statsVisitor == null ) return;
             final String openFdCount = "OpenFileDescriptorCount";
             List<GridServiceContainer> gridServiceContainers = statsVisitor.gridServiceContainers();
             for (GridServiceContainer gridServiceContainer : gridServiceContainers){
@@ -33,7 +33,7 @@ public enum OperatingSystemInfo implements NamedMetric {
                                     metric(this).
                                     metricValue(String.valueOf(attr.getValue().toString())).
                                     hostName(gridServiceContainer.getMachine().getHostName()).
-                                    gscPid(gridServiceContainer.getVirtualMachine().getDetails().getPid()).
+                                    pid(gridServiceContainer.getVirtualMachine().getDetails().getPid()).
                                     create();
                             statsVisitor.saveStat(fullMetric);
                         }
@@ -41,13 +41,13 @@ public enum OperatingSystemInfo implements NamedMetric {
                 } catch (IOException | MalformedObjectNameException | ReflectionException | InstanceNotFoundException e) {
                     LOGGER.error("Error determining " + this.displayName(), e);
                 }
-            }*/
+            }
         }
     }
     , MAX_FILE_DESCRIPTOR_COUNT("max_file_descriptors"){
         @Override
         public void accept(StatsVisitor statsVisitor) {
-            /*if( statsVisitor == null ) return;
+            if( statsVisitor == null ) return;
             if( statsVisitor.isSavedOnce(this)) return;
             final String maxFdCount = "MaxFileDescriptorCount";
             final String osSearchString = "java.lang:type=OperatingSystem";
@@ -64,7 +64,7 @@ public enum OperatingSystemInfo implements NamedMetric {
                                     metric(this).
                                     metricValue(String.valueOf(attr.getValue().toString())).
                                     hostName(gridServiceContainer.getMachine().getHostName()).
-                                    gscPid(gridServiceContainer.getVirtualMachine().getDetails().getPid()).
+                                    pid(gridServiceContainer.getVirtualMachine().getDetails().getPid()).
                                     create();
                             statsVisitor.saveStat(fullMetric);
                         }
@@ -72,13 +72,13 @@ public enum OperatingSystemInfo implements NamedMetric {
                 } catch (IOException | MalformedObjectNameException | ReflectionException | InstanceNotFoundException e) {
                     LOGGER.error("Error determining " + this.displayName(), e);
                 }
-            }*/
+            }
         }
     }
     , LRMI_CONNECTIONS("lrmi_connections"){
         @Override
         public void accept(StatsVisitor statsVisitor) {
-            /*if( statsVisitor == null ) return;
+            if( statsVisitor == null ) return;
             final String threading = "java.lang:type=Threading";
             List<GridServiceContainer> gridServiceContainers = statsVisitor.gridServiceContainers();
             for (GridServiceContainer gridServiceContainer : gridServiceContainers){
@@ -108,13 +108,13 @@ public enum OperatingSystemInfo implements NamedMetric {
                             metric(this).
                             metricValue(String.valueOf(lrmiThreadCount)).
                             hostName(gridServiceContainer.getMachine().getHostName()).
-                            gscPid(gridServiceContainer.getVirtualMachine().getDetails().getPid()).
+                            pid(gridServiceContainer.getVirtualMachine().getDetails().getPid()).
                             create();
                     statsVisitor.saveStat(fullMetric);
                 } catch (IOException | MalformedObjectNameException | ReflectionException | InstanceNotFoundException | AttributeNotFoundException | MBeanException e) {
                     LOGGER.error("Error determining " + this.displayName(), e);
                 }
-            }*/
+            }
         }
     }
     ;

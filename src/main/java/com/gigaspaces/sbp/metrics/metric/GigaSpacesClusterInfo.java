@@ -4,7 +4,6 @@ import com.gigaspaces.lrmi.*;
 import com.gigaspaces.sbp.metrics.FullMetric;
 import com.gigaspaces.sbp.metrics.visitor.StatsVisitor;
 import org.openspaces.admin.gsc.GridServiceContainer;
-import org.openspaces.admin.pu.ProcessingUnitInstance;
 import org.openspaces.admin.space.SpaceInstance;
 import org.openspaces.admin.transport.Transport;
 import org.openspaces.admin.transport.TransportLRMIMonitoring;
@@ -66,7 +65,7 @@ public enum GigaSpacesClusterInfo implements NamedMetric {
                         metric(this).
                         metricValue(String.valueOf(connections.get(gridServiceContainer).size())).
                         hostName(gridServiceContainer.getMachine().getHostName()).
-                        gscPid(gridServiceContainer.getVirtualMachine().getDetails().getPid()).
+                        pid(gridServiceContainer.getVirtualMachine().getDetails().getPid()).
                         create();
                 statsVisitor.saveStat(fullMetric);
             }

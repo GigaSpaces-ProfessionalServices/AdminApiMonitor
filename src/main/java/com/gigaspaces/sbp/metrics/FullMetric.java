@@ -16,19 +16,22 @@ public class FullMetric {
 
     private String spaceInstanceID;
 
-    private Long gscPid;
+    private String gridComponentName;
+
+    private Long pid;
 
     private String qualifier;
 
     private String spaceMode;
 
-    public FullMetric(NamedMetric metric, String metricValue, Date time, String hostName, String spaceInstanceID, Long gscPid, String qualifier, String spaceMode) {
+    public FullMetric(NamedMetric metric, String metricValue, Date time, String hostName, String spaceInstanceID, String gridComponentName,Long pid, String qualifier, String spaceMode) {
         this.metric = metric;
         this.metricValue = metricValue;
         this.time = time;
         this.hostName = hostName;
         this.spaceInstanceID = spaceInstanceID;
-        this.gscPid = gscPid;
+        this.gridComponentName = gridComponentName;
+        this.pid = pid;
         this.qualifier = qualifier;
         this.spaceMode = spaceMode;
     }
@@ -53,8 +56,12 @@ public class FullMetric {
         return spaceInstanceID;
     }
 
-    public Long getGscPid() {
-        return gscPid;
+    public String getGridComponentName() {
+        return gridComponentName;
+    }
+
+    public Long getPid() {
+        return pid;
     }
 
     public void setMetricValue(String metricValue) {
@@ -70,8 +77,8 @@ public class FullMetric {
         result.append(metric.displayName()).append("_");
         if (qualifier != null){
             result.append(qualifier);
-        }   else if (getGscPid() != null && gscPid != 0l){
-            result.append(gscPid);
+        }   else if (getPid() != null && pid != 0l){
+            result.append(pid);
         }   else if (spaceInstanceID != null){
             result.append(spaceInstanceID);
         }
@@ -90,7 +97,9 @@ public class FullMetric {
 
         private String spaceInstanceID;
 
-        private Long gscPid = 0l;
+        private String gridComponentName;
+
+        private Long pid = 0l;
 
         private String qualifier;
 
@@ -116,8 +125,13 @@ public class FullMetric {
             return this;
         }
 
-        public FullMetricBuilder gscPid(Long gscPid){
-            this.gscPid = gscPid;
+        public FullMetricBuilder gridComponentName(String gridComponentName){
+            this.gridComponentName = gridComponentName;
+            return this;
+        }
+
+        public FullMetricBuilder pid(Long pid){
+            this.pid = pid;
             return this;
         }
 
@@ -132,7 +146,7 @@ public class FullMetric {
         }
 
         public FullMetric create(){
-            return new FullMetric(metric, metricValue, new Date(), hostName, spaceInstanceID, gscPid, qualifier, spaceMode);
+            return new FullMetric(metric, metricValue, new Date(), hostName, spaceInstanceID, gridComponentName, pid, qualifier, spaceMode);
         }
 
     }
