@@ -7,7 +7,7 @@
     <packaging>jar</packaging>
 
     <properties>
-        <gigaspaces.version>9.7.0-10496-RELEASE</gigaspaces.version>
+        <gigaspaces.version>9.7.1-10800-RELEASE</gigaspaces.version>
         <logback.version>1.0.13</logback.version>
     </properties>
 
@@ -70,7 +70,14 @@
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
-
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
