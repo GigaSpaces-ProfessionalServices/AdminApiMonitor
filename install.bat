@@ -19,7 +19,7 @@ SET /p NAME="Please enter admin's username : " %=%
 ECHO %NAME%
 SET /p PASSWORD="Please enter admin's password : " %=%
 ECHO %PASSWORD%
-) 
+)
 
 SET /p LOOKUP_GROUPS="Please enter lookup groups (format: )(optional) : "
 echo %LOOKUP_GROUPS%
@@ -45,24 +45,24 @@ ECHO 4) Email
 SET /p LOGGING_TYPE="Please enter the number of logging type"
 ECHO %LOGGING_TYPE%
 
-IF %LOGGING_TYPE% EQU 1 ( 
+IF %LOGGING_TYPE% EQU 1 (
 SET LOGGING_CONFIG=logback-stdout.xml
 SET CSV=
-) ELSE IF %LOGGING_TYPE% EQU 2 ( 
-SET LOGGING_CONFIG=logback-default.xml 
+) ELSE IF %LOGGING_TYPE% EQU 2 (
+SET LOGGING_CONFIG=logback-default.xml
 SET CSV=
-) ELSE IF %LOGGING_TYPE% EQU 3 ( 
-SET LOGGING_CONFIG=logback-csv.xml 
+) ELSE IF %LOGGING_TYPE% EQU 3 (
+SET LOGGING_CONFIG=logback-csv.xml
 SET CSV=-c
-) ELSE IF %LOGGING_TYPE% EQU 3 ( 
+) ELSE IF %LOGGING_TYPE% EQU 3 (
 SET LOGGING_CONFIG=logback-email.xml
-SET CSV= 
+SET CSV=
 ) ELSE (
-ECHO "Incorrect choice" 
+ECHO "Incorrect choice"
 goto :choice
 )
 
-IF %LOGGING_TYPE% EQU 3 (  
+IF %LOGGING_TYPE% EQU 3 (
 SET CSV=-c)
 
 ECHO %LOGGING_CONFIG%
@@ -73,11 +73,11 @@ ECHO %INSTALL_DIR%
 
 call mvn clean install
 
-md %INSTALL_DIR%\AdminApiMonitor
-SET INSTALL_DIR=%INSTALL_DIR%\AdminApiMonitor
-xcopy target\AdminApiMonitor.jar %INSTALL_DIR%
-xcopy target\logback\%LOGGING_CONFIG% %INSTALL_DIR% 
-::unzip target/AdminApiMonitor-ConfigurationFiles.zip -d $installDir/config
+md %INSTALL_DIR%\GsMonitor
+SET INSTALL_DIR=%INSTALL_DIR%\GsMonitor
+xcopy target\GsMonitor.jar %INSTALL_DIR%
+xcopy target\logback\%LOGGING_CONFIG% %INSTALL_DIR%
+::unzip target/GsMonitor-ConfigurationFiles.zip -d $installDir/config
 cd %INSTALL_DIR%
 
 ECHO %CONST%
@@ -103,7 +103,7 @@ set SEARCHTEXT=admin-api.log
 set REPLACETEXT=%LOGFILE%
 set OUTPUTLINE=
 
-for /f "tokens=1,* delims=¶" %%A in ( '"type %INTEXTFILE%"') do (
+for /f "tokens=1,* delims=ï¿½" %%A in ( '"type %INTEXTFILE%"') do (
 SET string=%%A
 SET modified=!string:%SEARCHTEXT%=%REPLACETEXT%!
 
@@ -113,8 +113,8 @@ del %INTEXTFILE%
 rename %OUTTEXTFILE% %INTEXTFILE%
 ::SED EQUIVALENT END
 
-::ECHO java -Dproperties=%INSTALL_DIR%\admin-api.properties -Dlog.file=%LOGFILE% -Dlogback.configurationFile=%INSTALL_DIR%\%LOGGING_CONFIG%  -jar AdminApiMonitor.jar %CSV%
-java -Dproperties=%INSTALL_DIR%\admin-api.properties -Dlog.file=%LOGFILE% -Dlogback.configurationFile=%INSTALL_DIR%\%LOGGING_CONFIG%  -jar AdminApiMonitor.jar %CSV%
+::ECHO java -Dproperties=%INSTALL_DIR%\admin-api.properties -Dlog.file=%LOGFILE% -Dlogback.configurationFile=%INSTALL_DIR%\%LOGGING_CONFIG%  -jar GsMonitor.jar %CSV%
+java -Dproperties=%INSTALL_DIR%\admin-api.properties -Dlog.file=%LOGFILE% -Dlogback.configurationFile=%INSTALL_DIR%\%LOGGING_CONFIG%  -jar GsMonitor.jar %CSV%
 ::chmod +x run.sh
 ::./run.sh
 

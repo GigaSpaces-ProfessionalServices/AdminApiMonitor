@@ -5,8 +5,8 @@ DEFAULT_SPACENAME="mySpace"
 DEFAULT_COLLECTIONINTERVAL=60000
 DEFAULT_COLLECTIONDELAY=10000
 DEFAULT_EMA_ALPHA=0.8
-DEFAULT_LOGFILE="/tmp/AdminApiMonitor.log"
-DEFAULT_INSTALLDIR="/tmp/AdminApiMonitor"
+DEFAULT_LOGFILE="/tmp/GsMonitor.log"
+DEFAULT_INSTALLDIR="/tmp/GsMonitor"
 
 DEFAULT_OBLITERATE_EXISTING_INSTALL="y"
 
@@ -146,9 +146,9 @@ fi
 
 mkdir -p ${installDir}
 #installDir=${installDir}
-cp target/AdminApiMonitor.jar ${installDir}
+cp target/GsMonitor.jar ${installDir}
 cp target/logback/${LOGGING_CONFIG} ${installDir}
-unzip target/AdminApiMonitor-ConfigurationFiles.zip -d ${installDir}/config
+unzip target/GsMonitor-ConfigurationFiles.zip -d ${installDir}/config
 cd ${installDir}
 
 echo "spaceMonitor.spaceName=${spacename}" > 'admin-api.properties'
@@ -175,7 +175,7 @@ if [ "${secured}" == "true" ]; then
     SECURED_FLAG = "-s"
 fi
 
-echo "java -Dproperties=${installDir}/admin-api.properties -Dlog.file=${logfile} -Dlogback.configurationFile=${installDir}/${LOGGING_CONFIG} -jar AdminApiMonitor.jar ${SECURED_FLAG} ${CSV}" > ${RUN_SCRIPT}
+echo "java -Dproperties=${installDir}/admin-api.properties -Dlog.file=${logfile} -Dlogback.configurationFile=${installDir}/${LOGGING_CONFIG} -jar GsMonitor.jar ${SECURED_FLAG} ${CSV}" > ${RUN_SCRIPT}
 chmod +x ${RUN_SCRIPT}
 #./${RUN_SCRIPT}
 

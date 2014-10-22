@@ -1,7 +1,7 @@
-AdminApiMonitor
+GsMonitor
 =========================
 
-A little tool that logs a lot of AdminApi info. 
+A little tool that logs a lot of GigaSpaces Admin API info. 
 
 ## Output modes
 
@@ -22,27 +22,27 @@ Please see "Logging configuration" section for more details.
 1. Set the gigaspaces.version in pom.xml // default is 9.7.0
 1. Copy src/main/resources/admin_api.properties to your runtime environment and edit. (If run against multiple spaces, you can add more than one space name, separated by commas: `spaceMonitor.spaceName=space1,space2`)
 1. `mvn package`
-1. Use target/AdminApiMonitor.jar **NOT** target/AdminApiMonitor-1.0-SNAPSHOT.jar
+1. Use target/GsMonitor.jar **NOT** target/GsMonitor-1.0-SNAPSHOT.jar
 
 ## To run:
 
-`java -Dproperties=/full/path/to/admin_api.properties -jar AdminApiMonitor.jar` 
+`java -Dproperties=/full/path/to/admin_api.properties -jar GsMonitor.jar` 
 
 If the space is secured, use -s in addition to the properties settings:
 
-`java -Dproperties=/full/path/to/admin_api.properties -Dlogback.configurationFile=/path/to/config.xml -jar AdminApiMonitor.jar -s`
+`java -Dproperties=/full/path/to/admin_api.properties -Dlogback.configurationFile=/path/to/config.xml -jar GsMonitor.jar -s`
 
 For csv output, use -csv:
 
-`java -Dproperties=/full/path/to/admin_api.properties -Dlogback.configurationFile=/path/to/config.xml -jar AdminApiMonitor.jar -c`
+`java -Dproperties=/full/path/to/admin_api.properties -Dlogback.configurationFile=/path/to/config.xml -jar GsMonitor.jar -c`
 
 To change logging behavior (non-csv output), configure a logback configuration file and point the tool at it:
 
-`java -Dproperties=/full/path/to/admin_api.properties -Dlogback.configurationFile=/path/to/config.xml -jar AdminApiMonitor.jar`
+`java -Dproperties=/full/path/to/admin_api.properties -Dlogback.configurationFile=/path/to/config.xml -jar GsMonitor.jar`
 
 ## Configuration
 
-Application and logging configuration examples are provided in **target/AdminApiMonitor-ConfigurationFiles.zip**.
+Application and logging configuration examples are provided in **target/GsMonitor-ConfigurationFiles.zip**.
 
 Few different logging configurations are provided in target/logback directory. Formats:
 

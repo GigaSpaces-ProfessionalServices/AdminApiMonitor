@@ -2,7 +2,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.gigaspaces.sbp</groupId>
-    <artifactId>AdminApiMonitor</artifactId>
+    <artifactId>GsMonitor</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
@@ -82,7 +82,7 @@
                     </excludes>
                     <archive>
                         <manifest>
-                            <mainClass>com.gigaspaces.sbp.metrics.AdminApiMonitorRunner</mainClass>
+                            <mainClass>com.gigaspaces.sbp.metrics.GsMonitorRunner</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -97,7 +97,7 @@
                         <configuration>
                             <attachToBuild>true</attachToBuild>
                             <classifier>executable</classifier>
-                            <filename>AdminApiMonitor.jar</filename>
+                            <filename>GsMonitor.jar</filename>
                         </configuration>
                         <goals>
                             <goal>one-jar</goal>
@@ -137,7 +137,7 @@
                                 <copy todir="target/properties">
                                     <fileset dir="src/main/resources/properties"/>
                                 </copy>
-                                    <zip destfile="target/AdminApiMonitor-ConfigurationFiles.zip" >
+                                    <zip destfile="target/GsMonitor-ConfigurationFiles.zip" >
                                     <fileset dir="src/main/resources/logback" />
                                     <fileset dir="src/main/resources/properties" />
                                 </zip>

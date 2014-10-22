@@ -45,7 +45,7 @@ public class CollectPeriodicMetricsVisitorTask extends AbstractPeriodicVisitorTa
     }
 
     @Required
-    public void setAdminMonitor(AdminApiMonitorRunner adminMonitor) {
+    public void setAdminMonitor(GsMonitorRunner adminMonitor) {
         this.adminMonitor = adminMonitor;
     }
 
