@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.gigaspaces.sbp</groupId>
     <artifactId>AdminApiMonitor</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0-test21</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -139,12 +139,12 @@
                         <configuration>
                             <target>
                                 <copy todir="target/logback">
-                                    <fileset dir="src/main/resources/logback"/>
+                                    <fileset dir="src/main/resources/logback" />
                                 </copy>
                                 <copy todir="target/properties">
-                                    <fileset dir="src/main/resources/properties"/>
+                                    <fileset dir="src/main/resources/properties" />
                                 </copy>
-                                    <zip destfile="target/AdminApiMonitor-ConfigurationFiles.zip" >
+                                    <zip destfile="target/AdminApiMonitor-ConfigurationFiles.zip">
                                     <fileset dir="src/main/resources/logback" />
                                     <fileset dir="src/main/resources/properties" />
                                 </zip>
@@ -178,7 +178,7 @@
 
     <scm>
         <connection>scm:git:https://github.com/GigaSpaces-ProfessionalServices/AdminApiMonitor</connection>
-      <tag>HEAD</tag>
+      <tag>AdminApiMonitor-1.0-test21</tag>
   </scm>
 
     <repositories>
