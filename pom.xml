@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.gigaspaces.sbp</groupId>
@@ -7,32 +8,36 @@
     <packaging>jar</packaging>
 
     <properties>
-        <gigaspaces.version>9.7.1-10800-RELEASE</gigaspaces.version>
+        <commons.cli.version>1.2</commons.cli.version>
+        <!--<gigaspaces.version>9.5.1-RELEASE</gigaspaces.version>-->
+        <javax.mail.version>1.4.3</javax.mail.version>
+        <junit.version>4.11</junit.version>
         <logback.version>1.0.13</logback.version>
+        <mockito.version>1.9.5</mockito.version>
+        <slf4j.version>1.7.5</slf4j.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>commons-cli</groupId>
             <artifactId>commons-cli</artifactId>
-            <version>1.2</version>
+            <version>${commons.cli.version}</version>
         </dependency>
         <dependency>
             <groupId>com.gigaspaces</groupId>
             <artifactId>gs-openspaces</artifactId>
             <version>${gigaspaces.version}</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.11</version>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
-            <version>1.9.5</version>
+            <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -48,12 +53,12 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.5</version>
+            <version>${slf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
-            <version>1.4.3</version>
+            <version>${javax.mail.version}</version>
         </dependency>
     </dependencies>
 
@@ -135,7 +140,7 @@
                 <version>1.7</version>
                 <executions>
                     <execution>
-                        <phase> package </phase>
+                        <phase>package</phase>
                         <configuration>
                             <target>
                                 <copy todir="target/logback">
@@ -144,9 +149,9 @@
                                 <copy todir="target/properties">
                                     <fileset dir="src/main/resources/properties"/>
                                 </copy>
-                                    <zip destfile="target/AdminApiMonitor-ConfigurationFiles.zip" >
-                                    <fileset dir="src/main/resources/logback" />
-                                    <fileset dir="src/main/resources/properties" />
+                                <zip destfile="target/AdminApiMonitor-ConfigurationFiles.zip">
+                                    <fileset dir="src/main/resources/logback"/>
+                                    <fileset dir="src/main/resources/properties"/>
                                 </zip>
                             </target>
                         </configuration>
@@ -178,8 +183,8 @@
 
     <scm>
         <connection>scm:git:https://github.com/GigaSpaces-ProfessionalServices/AdminApiMonitor</connection>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 
     <repositories>
         <repository>
