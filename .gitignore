@@ -14,8 +14,8 @@
 *.iws
 *.project
 *.classpath
-gigaspaces
-gigaspaces/logs
+#gigaspaces
+#gigaspaces/logs
 dirname
 
 .idea/*
@@ -28,4 +28,4 @@ build/*
 hs_err_pid*
 
 #gigaspaces
-gigaspaces/*
+#gigaspaces/*
