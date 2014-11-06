@@ -4,7 +4,6 @@ import com.gigaspaces.sbp.metrics.metric.*;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.alert.Alert;
 import org.openspaces.admin.alert.AlertManager;
-import org.openspaces.admin.alert.config.parser.XmlAlertConfigurationParser;
 import org.openspaces.admin.alert.events.AlertTriggeredEventListener;
 import org.springframework.beans.factory.annotation.Required;
 
@@ -14,7 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class AbstractPeriodicVisitorTask {
 
-    protected AdminApiMonitorRunner adminMonitor;
+    protected GsMonitorRunner adminMonitor;
 
     protected String spaceName;
 
@@ -69,7 +68,7 @@ public class AbstractPeriodicVisitorTask {
     }
 
     @Required
-    public void setAdminMonitor(AdminApiMonitorRunner adminMonitor) {
+    public void setAdminMonitor(GsMonitorRunner adminMonitor) {
         this.adminMonitor = adminMonitor;
     }
 

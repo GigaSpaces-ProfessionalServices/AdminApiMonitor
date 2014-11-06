@@ -3,13 +3,19 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.gigaspaces.sbp</groupId>
-    <artifactId>AdminApiMonitor</artifactId>
+    <artifactId>GsMonitor</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <properties>
         <commons.cli.version>1.2</commons.cli.version>
-        <!--<gigaspaces.version>9.5.1-RELEASE</gigaspaces.version>-->
+        <!--
+            This property should be set on the command line:
+
+            mvn clean package -Dgigaspaces.version=9.5.1-RELEASE
+
+            <gigaspaces.version>9.5.1-RELEASE</gigaspaces.version>
+        -->
         <javax.mail.version>1.4.3</javax.mail.version>
         <junit.version>4.11</junit.version>
         <logback.version>1.0.13</logback.version>
@@ -94,7 +100,7 @@
                     </excludes>
                     <archive>
                         <manifest>
-                            <mainClass>com.gigaspaces.sbp.metrics.AdminApiMonitorRunner</mainClass>
+                            <mainClass>com.gigaspaces.sbp.metrics.GsMonitorRunner</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -109,7 +115,7 @@
                         <configuration>
                             <attachToBuild>true</attachToBuild>
                             <classifier>executable</classifier>
-                            <filename>AdminApiMonitor.jar</filename>
+                            <filename>gs-monitor.jar</filename>
                         </configuration>
                         <goals>
                             <goal>one-jar</goal>
@@ -149,7 +155,7 @@
                                 <copy todir="target/properties">
                                     <fileset dir="src/main/resources/properties"/>
                                 </copy>
-                                <zip destfile="target/AdminApiMonitor-ConfigurationFiles.zip">
+                                    <zip destfile="target/AdminApiMonitor-ConfigurationFiles.zip">
                                     <fileset dir="src/main/resources/logback"/>
                                     <fileset dir="src/main/resources/properties"/>
                                 </zip>
