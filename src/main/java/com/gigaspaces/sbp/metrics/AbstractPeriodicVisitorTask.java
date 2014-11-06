@@ -51,7 +51,7 @@ public class AbstractPeriodicVisitorTask {
         metrics.addAll(Arrays.asList(JvmInfo.values()));
         metrics.addAll(Arrays.asList(Memory.values()));
         metrics.addAll(Arrays.asList(OperatingSystemInfo.values()));
-        metrics.addAll(Arrays.asList(MonitoringToolInfo.values()));
+//        metrics.addAll(Arrays.asList(MonitoringToolInfo.values()));
         metrics.addAll(Arrays.asList(InstanceCount.values()));
         metrics.addAll(Arrays.asList(CacheContentMetric.values()));
         metrics.addAll(Arrays.asList(AlertsInfo.values()));
