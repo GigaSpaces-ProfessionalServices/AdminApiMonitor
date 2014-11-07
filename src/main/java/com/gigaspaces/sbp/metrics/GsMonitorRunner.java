@@ -2,7 +2,6 @@ package com.gigaspaces.sbp.metrics;
 
 import com.gigaspaces.sbp.metrics.alert.EmailAlertTriggeredEventListener;
 import com.gigaspaces.sbp.metrics.cli.ProcessArgs;
-import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.ParseException;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;
@@ -18,7 +17,6 @@ import org.openspaces.admin.transport.TransportLRMIMonitoring;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import java.io.PrintWriter;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -29,7 +27,6 @@ public class GsMonitorRunner {
 
     private static final String APPLICATION_CONTEXT_PATH = "/META-INF/spring/admin-api-context.xml";
     private static final int WAITING_FOR_GRID_PAUSE = 5000;
-    private static final int TERMINAL_WIDTH = 110;
 
     // GigaSpaces configuration elements (from context.xml or properties file)
     private Admin admin;
@@ -41,10 +38,10 @@ public class GsMonitorRunner {
     private String alertsConfiguration;
     private Boolean alertsEmailReporting;
 
-    public void init(){
+    public void init() {
         AdminFactory factory = new AdminFactory();
-        if(settings.contains(Settings.Secured)){
-            factory.credentials(adminUser,adminPassword);
+        if (settings.contains(Settings.Secured)) {
+            factory.credentials(adminUser, adminPassword);
         }
         factory.addLocators(locators);
         factory.addGroups(groups);
@@ -53,7 +50,7 @@ public class GsMonitorRunner {
 
         AlertManager alertManager = admin.getAlertManager();
         alertManager.configure(new XmlAlertConfigurationParser(alertsConfiguration).parse());
-        if (alertsEmailReporting){
+        if (alertsEmailReporting) {
             alertManager.getAlertTriggered().add(new EmailAlertTriggeredEventListener());
         }
 
@@ -63,14 +60,14 @@ public class GsMonitorRunner {
         gscs.waitFor(1, 500, TimeUnit.MILLISECONDS);
 
         List<String> spaceNames = new ArrayList<>();
-        for (String name : Arrays.asList(spaceName.split(","))){
+        for (String name : Arrays.asList(spaceName.split(","))) {
             spaceNames.add(name.trim());
         }
         Spaces spaces = admin.getSpaces();
-        for (String spaceName : spaceNames){
+        for (String spaceName : spaceNames) {
             spaces.waitFor(spaceName, 15, TimeUnit.SECONDS);
         }
-        for (Space space : admin.getSpaces()){
+        for (Space space : admin.getSpaces()) {
             for (SpaceInstance spaceInstance : space.getInstances()) {
                 Transport transport = spaceInstance.getTransport();
                 TransportLRMIMonitoring lrmiMonitoring = transport.getLRMIMonitoring();
@@ -79,32 +76,22 @@ public class GsMonitorRunner {
         }
     }
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, ParseException {
 
-        ProcessArgs processArgs = new ProcessArgs();
+        settings = new ProcessArgs().invokeOrDie(args);
 
-        try {
-            checkConfigurationProvided();
-            settings = processArgs.invoke(args);
-            System.setProperty("csv_format", String.valueOf(settings.contains(Settings.Csv)));
-        } catch (ParseException e) {
-            System.err.println("ERROR: User error. Please try again...");
-            final PrintWriter writer = new PrintWriter(System.err);
-            final HelpFormatter usageFormatter = new HelpFormatter();
-            usageFormatter.printUsage(writer, TERMINAL_WIDTH, "java -DjavaOpt=foo -jar gs-monitor.jar", processArgs.allOptions());
-            writer.flush();
-            System.exit(666);
-        }
+        System.setProperty("csv_format", String.valueOf(settings.contains(Settings.Csv)));
+        checkConfigurationProvided();
 
         while (!applicationContextStarted)
             attemptStart();
 
     }
 
-    private static void checkMandatoryPropertyExistst(String propertyName){
-        if (System.getProperty(propertyName) == null){
+    private static void checkMandatoryPropertyExists(String propertyName) {
+        if (System.getProperty(propertyName) == null) {
             System.out.println("===================================================");
-            System.out.println("Failed to start AdminApiMonitor");
+            System.out.println("Failed to start GS Monitor");
             System.out.println(propertyName + " property has to be provided. Please take a look at readme.md");
             System.out.println("===================================================");
             System.exit(1);
@@ -112,15 +99,15 @@ public class GsMonitorRunner {
     }
 
     private static void checkConfigurationProvided() {
-        checkMandatoryPropertyExistst("properties");
-        checkMandatoryPropertyExistst("logback.configurationFile");
+        checkMandatoryPropertyExists("properties");
+        checkMandatoryPropertyExists("logback.configurationFile");
     }
 
     private static void attemptStart() throws InterruptedException {
         try {
             startApplicationContext();
             applicationContextStarted = true;
-        }  catch (BeanCreationException e){
+        } catch (BeanCreationException e) {
             System.out.println("===================================================");
             System.out.println("Unable to start " + GsMonitorRunner.class.getSimpleName() + ". Retrying in " + WAITING_FOR_GRID_PAUSE / 1000 + " seconds.");
             System.out.println("===================================================");
@@ -132,7 +119,7 @@ public class GsMonitorRunner {
         return admin;
     }
 
-    private static void startApplicationContext(){
+    private static void startApplicationContext() {
         new ClassPathXmlApplicationContext(APPLICATION_CONTEXT_PATH);
     }
 

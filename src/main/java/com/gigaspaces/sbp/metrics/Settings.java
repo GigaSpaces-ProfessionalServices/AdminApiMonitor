@@ -10,27 +10,28 @@ import com.gigaspaces.sbp.metrics.cli.OptionLike;
  */
 public enum Settings implements OptionLike {
 
-    AllMetrics("a", "all-metrics", "Print all metrics.", false)
-    , Csv("c", "csv", "Emit metrics on a single line, separated by commas.", false)
-    , Secured("s", "secured", "If GigaSpaces security is enabled on the XAP grid.", false)
-    , LogFormat("f", "log", "Emit metrics in log format (one metric per line).", false)
+    Csv("c", "csv-format", "Optional: Print multiple metrics per line (comma-separated). May not be used in combination with log-format.", false, false)
+    , LogFormat("f", "log-format", "Optional: Print metrics in log format (one metric per line). May not be used in combination with csv-format.", false, false)
+    , Secured("s", "secured", "Optional: When XAP security is enabled. format= true or false", false, false)
 
-    , LookupLocators("l","locators", "XAP Lookup locators", true)
-    , LookupGroups("g", "groups", "XAP lookup groups", true)
-    , SpaceNames("z","spaces", "XAP Space names (comma-delimited list)", true)
-    , OutputFile("o","file", "Output file (relative location)", true);
+    , LookupLocators("l","locators", "Required: XAP lookup locators. format= host1:portnum,host2:portnum", true, true)
+    , LookupGroups("g", "groups", "Optional: XAP lookup groups. format= group1,group2", true, false)
+    , SpaceNames("z","spaces", "Required: XAP space names. Mirror space name must be provided for mirror statistics to be reported. format= space1,space2", true, true)
+    , OutputFile("o","output-file", "Optional: Output file. format= fully-qualified or relative file path", true, false);
     ;
 
     private final String optionCharacter;
     private final String optionWord;
     private final String optionDescription;
-    private final boolean isParameter;
+    private final boolean hasArgument;
+    private final boolean isRequired;
 
-    Settings(String optionCharacter, String optionWord, String optionDescription, boolean isParameter) {
+    Settings(String optionCharacter, String optionWord, String optionDescription, boolean hasArgument, boolean isRequired) {
         this.optionCharacter = optionCharacter;
         this.optionWord = optionWord;
         this.optionDescription = optionDescription;
-        this.isParameter = isParameter;
+        this.hasArgument = hasArgument;
+        this.isRequired = isRequired;
     }
 
     @Override
@@ -49,6 +50,9 @@ public enum Settings implements OptionLike {
     }
 
     @Override
-    public boolean isParameter(){ return isParameter; }
+    public boolean hasArgument(){ return hasArgument; }
+
+    @Override
+    public boolean isRequired(){ return isRequired; }
 
 }

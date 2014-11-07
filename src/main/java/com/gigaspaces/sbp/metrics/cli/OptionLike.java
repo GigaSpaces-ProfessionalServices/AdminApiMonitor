@@ -17,6 +17,8 @@ public interface OptionLike {
     /**
      * @return if this setting takes an argument
      */
-    boolean isParameter();
+    boolean hasArgument();
+
+    boolean isRequired();
 
 }

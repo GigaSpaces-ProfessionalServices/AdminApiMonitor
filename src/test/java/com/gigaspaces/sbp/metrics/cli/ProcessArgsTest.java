@@ -41,8 +41,6 @@ public class ProcessArgsTest {
     };
 
     // OPTIONS
-    private static final String ALL_OPTION = String.format("-%s", Settings.AllMetrics.getOptionCharacter());
-    private static final String ALL_OPTION_WORD = String.format("-%s", Settings.AllMetrics.getOptionWord());
     private static final String CSV_OPTION = String.format("-%s", Settings.Csv.getOptionCharacter());
     private static final String CSV_OPTION_WORD = String.format("-%s", Settings.Csv.getOptionWord());
     private static final String SECURED_OPTION = String.format("-%s", Settings.Secured.getOptionCharacter());
@@ -69,10 +67,7 @@ public class ProcessArgsTest {
     @Test
     public void testInvokeSingleOptions() throws Exception {
 
-        EnumSet<Settings> actual = testInstance.invoke(commandLine(new String[]{ALL_OPTION}));
-        assertTrue(actual.contains(Settings.AllMetrics));
-
-        actual = testInstance.invoke(commandLine(new String[]{CSV_OPTION}));
+        EnumSet<Settings> actual = testInstance.invoke(commandLine(new String[]{CSV_OPTION}));
         assertTrue(actual.contains(Settings.Csv));
 
         actual = testInstance.invoke(commandLine(new String[]{SECURED_OPTION}));
@@ -123,24 +118,10 @@ public class ProcessArgsTest {
         testInstance.invoke(testCmdLine);
     }
 
-    @Test(expected = ParseException.class)
-    public void testOutputFileRequired() throws Exception{
-
-        final String[] testCmdLine = new String[]{
-                LOCATORS, GOOD_LOCATOR_ARG,
-                SPACES_WORD, GOOD_SPACE_NAMES,
-        };
-
-        testInstance.invoke(testCmdLine);
-    }
-
     @Test
     public void testInvokeSingleOptionsWithWords() throws Exception {
 
-        EnumSet<Settings> actual = testInstance.invoke(commandLine(new String[]{ALL_OPTION_WORD}));
-        assertTrue(actual.contains(Settings.AllMetrics));
-
-        actual = testInstance.invoke(commandLine(new String[]{CSV_OPTION_WORD}));
+        EnumSet<Settings> actual = testInstance.invoke(commandLine(new String[]{CSV_OPTION_WORD}));
         assertTrue(actual.contains(Settings.Csv));
 
         actual = testInstance.invoke(commandLine(new String[]{SECURED_OPTION_WORD}));
@@ -200,7 +181,7 @@ public class ProcessArgsTest {
     @Test
     public void testInvokeRequiresHyphens() throws Exception {
 
-        EnumSet<Settings> actual = testInstance.invoke(commandLine(new String[]{Settings.AllMetrics.getOptionCharacter()}));
+        EnumSet<Settings> actual = testInstance.invoke(commandLine(new String[]{Settings.Secured.getOptionCharacter()}));
         assertNotNull(actual);
 
         assertEquals(actual.size(), 3, 0);

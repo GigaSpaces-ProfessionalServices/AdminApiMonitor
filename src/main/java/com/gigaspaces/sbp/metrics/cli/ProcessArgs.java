@@ -3,7 +3,11 @@ package com.gigaspaces.sbp.metrics.cli;
 import com.gigaspaces.sbp.metrics.Settings;
 import org.apache.commons.cli.*;
 
+import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
@@ -14,9 +18,10 @@ import java.util.EnumSet;
  */
 public class ProcessArgs {
 
+    private static final int TERMINAL_WIDTH = 130;
+
     private static final String MULTIPLE_FORMAT_ERROR = String.format("CSV and log formats cannot be used at the same time ('-%s' and '-%s').", Settings.Csv.getOptionCharacter(), Settings.LogFormat.getOptionCharacter());
     private static final String LOOKUP_LOCATORS_REQUIRED = String.format("Lookup locators must be supplied ('-%s').", Settings.LookupLocators.getOptionCharacter());
-    private static final String OUTPUT_FILE_REQUIRED = String.format("Output file is a required parameter ('-%s').", Settings.OutputFile.getOptionCharacter());
     private static final String SPACE_NAMES_REQUIRED = String.format("Spaces is a required parameter ('-%s').", Settings.SpaceNames);
 
     /**
@@ -26,16 +31,15 @@ public class ProcessArgs {
      * @return such a beast
      */
     public EnumSet<Settings> invoke(String[] args) throws ParseException {
+
         EnumSet<Settings> settings = EnumSet.noneOf(Settings.class);
 
         CommandLine commandLine = new GnuParser().parse(allOptions(), args);
 
         ensureOnlyOneOutputFormat(commandLine);
         ensureLocators(commandLine);
-        ensureOutputFile(commandLine);
         ensureSpaces(commandLine);
 
-        settings = addOptionIfPresent(commandLine, settings, Settings.AllMetrics);
         settings = addOptionIfPresent(commandLine, settings, Settings.Csv);
         settings = addOptionIfPresent(commandLine, settings, Settings.Secured);
         settings = addOptionIfPresent(commandLine, settings, Settings.LogFormat);
@@ -46,32 +50,28 @@ public class ProcessArgs {
         settings = addOptionIfPresent(commandLine, settings, Settings.OutputFile);
 
         return settings;
+
     }
 
     private void ensureOnlyOneOutputFormat(CommandLine commandLine) throws ParseException {
-        if((commandLine.hasOption(Settings.Csv.getOptionCharacter()) || commandLine.hasOption(Settings.Csv.getOptionWord())) &&
-                (commandLine.hasOption(Settings.LogFormat.getOptionCharacter()) || commandLine.hasOption(Settings.LogFormat.getOptionWord()))){
+        if ((commandLine.hasOption(Settings.Csv.getOptionCharacter()) || commandLine.hasOption(Settings.Csv.getOptionWord())) &&
+                (commandLine.hasOption(Settings.LogFormat.getOptionCharacter()) || commandLine.hasOption(Settings.LogFormat.getOptionWord()))) {
             throw new ParseException(MULTIPLE_FORMAT_ERROR);
         }
     }
 
     private void ensureLocators(CommandLine commandLine) throws ParseException {
-        if( !commandLine.hasOption(Settings.LookupLocators.getOptionCharacter()) && !commandLine.hasOption(Settings.LookupLocators.getOptionWord()))
+        if (!commandLine.hasOption(Settings.LookupLocators.getOptionCharacter()) && !commandLine.hasOption(Settings.LookupLocators.getOptionWord()))
             throw new ParseException(LOOKUP_LOCATORS_REQUIRED);
     }
 
-    private void ensureOutputFile(CommandLine commandLine) throws ParseException {
-        if( !commandLine.hasOption(Settings.OutputFile.getOptionCharacter()) && !commandLine.hasOption(Settings.OutputFile.getOptionWord()))
-            throw new ParseException(OUTPUT_FILE_REQUIRED);
-    }
-
-    private void ensureSpaces(CommandLine commandLine) throws ParseException{
-        if( !commandLine.hasOption(Settings.SpaceNames.getOptionCharacter()) && !commandLine.hasOption(Settings.SpaceNames.getOptionWord()))
+    private void ensureSpaces(CommandLine commandLine) throws ParseException {
+        if (!commandLine.hasOption(Settings.SpaceNames.getOptionCharacter()) && !commandLine.hasOption(Settings.SpaceNames.getOptionWord()))
             throw new ParseException(SPACE_NAMES_REQUIRED);
     }
 
-    private EnumSet<Settings> addOptionIfPresent(CommandLine line, EnumSet<Settings> result, Settings setting){
-        if( line.hasOption(setting.getOptionCharacter())|| line.hasOption(setting.getOptionWord()))
+    private EnumSet<Settings> addOptionIfPresent(CommandLine line, EnumSet<Settings> result, Settings setting) {
+        if (line.hasOption(setting.getOptionCharacter()) || line.hasOption(setting.getOptionWord()))
             result = addTo(result, setting);
         return result;
     }
@@ -83,26 +83,71 @@ public class ProcessArgs {
     }
 
     public Options allOptions() {
-        final Options options = new Options();
-        addOptionByReference(options, Settings.AllMetrics);
+
+        final Options options = requiredOptions();
+
+        addParamByReference(options, Settings.LookupGroups);
+        addParamByReference(options, Settings.OutputFile);
+
         addOptionByReference(options, Settings.Csv);
         addOptionByReference(options, Settings.Secured);
         addOptionByReference(options, Settings.LogFormat);
 
-        addParamByReference(options, Settings.LookupLocators);
-        addParamByReference(options, Settings.LookupGroups);
-        addParamByReference(options, Settings.SpaceNames);
-        addParamByReference(options, Settings.OutputFile);
-
         return options;
     }
 
-    private void addOptionByReference(Options options, Settings anOption) {
-        options.addOption(anOption.getOptionCharacter(), anOption.getOptionWord(), false, anOption.getOptionDescription());
+    public Options requiredOptions() {
+
+        final Options options = new Options();
+        addParamByReference(options, Settings.LookupLocators);
+        addParamByReference(options, Settings.SpaceNames);
+        return options;
+
     }
 
-    private void addParamByReference(Options options, Settings param){
-        options.addOption(param.getOptionCharacter(), param.getOptionWord(), true, param.getOptionDescription());
+    private void addOptionByReference(Options options, Settings anOption) {
+        options.addOption(asOption(anOption));
+    }
+
+    private void addParamByReference(Options options, Settings param) {
+        options.addOption(asOption(param));
+    }
+
+    private Option asOption(Settings setting) {
+        Option opt = new Option(setting.getOptionCharacter(), setting.hasArgument(), setting.getOptionDescription());
+        opt.setLongOpt(setting.getOptionWord());
+        opt.setDescription(setting.getOptionDescription());
+        opt.setRequired(setting.isRequired());
+        return opt;
+    }
+
+    public EnumSet<Settings> invokeOrDie(String[] args) {
+
+        try {
+
+            return invoke(args);
+
+        } catch (ParseException e) {
+
+            PrintStream out = System.err;
+            out.println(e.getMessage());
+            final PrintWriter writer = new PrintWriter(out);
+
+            String headsAndTails = "\n.\n\n\n";
+
+            final HelpFormatter helpFormatter = new HelpFormatter();
+            helpFormatter.setSyntaxPrefix("usage:\n\n");
+            String cmdLineSyntax = "java -jar gs-monitor.jar";
+            Options allOpts = allOptions();
+            helpFormatter.printHelp(writer, TERMINAL_WIDTH, cmdLineSyntax, headsAndTails, allOpts, 5, 5, headsAndTails, true);
+            writer.flush();
+
+            System.exit(666);
+
+            return null;
+
+        }
+
     }
 
 }
