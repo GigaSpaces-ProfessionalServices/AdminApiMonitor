@@ -14,4 +14,9 @@ public interface OptionLike {
 
     String getOptionDescription();
 
+    /**
+     * @return if this setting takes an argument
+     */
+    boolean isParameter();
+
 }

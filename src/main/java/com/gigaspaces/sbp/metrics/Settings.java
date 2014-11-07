@@ -10,20 +10,27 @@ import com.gigaspaces.sbp.metrics.cli.OptionLike;
  */
 public enum Settings implements OptionLike {
 
+    AllMetrics("a", "all-metrics", "Print all metrics.", false)
+    , Csv("c", "csv", "Emit metrics on a single line, separated by commas.", false)
+    , Secured("s", "secured", "If GigaSpaces security is enabled on the XAP grid.", false)
+    , LogFormat("f", "log", "Emit metrics in log format (one metric per line).", false)
 
-    AllMetrics("a", "all-metrics", "Print all metrics.")
-    , Csv("c", "csv", "Emit metrics on a single line, separated by commas.")
-    , Secured("s", "secured", "If GigaSpaces security is enabled.")
+    , LookupLocators("l","locators", "XAP Lookup locators", true)
+    , LookupGroups("g", "groups", "XAP lookup groups", true)
+    , SpaceNames("z","spaces", "XAP Space names (comma-delimited list)", true)
+    , OutputFile("o","file", "Output file (relative location)", true);
     ;
 
     private final String optionCharacter;
     private final String optionWord;
     private final String optionDescription;
+    private final boolean isParameter;
 
-    Settings(String optionCharacter, String optionWord, String optionDescription) {
+    Settings(String optionCharacter, String optionWord, String optionDescription, boolean isParameter) {
         this.optionCharacter = optionCharacter;
         this.optionWord = optionWord;
         this.optionDescription = optionDescription;
+        this.isParameter = isParameter;
     }
 
     @Override
@@ -40,5 +47,8 @@ public enum Settings implements OptionLike {
     public String getOptionDescription() {
         return optionDescription;
     }
+
+    @Override
+    public boolean isParameter(){ return isParameter; }
 
 }
