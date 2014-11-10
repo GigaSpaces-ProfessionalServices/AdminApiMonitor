@@ -21,4 +21,6 @@ public interface OptionLike {
 
     boolean isRequired();
 
+    boolean hasDefault();
+
 }

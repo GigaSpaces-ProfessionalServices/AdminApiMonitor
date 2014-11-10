@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
  * Date: 7/29/14
  * Time: 8:45 PM
  */
-public class ProcessArgsTest {
+public final class ProcessArgsTest {
 
     // ONE OF EACH OF THESE IS REQUIRED...
     private static final String LOCATORS = String.format("-%s", Settings.LookupLocators.getOptionCharacter());
@@ -93,6 +93,11 @@ public class ProcessArgsTest {
         actual = testInstance.invoke(commandLine(new String[]{OUTPUT, GOOD_FILENAME}));
         assertTrue(actual.contains(Settings.OutputFile));
 
+    }
+
+    @Test
+    public void testUsernameAndPasswordGoTogether() throws Exception{
+        fail("bahhh");
     }
 
 

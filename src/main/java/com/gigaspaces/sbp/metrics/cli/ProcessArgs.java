@@ -2,6 +2,7 @@ package com.gigaspaces.sbp.metrics.cli;
 
 import com.gigaspaces.sbp.metrics.Settings;
 import org.apache.commons.cli.*;
+import org.springframework.stereotype.Component;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -16,6 +17,7 @@ import java.util.Map;
  * Time: 6:40 PM
  * Makes our settings handling a little more type safe.
  */
+@Component
 public class ProcessArgs {
 
     private static final int TERMINAL_WIDTH = 130;
@@ -23,6 +25,8 @@ public class ProcessArgs {
     private static final String MULTIPLE_FORMAT_ERROR = String.format("CSV and log formats cannot be used at the same time ('-%s' and '-%s').", Settings.Csv.getOptionCharacter(), Settings.LogFormat.getOptionCharacter());
     private static final String LOOKUP_LOCATORS_REQUIRED = String.format("Lookup locators must be supplied ('-%s').", Settings.LookupLocators.getOptionCharacter());
     private static final String SPACE_NAMES_REQUIRED = String.format("Spaces is a required parameter ('-%s').", Settings.SpaceNames);
+
+    private final Parser parser = new GnuParser();
 
     /**
      * A set of settings
@@ -34,7 +38,7 @@ public class ProcessArgs {
 
         EnumSet<Settings> settings = EnumSet.noneOf(Settings.class);
 
-        CommandLine commandLine = new GnuParser().parse(allOptions(), args);
+        CommandLine commandLine = parser.parse(allOptions(), args);
 
         ensureOnlyOneOutputFormat(commandLine);
         ensureLocators(commandLine);
@@ -51,6 +55,10 @@ public class ProcessArgs {
 
         return settings;
 
+    }
+
+    public CommandLine parse(String[] args) throws ParseException {
+        return parser.parse(allOptions(), args);
     }
 
     private void ensureOnlyOneOutputFormat(CommandLine commandLine) throws ParseException {
