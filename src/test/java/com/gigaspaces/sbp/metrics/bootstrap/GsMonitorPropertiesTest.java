@@ -1,4 +1,4 @@
-package com.gigaspaces.sbp.metrics.cli;
+package com.gigaspaces.sbp.metrics.bootstrap;
 
 import org.junit.Test;
 

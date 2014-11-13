@@ -59,7 +59,7 @@ if [ "${delay}" == "" ]; then
 fi
 echo ${delay}
 
-#    Using read, ask for inputs to update log file output path and logging type (choose from variants)
+#    Using read, ask for inputs to initialize log file output path and logging type (choose from variants)
 read -p "Please enter path to log file [${DEFAULT_LOGFILE}]: " logfile
 if [ "${logfile}" == "" ]; then
     logfile="${DEFAULT_LOGFILE}"

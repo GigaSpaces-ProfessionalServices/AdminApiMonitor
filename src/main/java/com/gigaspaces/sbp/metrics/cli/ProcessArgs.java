@@ -1,14 +1,13 @@
 package com.gigaspaces.sbp.metrics.cli;
 
-import com.gigaspaces.sbp.metrics.Settings;
+import com.gigaspaces.sbp.metrics.cli.Settings;
 import org.apache.commons.cli.*;
 import org.springframework.stereotype.Component;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA.
@@ -25,6 +24,7 @@ public class ProcessArgs {
     private static final String MULTIPLE_FORMAT_ERROR = String.format("CSV and log formats cannot be used at the same time ('-%s' and '-%s').", Settings.Csv.getOptionCharacter(), Settings.LogFormat.getOptionCharacter());
     private static final String LOOKUP_LOCATORS_REQUIRED = String.format("Lookup locators must be supplied ('-%s').", Settings.LookupLocators.getOptionCharacter());
     private static final String SPACE_NAMES_REQUIRED = String.format("Spaces is a required parameter ('-%s').", Settings.SpaceNames);
+    private static final String ONE_REQIURES_TWO_ERROR = "Using '%s', means that '%s' is required also.";
 
     private final Parser parser = new GnuParser();
 
@@ -34,7 +34,7 @@ public class ProcessArgs {
      * @param args args, as passed on the command line
      * @return such a beast
      */
-    public EnumSet<Settings> invoke(String[] args) throws ParseException {
+    public Set<Settings> invoke(String[] args) throws ParseException {
 
         EnumSet<Settings> settings = EnumSet.noneOf(Settings.class);
 
@@ -53,8 +53,22 @@ public class ProcessArgs {
         settings = addOptionIfPresent(commandLine, settings, Settings.SpaceNames);
         settings = addOptionIfPresent(commandLine, settings, Settings.OutputFile);
 
+        settings = addOptionIfPresent(commandLine, settings, Settings.Username);
+        settings = addOptionIfPresent(commandLine, settings, Settings.Password);
+
+        ensureUsernameXandPassword(settings);
+
         return settings;
 
+    }
+
+    private void ensureUsernameXandPassword(EnumSet<Settings> settings) throws ParseException {
+        boolean username = settings.contains(Settings.Username);
+        boolean password = settings.contains(Settings.Password);
+        if (username && !password)
+            throw new ParseException(String.format(ONE_REQIURES_TWO_ERROR, Settings.Username.name(), Settings.Password.name()));
+        else if (password && !username)
+            throw new ParseException(String.format(ONE_REQIURES_TWO_ERROR, Settings.Password.name(), Settings.Username.name()));
     }
 
     public CommandLine parse(String[] args) throws ParseException {
@@ -94,12 +108,15 @@ public class ProcessArgs {
 
         final Options options = requiredOptions();
 
-        addParamByReference(options, Settings.LookupGroups);
-        addParamByReference(options, Settings.OutputFile);
+        addOptionByReference(options, Settings.LookupGroups);
+        addOptionByReference(options, Settings.OutputFile);
 
         addOptionByReference(options, Settings.Csv);
         addOptionByReference(options, Settings.Secured);
         addOptionByReference(options, Settings.LogFormat);
+
+        addOptionByReference(options, Settings.Username);
+        addOptionByReference(options, Settings.Password);
 
         return options;
     }
@@ -107,18 +124,14 @@ public class ProcessArgs {
     public Options requiredOptions() {
 
         final Options options = new Options();
-        addParamByReference(options, Settings.LookupLocators);
-        addParamByReference(options, Settings.SpaceNames);
+        addOptionByReference(options, Settings.LookupLocators);
+        addOptionByReference(options, Settings.SpaceNames);
         return options;
 
     }
 
     private void addOptionByReference(Options options, Settings anOption) {
         options.addOption(asOption(anOption));
-    }
-
-    private void addParamByReference(Options options, Settings param) {
-        options.addOption(asOption(param));
     }
 
     private Option asOption(Settings setting) {
@@ -129,7 +142,7 @@ public class ProcessArgs {
         return opt;
     }
 
-    public EnumSet<Settings> invokeOrDie(String[] args) {
+    public Set<Settings> invokeOrDie(String[] args) {
 
         try {
 

@@ -1,4 +1,4 @@
-package com.gigaspaces.sbp.metrics.cli;
+package com.gigaspaces.sbp.metrics.bootstrap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,10 +30,11 @@ abstract class PropertyFileValues {
         this.propertyFileName = propertyFileName;
         logger.debug(String.format(LOADING_PROPERTIES_FILE_MESSAGE, propertyFileName));
         try {
-            properties.load(XapPropertyFileDefaults.class.getClassLoader().getResourceAsStream(propertyFileName));
+            properties.load(PropertyFileValues.class.getClassLoader().getResourceAsStream(propertyFileName));
         } catch (IOException | NullPointerException e) {
-            logger.error(String.format(PROPERTY_FILE_LOAD_ERROR, propertyFileName), e);
-            throw new ExceptionInInitializerError(e);
+            ExceptionInInitializerError err = new ExceptionInInitializerError(e);
+            logger.error(String.format(PROPERTY_FILE_LOAD_ERROR, propertyFileName), err);
+            throw err;
         }
     }
 

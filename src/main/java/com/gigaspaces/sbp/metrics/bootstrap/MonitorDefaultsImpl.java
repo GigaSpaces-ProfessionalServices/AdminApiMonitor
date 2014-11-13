@@ -1,4 +1,4 @@
-package com.gigaspaces.sbp.metrics.cli;
+package com.gigaspaces.sbp.metrics.bootstrap;
 
 /**
  * Created by IntelliJ IDEA.
@@ -6,7 +6,7 @@ package com.gigaspaces.sbp.metrics.cli;
  * Date: 11/10/14
  * Time: 2:52 PM
  */
-class MonitorProperties extends PropertyFileValues implements MonitorDefaults{
+class MonitorDefaultsImpl extends PropertyFileValues implements MonitorDefaults{
 
 //    alerts.config=alerts-config.xml
 
@@ -17,8 +17,9 @@ class MonitorProperties extends PropertyFileValues implements MonitorDefaults{
     private static final String METRIC_INTERVAL_IN_MILLISECONDS = "stat.periodic.sample.interval";
     private static final String METRIC_DELAY_IN_MILLISECONDS = "stat.periodic.sample.delay";
     private static final String METRIC_ALPHA = "stat.sample.alpha";
+    private static final String OUTPUT_FILENAME = "spaceMonitor.outputFile";
 
-    MonitorProperties(String propertyFileName) {
+    MonitorDefaultsImpl(String propertyFileName) {
         super(propertyFileName);
     }
 
@@ -68,6 +69,11 @@ class MonitorProperties extends PropertyFileValues implements MonitorDefaults{
     @Override
     public Float metricAlpha() {
         return Float.valueOf(getPropOrThrow(METRIC_ALPHA));
+    }
+
+    @Override
+    public String outputFilename(){
+        return getPropOrThrow(OUTPUT_FILENAME);
     }
 
 }

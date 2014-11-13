@@ -1,5 +1,6 @@
-package com.gigaspaces.sbp.metrics.cli;
+package com.gigaspaces.sbp.metrics.bootstrap;
 
+import com.gigaspaces.sbp.metrics.bootstrap.MonitorDefaultsImpl;
 import org.springframework.stereotype.Component;
 
 /**
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Component;
  * Time: 3:27 PM
  */
 @Component
-public class GsMonitorProperties extends MonitorProperties {
+public class GsMonitorProperties extends MonitorDefaultsImpl {
 
     private static final String GS_MONITOR_PROPERTY_FILE_NAME = "properties/gs.monitor.properties";
 

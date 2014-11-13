@@ -1,20 +1,21 @@
-package com.gigaspaces.sbp.metrics.cli;
+package com.gigaspaces.sbp.metrics.bootstrap;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-public final class XapPropertyFileDefaultsTest {
+public final class XapDefaultsImplTest {
 
     private static final String TEST_PROPERTY_FILENAME = "properties/xap.test.default.properties";
 
-    private XapPropertyFileDefaults testInstance;
+    private XapDefaultsImpl testInstance;
 
 
     @Before
     public void setUp() throws Exception {
-        testInstance = new XapPropertyFileDefaults(TEST_PROPERTY_FILENAME);
+        testInstance = new XapDefaultsImpl(TEST_PROPERTY_FILENAME);
     }
 
     @Test
@@ -39,6 +40,6 @@ public final class XapPropertyFileDefaultsTest {
 
     @Test(expected = ExceptionInInitializerError.class)
     public void testCtor() throws Exception{
-        new XapPropertyFileDefaults("foobarbaz.properties");
+        new XapDefaultsImpl("foobarbaz.properties");
     }
 }

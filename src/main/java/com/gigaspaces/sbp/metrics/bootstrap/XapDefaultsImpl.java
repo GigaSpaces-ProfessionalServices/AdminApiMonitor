@@ -1,4 +1,4 @@
-package com.gigaspaces.sbp.metrics.cli;
+package com.gigaspaces.sbp.metrics.bootstrap;
 
 /**
  * Created by IntelliJ IDEA.
@@ -7,14 +7,14 @@ package com.gigaspaces.sbp.metrics.cli;
  * Time: 2:13 PM
  * Provides a simple way of loading defaults.
  */
-class XapPropertyFileDefaults extends PropertyFileValues implements XapDefaults {
+class XapDefaultsImpl extends PropertyFileValues implements XapDefaults {
 
     private static final String LOOKUP_LOCATORS_PROP_NAME = "spaceMonitor.locators";
     private static final String SPACE_NAMES_PROP_NAME = "spaceMonitor.spaceName";
     private static final String OUTPUT_FILENAME_PROP_NAME = "spaceMonitor.outputFile";
     private static final String XAP_SECURITY_PROP_NAME = "spaceMonitor.secured";
 
-    XapPropertyFileDefaults(String propertyFilename) {
+    XapDefaultsImpl(String propertyFilename) {
         super(propertyFilename);
     }
 

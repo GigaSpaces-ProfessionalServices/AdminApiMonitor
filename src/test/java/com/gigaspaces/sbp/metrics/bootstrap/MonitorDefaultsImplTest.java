@@ -1,19 +1,20 @@
-package com.gigaspaces.sbp.metrics.cli;
+package com.gigaspaces.sbp.metrics.bootstrap;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
-public final class MonitorPropertiesTest {
+public final class MonitorDefaultsImplTest {
 
     private static final String TEST_FILE_NAME = "properties/gs.test.monitor.properties";
 
-    private MonitorProperties testInstance;
+    private MonitorDefaultsImpl testInstance;
 
     @Before
     public void setUp() throws Exception {
-        testInstance = new MonitorProperties(TEST_FILE_NAME);
+        testInstance = new MonitorDefaultsImpl(TEST_FILE_NAME);
     }
 
     @Test
@@ -48,6 +49,11 @@ public final class MonitorPropertiesTest {
 
     @Test(expected = ExceptionInInitializerError.class)
     public void testBogusPropFileNameThrows() throws Exception{
-        new MonitorProperties("bibbityBobbity.boo");
+        new MonitorDefaultsImpl("bibbity.bobbity.boo.properties");
+    }
+
+    @Test
+    public void testOutputFile() throws Exception{
+        assertEquals("myfile.txt", testInstance.outputFilename());
     }
 }

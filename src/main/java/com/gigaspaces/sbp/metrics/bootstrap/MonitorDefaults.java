@@ -1,4 +1,4 @@
-package com.gigaspaces.sbp.metrics.cli;
+package com.gigaspaces.sbp.metrics.bootstrap;
 
 /**
  * Created by IntelliJ IDEA.
@@ -34,5 +34,7 @@ public interface MonitorDefaults {
      * @return the value
      */
     Float metricAlpha();
+
+    String outputFilename();
 
 }

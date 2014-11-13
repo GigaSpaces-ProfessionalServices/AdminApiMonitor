@@ -1,4 +1,4 @@
-package com.gigaspaces.sbp.metrics;
+package com.gigaspaces.sbp.metrics.cli;
 
 import com.gigaspaces.sbp.metrics.cli.OptionLike;
 

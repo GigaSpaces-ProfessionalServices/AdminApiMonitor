@@ -2,6 +2,7 @@ package com.gigaspaces.sbp.metrics;
 
 import com.gigaspaces.sbp.metrics.alert.EmailAlertTriggeredEventListener;
 import com.gigaspaces.sbp.metrics.cli.ProcessArgs;
+import com.gigaspaces.sbp.metrics.cli.Settings;
 import org.apache.commons.cli.ParseException;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;
@@ -22,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 public class GsMonitorRunner {
 
-    private static EnumSet<Settings> settings; // from command line
+    private static Set<Settings> settings; // from command line
     private static boolean applicationContextStarted;
 
     private static final String APPLICATION_CONTEXT_PATH = "/META-INF/spring/admin-api-context.xml";
@@ -81,27 +82,27 @@ public class GsMonitorRunner {
         settings = new ProcessArgs().invokeOrDie(args);
 
         System.setProperty("csv_format", String.valueOf(settings.contains(Settings.Csv)));
-        checkConfigurationProvided();
+//        checkConfigurationProvided();
 
         while (!applicationContextStarted)
             attemptStart();
 
     }
 
-    private static void checkMandatoryPropertyExists(String propertyName) {
-        if (System.getProperty(propertyName) == null) {
-            System.out.println("===================================================");
-            System.out.println("Failed to start GS Monitor");
-            System.out.println(propertyName + " property has to be provided. Please take a look at readme.md");
-            System.out.println("===================================================");
-            System.exit(1);
-        }
-    }
+//    private static void checkMandatoryPropertyExists(String propertyName) {
+//        if (System.getProperty(propertyName) == null) {
+//            System.out.println("===================================================");
+//            System.out.println("Failed to start GS Monitor");
+//            System.out.println(propertyName + " property has to be provided. Please take a look at readme.md");
+//            System.out.println("===================================================");
+//            System.exit(1);
+//        }
+//    }
 
-    private static void checkConfigurationProvided() {
-        checkMandatoryPropertyExists("properties");
-        checkMandatoryPropertyExists("logback.configurationFile");
-    }
+//    private static void checkConfigurationProvided() {
+//        checkMandatoryPropertyExists("properties");
+//        checkMandatoryPropertyExists("logback.configurationFile");
+//    }
 
     private static void attemptStart() throws InterruptedException {
         try {
