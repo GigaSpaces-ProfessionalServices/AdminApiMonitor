@@ -23,7 +23,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CreateGsMonitorSettingTypeTest {
+public class CreateGsMonitorSettingsTest {
 
     private CreateGsMonitorSettings testInstance;
 
