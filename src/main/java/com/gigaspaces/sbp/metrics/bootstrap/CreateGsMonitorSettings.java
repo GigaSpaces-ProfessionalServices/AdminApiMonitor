@@ -1,9 +1,14 @@
 package com.gigaspaces.sbp.metrics.bootstrap;
 
-import com.gigaspaces.sbp.metrics.cli.Settings;
-import com.gigaspaces.sbp.metrics.cli.ProcessArgs;
+import com.gigaspaces.sbp.metrics.Constants;
+import com.gigaspaces.sbp.metrics.bootstrap.cli.OutputFormat;
+import com.gigaspaces.sbp.metrics.bootstrap.cli.SettingType;
+import com.gigaspaces.sbp.metrics.bootstrap.cli.CalculateSettingsFromCliArgs;
+import com.gigaspaces.sbp.metrics.bootstrap.props.MonitorDefaults;
+import com.gigaspaces.sbp.metrics.bootstrap.props.XapDefaults;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.ParseException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -17,6 +22,11 @@ import java.util.Set;
  * User: jason
  * Date: 11/6/14
  * Time: 10:17 PM
+ *
+ * Processes CLI input and property file defaults and aggregates that information into
+ * an authoritative, type-safe {@link com.gigaspaces.sbp.metrics.bootstrap.GsMonitorSettings}
+ * instance. Since all values can't be known until after application start-up (CLI input),
+ * this class is the one that processes CLI input and brings in defaults, when necessary.
  */
 @Component
 public class CreateGsMonitorSettings {
@@ -27,61 +37,93 @@ public class CreateGsMonitorSettings {
             = "spaceNames are required. Should be enforced by ParseArgs.invoke(args)";
     private static final String USERNAME_PASSWORD_INVARIANT
             = "Username and password must be provided together.";
+    private static final String UNSUPPORTED_OUTPUT_FORMAT
+            = "Output format '%s' is unsupported by this build of the monitor.";
 
     @Resource
-    private final ProcessArgs processArgs;
-    @Resource
     private final XapDefaults xapDefaults;
+    @Resource
+    private final MonitorDefaults monitorDefaults;
+    @Resource
+    private final CalculateSettingsFromCliArgs calculateSettingsFromCliArgs;
     @Resource
     private final ValidateAndCreateFilePath validateAndCreateFilePath;
     @Resource
     private final GsMonitorSettings gsMonitorSettings;
 
-    public CreateGsMonitorSettings(ProcessArgs processArgs,
+    @Autowired
+    public CreateGsMonitorSettings(CalculateSettingsFromCliArgs calculateSettingsFromCliArgs,
                                    XapDefaults xapDefaults,
                                    ValidateAndCreateFilePath validateAndCreateFilePath,
-                                   GsMonitorSettings gsMonitorSettings) {
+                                   GsMonitorSettings gsMonitorSettings, MonitorDefaults monitorDefaults) {
 
         assert xapDefaults != null : "need defaults";
-        assert processArgs != null : "need a read argument processor";
+        assert calculateSettingsFromCliArgs != null : "need a read argument processor";
         assert validateAndCreateFilePath != null : "need a file validator";
         assert gsMonitorSettings != null : "need application settings";
+        assert monitorDefaults != null : "need monitor defaults";
 
         this.xapDefaults = xapDefaults;
-        this.processArgs = processArgs;
+        this.calculateSettingsFromCliArgs = calculateSettingsFromCliArgs;
         this.validateAndCreateFilePath = validateAndCreateFilePath;
         this.gsMonitorSettings = gsMonitorSettings;
+        this.monitorDefaults = monitorDefaults;
 
     }
 
-    public Map<Settings, String> invoke(String[] args) throws ParseException {
+    /**
+     * Processes the arguments passed to it (using {@link com.gigaspaces.sbp.metrics.bootstrap.cli.CalculateSettingsFromCliArgs#invoke(String[])}.
+     * In the case that the user has passed some non-compliant input, the system will log to stderr and terminate forcefully.
+     * @param args CLI input
+     * @return a map from each interpreted setting to
+     * @throws ParseException
+     */
+    public Map<SettingType, String> invokeOrThrow(String[] args) throws ParseException {
 
-        CommandLine commandLine = processArgs.parse(args);
-        Set<Settings> set = processArgs.invoke(args);
+        CommandLine commandLine = calculateSettingsFromCliArgs.parse(args);
+        Set<SettingType> set = calculateSettingsFromCliArgs.invoke(args);
 
-        Map<Settings, String> map = new HashMap<>();
+        Map<SettingType, String> map = new HashMap<>();
 
-        map.put(Settings.LookupLocators, processLocators(commandLine, set));
-        map.put(Settings.SpaceNames, processSpaceNames(commandLine, set));
-        map.put(Settings.OutputFile, processOutputFile(commandLine));
+        map.put(SettingType.LookupLocators, processLocators(commandLine, set));
+        map.put(SettingType.SpaceNames, processSpaceNames(commandLine, set));
+        map.put(SettingType.OutputFile, processOutputFile(commandLine));
 
-        EnumSet<Settings> ignore = EnumSet.of(
-            Settings.LookupLocators
-            , Settings.SpaceNames
-            , Settings.OutputFile
-            , Settings.Username
-            , Settings.Password
-        );
-
-        String[] up = processUsernameAndPassword(commandLine, set);
-        if( up[0] != null ) map.put(Settings.Username, up[0]);
-        if( up[1] != null ) map.put(Settings.Password, up[1]);
-
-        for( Settings setting : set ) if(!ignore.contains(setting)) map.put(setting, "true");
+        processUsernameAndPassword(commandLine, set, map);
+        processAlpha(map);
+        processOutputFormat(map);
+        processFlags(set, map);
 
         gsMonitorSettings.initialize(map);
 
         return map;
+    }
+
+    private void processFlags(Set<SettingType> set, Map<SettingType, String> map) {
+        EnumSet<SettingType> ignore = EnumSet.of(
+                SettingType.LookupLocators
+                , SettingType.SpaceNames
+                , SettingType.OutputFile
+                , SettingType.Username
+                , SettingType.Password
+        );
+        for( SettingType setting : set ) if(!ignore.contains(setting)) map.put(setting, Constants.DEFAULT_FLAG_VALUE);
+    }
+
+    Map<SettingType, String> processOutputFormat(Map<SettingType, String> map) {
+        OutputFormat fmt = monitorDefaults.outputFormat();
+        switch( fmt ){
+            case Csv:
+                map.put(SettingType.Csv, Constants.DEFAULT_FLAG_VALUE);
+            case LogFormat:
+                map.put(SettingType.LogFormat, Constants.DEFAULT_FLAG_VALUE);
+            default:
+                throw new IllegalStateException(String.format(UNSUPPORTED_OUTPUT_FORMAT, fmt.name()));
+        }
+    }
+
+    private void processAlpha(Map<SettingType, String> map) {
+        map.put(SettingType.MovingAverageAlpha, monitorDefaults.movingAverageAlpha().toString() );
     }
 
     /**
@@ -95,7 +137,7 @@ public class CreateGsMonitorSettings {
      */
     String processOutputFile(CommandLine commandLine) throws ParseException {
 
-        String outputFile = getStringOrNull(commandLine, Settings.OutputFile);
+        String outputFile = getStringOrNull(commandLine, SettingType.OutputFile);
         if (outputFile == null) outputFile = xapDefaults.outputFile();
 
         return validateAndCreateFilePath.invoke(outputFile);
@@ -103,7 +145,7 @@ public class CreateGsMonitorSettings {
     }
 
 
-    private String getStringOrNull(CommandLine commandLine, Settings setting) {
+    private String getStringOrNull(CommandLine commandLine, SettingType setting) {
 
         assert setting != null : "need a non-null setting to continue processing";
 
@@ -120,14 +162,14 @@ public class CreateGsMonitorSettings {
 
     /**
      * @param commandLine the command line from CLI
-     * @param set calculated set of Settings (including a {@link Settings#LookupLocators})
+     * @param set calculated set of Settings (including a {@link com.gigaspaces.sbp.metrics.bootstrap.cli.SettingType#LookupLocators})
      */
-    String[] processUsernameAndPassword(CommandLine commandLine, Set<Settings> set) throws ParseException{
+    String[] processUsernameAndPassword(CommandLine commandLine, Set<SettingType> set, Map<SettingType, String> map) throws ParseException{
 
         assert set != null : "need a non-null set to process";
 
-        Settings un = Settings.Username;
-        Settings pw = Settings.Password;
+        SettingType un = SettingType.Username;
+        SettingType pw = SettingType.Password;
 
         boolean unSet = set.contains(un);
         boolean pwSet = set.contains(pw);
@@ -138,22 +180,25 @@ public class CreateGsMonitorSettings {
         String username = getStringOrNull(commandLine, un);
         String password = getStringOrNull(commandLine, pw);
 
+        if( username != null && username.trim().length() > 0 ) map.put(SettingType.Username, username.trim());
+        if( password != null && password.trim().length() > 0 ) map.put(SettingType.Password, password.trim());
+
         return new String[]{username, password};
 
     }
 
     /**
      * @param commandLine the command line from CLI
-     * @param set calculated set of Settings (including a {@link Settings#LookupLocators})
+     * @param set calculated set of Settings (including a {@link com.gigaspaces.sbp.metrics.bootstrap.cli.SettingType#LookupLocators})
      * @return if no locator was provided
-     * @throws ParseException if set doesn't have a {@link Settings#LookupLocators} or commandLine
+     * @throws ParseException if set doesn't have a {@link com.gigaspaces.sbp.metrics.bootstrap.cli.SettingType#LookupLocators} or commandLine
      * passed a bad value
      */
-    String processLocators(CommandLine commandLine, Set<Settings> set) throws ParseException {
+    String processLocators(CommandLine commandLine, Set<SettingType> set) throws ParseException {
 
         assert set != null : "need a non-null set to process";
 
-        Settings setting = Settings.LookupLocators;
+        SettingType setting = SettingType.LookupLocators;
         if( !set.contains(setting) )
             throw new ParseException(LOOKUP_LOCATOR_INVARIANT);
 
@@ -168,21 +213,21 @@ public class CreateGsMonitorSettings {
 
     /**
      * @param commandLine the command line from CLI
-     * @param set calculated set of Settings (including a {@link Settings#SpaceNames})
+     * @param set calculated set of Settings (including a {@link com.gigaspaces.sbp.metrics.bootstrap.cli.SettingType#SpaceNames})
      * @return space names (we asked user to make them comma-delimited on the CLI)
-     * @throws ParseException if set doesn't have a {@link Settings#SpaceNames} or commandLine
+     * @throws ParseException if set doesn't have a {@link com.gigaspaces.sbp.metrics.bootstrap.cli.SettingType#SpaceNames} or commandLine
      * passed a bad value
      */
-    String processSpaceNames(CommandLine commandLine, Set<Settings> set) throws ParseException {
+    String processSpaceNames(CommandLine commandLine, Set<SettingType> set) throws ParseException {
 
         assert set != null : "need a non-null set to process";
 
-        if( !set.contains(Settings.SpaceNames ) )
+        if( !set.contains(SettingType.SpaceNames ) )
             throw new ParseException(SPACE_NAMES_INVARIANT);
 
-        String spaceNames = commandLine.getOptionValue(Settings.SpaceNames.getOptionCharacter());
+        String spaceNames = commandLine.getOptionValue(SettingType.SpaceNames.getOptionCharacter());
         if (spaceNames == null || spaceNames.trim().length() == 0)
-            spaceNames = commandLine.getOptionValue(Settings.SpaceNames.getOptionWord());
+            spaceNames = commandLine.getOptionValue(SettingType.SpaceNames.getOptionWord());
         if( spaceNames == null || spaceNames.trim().length() == 0 )
             throw new ParseException(SPACE_NAMES_INVARIANT);
 

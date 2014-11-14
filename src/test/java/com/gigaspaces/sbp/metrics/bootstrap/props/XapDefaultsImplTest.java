@@ -1,5 +1,6 @@
-package com.gigaspaces.sbp.metrics.bootstrap;
+package com.gigaspaces.sbp.metrics.bootstrap.props;
 
+import com.gigaspaces.sbp.metrics.bootstrap.props.XapDefaultsImpl;
 import org.junit.Before;
 import org.junit.Test;
 

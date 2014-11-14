@@ -1,6 +1,5 @@
 package com.gigaspaces.sbp.metrics.metric;
 
-import com.gigaspaces.sbp.metrics.FullMetric;
 import com.gigaspaces.sbp.metrics.visitor.StatsVisitor;
 import org.openspaces.admin.GridComponent;
 

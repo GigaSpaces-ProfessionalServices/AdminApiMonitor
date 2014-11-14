@@ -1,4 +1,4 @@
-package com.gigaspaces.sbp.metrics.cli;
+package com.gigaspaces.sbp.metrics.bootstrap.cli;
 
 /**
  * Created by IntelliJ IDEA.

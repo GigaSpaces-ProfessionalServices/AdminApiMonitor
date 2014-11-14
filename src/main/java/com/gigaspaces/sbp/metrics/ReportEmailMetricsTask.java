@@ -1,5 +1,6 @@
 package com.gigaspaces.sbp.metrics;
 
+import com.gigaspaces.sbp.metrics.metric.FullMetric;
 import com.gigaspaces.sbp.metrics.metric.NamedMetric;
 import com.gigaspaces.sbp.metrics.visitor.CsvVisitor;
 import org.slf4j.Logger;
@@ -19,7 +20,7 @@ public class ReportEmailMetricsTask extends AbstractPeriodicVisitorTask {
         for (String name : Arrays.asList(spaceName.split(","))){
             spaceNames.add(name.trim());
         }
-        CsvVisitor visitor = new CsvVisitor(adminMonitor.getAdmin(), spaceNames, pidMetricMap, exponentialMovingAverage, alerts, period);
+        CsvVisitor visitor = null;//new CsvVisitor(adminMonitor.getAdmin(), spaceNames, pidMetricMap, exponentialMovingAverage, alerts, period);
         for (NamedMetric metric : metrics){
             metric.accept(visitor);
         }

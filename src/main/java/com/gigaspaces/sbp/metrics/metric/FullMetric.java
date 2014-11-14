@@ -1,6 +1,4 @@
-package com.gigaspaces.sbp.metrics;
-
-import com.gigaspaces.sbp.metrics.metric.NamedMetric;
+package com.gigaspaces.sbp.metrics.metric;
 
 import java.util.Date;
 

@@ -1,7 +1,6 @@
 package com.gigaspaces.sbp.metrics;
 
 import com.gigaspaces.sbp.metrics.metric.*;
-import org.openspaces.admin.Admin;
 import org.openspaces.admin.alert.Alert;
 import org.openspaces.admin.alert.AlertManager;
 import org.openspaces.admin.alert.events.AlertTriggeredEventListener;
@@ -13,7 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class AbstractPeriodicVisitorTask {
 
-    protected GsMonitorRunner adminMonitor;
+//    protected GsMonitorRunner adminMonitor;
 
     protected String spaceName;
 
@@ -32,8 +31,8 @@ public class AbstractPeriodicVisitorTask {
     protected List<NamedMetric> metrics;
 
     public void init(){
-        Admin admin = adminMonitor.getAdmin();
-        AlertManager alertManager = admin.getAlertManager();
+//        Admin admin = adminMonitor.getAdmin();
+        AlertManager alertManager = null;// = admin.getAlertManager();
         alertManager.getAlertTriggered().add(new AlertTriggeredEventListener() {
             @Override
             public void alertTriggered(Alert alert) {
@@ -67,10 +66,10 @@ public class AbstractPeriodicVisitorTask {
         this.spaceName = spaceName;
     }
 
-    @Required
-    public void setAdminMonitor(GsMonitorRunner adminMonitor) {
-        this.adminMonitor = adminMonitor;
-    }
+//    @Required
+//    public void setAdminMonitor(GsMonitorRunner adminMonitor) {
+//        this.adminMonitor = adminMonitor;
+//    }
 
     @Required
     public void setExponentialMovingAverage(ExponentialMovingAverage exponentialMovingAverage) {

@@ -1,4 +1,4 @@
-package com.gigaspaces.sbp.metrics;
+package com.gigaspaces.sbp.metrics.metric;
 
 import com.gigaspaces.sbp.metrics.metric.*;
 

@@ -1,4 +1,6 @@
-package com.gigaspaces.sbp.metrics.bootstrap;
+package com.gigaspaces.sbp.metrics.bootstrap.props;
+
+import com.gigaspaces.sbp.metrics.bootstrap.cli.OutputFormat;
 
 /**
  * Created by IntelliJ IDEA.
@@ -18,6 +20,7 @@ class MonitorDefaultsImpl extends PropertyFileValues implements MonitorDefaults{
     private static final String METRIC_DELAY_IN_MILLISECONDS = "stat.periodic.sample.delay";
     private static final String METRIC_ALPHA = "stat.sample.alpha";
     private static final String OUTPUT_FILENAME = "spaceMonitor.outputFile";
+    private static final String OUTPUT_FORMAT = "output.format";
 
     MonitorDefaultsImpl(String propertyFileName) {
         super(propertyFileName);
@@ -67,13 +70,18 @@ class MonitorDefaultsImpl extends PropertyFileValues implements MonitorDefaults{
      * {@inheritDoc}
      */
     @Override
-    public Float metricAlpha() {
+    public Float movingAverageAlpha() {
         return Float.valueOf(getPropOrThrow(METRIC_ALPHA));
     }
 
     @Override
     public String outputFilename(){
         return getPropOrThrow(OUTPUT_FILENAME);
+    }
+
+    @Override
+    public OutputFormat outputFormat() {
+        return OutputFormat.valueOf(getPropOrThrow(OUTPUT_FORMAT));
     }
 
 }

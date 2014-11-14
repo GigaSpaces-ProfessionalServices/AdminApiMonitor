@@ -1,4 +1,4 @@
-package com.gigaspaces.sbp.metrics.bootstrap;
+package com.gigaspaces.sbp.metrics.bootstrap.props;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

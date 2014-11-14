@@ -1,61 +1,63 @@
 package com.gigaspaces.sbp.metrics;
 
-import com.gigaspaces.sbp.metrics.metric.*;
+import com.gigaspaces.sbp.metrics.bootstrap.GsMonitorSettings;
+import com.gigaspaces.sbp.metrics.metric.NamedMetric;
 import com.gigaspaces.sbp.metrics.visitor.CsvVisitor;
-import com.gigaspaces.sbp.metrics.visitor.PrintVisitor;
-import com.gigaspaces.sbp.metrics.visitor.StatsVisitor;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import java.util.*;
+import javax.annotation.Resource;
+import java.util.Collection;
 
-public class CollectPeriodicMetricsVisitorTask extends AbstractPeriodicVisitorTask {
+@Component
+public class CollectPeriodicMetricsVisitorTask /*extends AbstractPeriodicVisitorTask*/ {
 
-    public void collectMetrics(){
+    private static final String THING_REQUIRED = "%s are required";
+    private static final String UNSUPPORTED_FORMAT = "OutputFormat '%s' is not supported by this build of the tool.";
 
-        List<String> spaceNames = new ArrayList<>();
-        for (String name : Arrays.asList(spaceName.split(","))){
-            spaceNames.add(name.trim());
+    @Resource
+    private final GsMonitorSettings settings;
+    @Resource
+    private final ExponentialMovingAverage average;
+
+    private boolean headersSaved;
+    private Collection<NamedMetric> metrics;
+
+    @Autowired
+    public CollectPeriodicMetricsVisitorTask(GsMonitorSettings settings, ExponentialMovingAverage average) {
+        assert settings != null : String.format(THING_REQUIRED, GsMonitorSettings.class.getSimpleName());
+        assert average != null : String.format(THING_REQUIRED, ExponentialMovingAverage.class.getSimpleName());
+        this.settings = settings;
+        this.average = average;
+    }
+
+    // TODO set period from GsMonitorSettings
+
+    private CsvVisitor visitor;
+    // CsvVisitor visitor = null;//new CsvVisitor(adminMonitor.getAdmin(), spaceNames, pidMetricMap, exponentialMovingAverage, alerts, period);
+    // StatsVisitor visitor = null;// new PrintVisitor(adminMonitor.getAdmin(), spaceNames, pidMetricMap, exponentialMovingAverage, alerts, period);
+
+    public void collectMetrics() {
+        switch (settings.outputFormat()) {
+            case Csv:
+                if (!headersSaved) {
+                    visitor.setSaveHeaders(true);
+                    headersSaved = true;
+                }
+                for (NamedMetric metric : metrics) {
+                    metric.accept(visitor);
+                }
+                visitor.printCsvMetrics();
+                break;
+            case LogFormat:
+                for (NamedMetric metric : metrics) {
+                    metric.accept(visitor);
+                }
+                break;
+            default:
+                throw new IllegalStateException(String.format(UNSUPPORTED_FORMAT, settings.outputFormat()));
         }
-        if (csv){
-            CsvVisitor visitor = new CsvVisitor(adminMonitor.getAdmin(), spaceNames, pidMetricMap, exponentialMovingAverage, alerts, period);
-            if (!headersSaved){
-                visitor.setSaveHeaders(true);
-                headersSaved = true;
-            }
-            for (NamedMetric metric : metrics){
-                metric.accept(visitor);
-            }
-            visitor.printCsvMetrics();
-        }   else {
-            StatsVisitor visitor = new PrintVisitor(adminMonitor.getAdmin(), spaceNames, pidMetricMap, exponentialMovingAverage, alerts, period);
-            for (NamedMetric metric : metrics){
-                metric.accept(visitor);
-            }
-        }
+
     }
 
-    @Required
-    public void setCsv(Boolean csv) {
-        this.csv = csv;
-    }
-
-    @Required
-    public void setSpaceName(String spaceName) {
-        this.spaceName = spaceName;
-    }
-
-    @Required
-    public void setAdminMonitor(GsMonitorRunner adminMonitor) {
-        this.adminMonitor = adminMonitor;
-    }
-
-    @Required
-    public void setExponentialMovingAverage(ExponentialMovingAverage exponentialMovingAverage) {
-        this.exponentialMovingAverage = exponentialMovingAverage;
-    }
-
-    @Required
-    public void setPeriod(Long period) {
-        this.period = period;
-    }
 }

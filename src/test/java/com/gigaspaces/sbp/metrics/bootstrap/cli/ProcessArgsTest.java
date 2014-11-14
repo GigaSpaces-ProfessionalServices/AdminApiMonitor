@@ -1,4 +1,4 @@
-package com.gigaspaces.sbp.metrics.cli;
+package com.gigaspaces.sbp.metrics.bootstrap.cli;
 
 import org.apache.commons.cli.ParseException;
 import org.junit.Before;
@@ -17,13 +17,13 @@ import static org.junit.Assert.*;
 public final class ProcessArgsTest {
 
     // ONE OF EACH OF THESE IS REQUIRED...
-    private static final String LOCATORS = String.format("-%s", Settings.LookupLocators.getOptionCharacter());
-    private static final String LOOKUP_GROUPS = String.format("-%s", Settings.LookupGroups.getOptionCharacter());
-    private static final String SPACES = String.format("-%s", Settings.SpaceNames.getOptionCharacter());
+    private static final String LOCATORS = String.format("-%s", SettingType.LookupLocators.getOptionCharacter());
+    private static final String LOOKUP_GROUPS = String.format("-%s", SettingType.LookupGroups.getOptionCharacter());
+    private static final String SPACES = String.format("-%s", SettingType.SpaceNames.getOptionCharacter());
     // (possibly as a word)...
-    private static final String LOCATORS_WORD = String.format("-%s", Settings.LookupLocators.getOptionWord());
-    private static final String LOOKUP_GROUPS_WORD = String.format("-%s", Settings.LookupGroups.getOptionWord());
-    private static final String SPACES_WORD = String.format("-%s", Settings.SpaceNames.getOptionWord());
+    private static final String LOCATORS_WORD = String.format("-%s", SettingType.LookupLocators.getOptionWord());
+    private static final String LOOKUP_GROUPS_WORD = String.format("-%s", SettingType.LookupGroups.getOptionWord());
+    private static final String SPACES_WORD = String.format("-%s", SettingType.SpaceNames.getOptionWord());
     // with an argument something like one of these...
     private static final String GOOD_LOCATOR_ARG = "google.com:4174";
     private static final String GOOD_GROUP_VAL = "monsters";
@@ -36,22 +36,22 @@ public final class ProcessArgsTest {
     };
 
     // OPTIONAL COMMANDS
-    private static final String OUTPUT = String.format("-%s", Settings.OutputFile.getOptionCharacter());
-    private static final String OUTPUT_WORD = String.format("-%s", Settings.OutputFile.getOptionWord());
-    private static final String USERNAME = String.format("-%s", Settings.Username.getOptionCharacter());
-    private static final String PASSWORD = String.format("-%s", Settings.Password.getOptionCharacter());
-    private static final String USERNAME_WORD = String.format("-%s", Settings.Username.getOptionWord());
-    private static final String PASSWORD_WORD = String.format("-%s", Settings.Password.getOptionWord());
+    private static final String OUTPUT = String.format("-%s", SettingType.OutputFile.getOptionCharacter());
+    private static final String OUTPUT_WORD = String.format("-%s", SettingType.OutputFile.getOptionWord());
+    private static final String USERNAME = String.format("-%s", SettingType.Username.getOptionCharacter());
+    private static final String PASSWORD = String.format("-%s", SettingType.Password.getOptionCharacter());
+    private static final String USERNAME_WORD = String.format("-%s", SettingType.Username.getOptionWord());
+    private static final String PASSWORD_WORD = String.format("-%s", SettingType.Password.getOptionWord());
 
     private static final String GOOD_USERNAME = "nerothin";
     private static final String GOOD_PASSWORD = "secret";
 
-    private static final String CSV_OPTION = String.format("-%s", Settings.Csv.getOptionCharacter());
-    private static final String CSV_OPTION_WORD = String.format("-%s", Settings.Csv.getOptionWord());
-    private static final String SECURED_OPTION = String.format("-%s", Settings.Secured.getOptionCharacter());
-    private static final String SECURED_OPTION_WORD = String.format("-%s", Settings.Secured.getOptionWord());
-    private static final String LOG_FORMAT_OPTION = String.format("-%s", Settings.LogFormat.getOptionCharacter());
-    private static final String LOG_FORMAT_OPTION_WORD = String.format("-%s", Settings.LogFormat.getOptionWord());
+    private static final String CSV_OPTION = String.format("-%s", SettingType.Csv.getOptionCharacter());
+    private static final String CSV_OPTION_WORD = String.format("-%s", SettingType.Csv.getOptionWord());
+    private static final String SECURED_OPTION = String.format("-%s", SettingType.Secured.getOptionCharacter());
+    private static final String SECURED_OPTION_WORD = String.format("-%s", SettingType.Secured.getOptionWord());
+    private static final String LOG_FORMAT_OPTION = String.format("-%s", SettingType.LogFormat.getOptionCharacter());
+    private static final String LOG_FORMAT_OPTION_WORD = String.format("-%s", SettingType.LogFormat.getOptionWord());
 
     private String[] makeTestCommandLine(String[] moreCommands){
         if( moreCommands == null || moreCommands.length == 0 ) return MIN_GOOD_CMDLINE;
@@ -62,59 +62,59 @@ public final class ProcessArgsTest {
         return arr;
     }
 
-    private ProcessArgs testInstance;
+    private CalculateSettingsFromCliArgs testInstance;
 
     @Before
     public void setUp() throws Exception {
-        testInstance = new ProcessArgs();
+        testInstance = new CalculateSettingsFromCliArgs();
     }
 
     @Test
     public void testInvokeSingleOptions() throws Exception {
 
-        Set<Settings> actual = testInstance.invoke(makeTestCommandLine(new String[]{CSV_OPTION}));
-        assertTrue(actual.contains(Settings.Csv));
+        Set<SettingType> actual = testInstance.invoke(makeTestCommandLine(new String[]{CSV_OPTION}));
+        assertTrue(actual.contains(SettingType.Csv));
 
         actual = testInstance.invoke(makeTestCommandLine(new String[]{SECURED_OPTION}));
-        assertTrue(actual.contains(Settings.Secured));
+        assertTrue(actual.contains(SettingType.Secured));
 
         actual = testInstance.invoke(makeTestCommandLine(new String[]{LOG_FORMAT_OPTION}));
-        assertTrue(actual.contains(Settings.LogFormat));
+        assertTrue(actual.contains(SettingType.LogFormat));
 
     }
 
     @Test
     public void testSingleParamsWithCharacter() throws Exception {
 
-        Set<Settings> actual = testInstance.invoke(makeTestCommandLine(new String[]{LOCATORS, GOOD_LOCATOR_ARG}));
-        assertTrue(actual.contains(Settings.LookupLocators));
+        Set<SettingType> actual = testInstance.invoke(makeTestCommandLine(new String[]{LOCATORS, GOOD_LOCATOR_ARG}));
+        assertTrue(actual.contains(SettingType.LookupLocators));
 
         actual = testInstance.invoke(makeTestCommandLine(new String[]{LOOKUP_GROUPS, GOOD_GROUP_VAL}));
-        assertTrue(actual.contains(Settings.LookupGroups));
+        assertTrue(actual.contains(SettingType.LookupGroups));
 
         actual = testInstance.invoke(makeTestCommandLine(new String[]{SPACES, GOOD_SPACE_NAMES}));
-        assertTrue(actual.contains(Settings.SpaceNames));
+        assertTrue(actual.contains(SettingType.SpaceNames));
 
         actual = testInstance.invoke(makeTestCommandLine(new String[]{OUTPUT, GOOD_FILENAME}));
-        assertTrue(actual.contains(Settings.OutputFile));
+        assertTrue(actual.contains(SettingType.OutputFile));
 
     }
 
     @Test
     public void testUsernameAndPasswordTogetherWithCharacter() throws Exception{
 
-        Set<Settings> actual = testInstance.invoke(makeTestCommandLine(new String[]{USERNAME, GOOD_USERNAME, PASSWORD, GOOD_PASSWORD}));
-        assertTrue(actual.contains(Settings.Username));
-        assertTrue(actual.contains(Settings.Password));
+        Set<SettingType> actual = testInstance.invoke(makeTestCommandLine(new String[]{USERNAME, GOOD_USERNAME, PASSWORD, GOOD_PASSWORD}));
+        assertTrue(actual.contains(SettingType.Username));
+        assertTrue(actual.contains(SettingType.Password));
 
     }
 
     @Test
     public void testUsernameAndPasswordTogetherWithWord() throws Exception{
 
-        Set<Settings> actual = testInstance.invoke(makeTestCommandLine(new String[]{USERNAME_WORD, GOOD_USERNAME, PASSWORD_WORD, GOOD_PASSWORD}));
-        assertTrue(actual.contains(Settings.Username));
-        assertTrue(actual.contains(Settings.Password));
+        Set<SettingType> actual = testInstance.invoke(makeTestCommandLine(new String[]{USERNAME_WORD, GOOD_USERNAME, PASSWORD_WORD, GOOD_PASSWORD}));
+        assertTrue(actual.contains(SettingType.Username));
+        assertTrue(actual.contains(SettingType.Password));
 
     }
 
@@ -161,40 +161,40 @@ public final class ProcessArgsTest {
     @Test
     public void testInvokeSingleOptionsWithWords() throws Exception {
 
-        Set<Settings> actual = testInstance.invoke(makeTestCommandLine(new String[]{CSV_OPTION_WORD}));
-        assertTrue(actual.contains(Settings.Csv));
+        Set<SettingType> actual = testInstance.invoke(makeTestCommandLine(new String[]{CSV_OPTION_WORD}));
+        assertTrue(actual.contains(SettingType.Csv));
 
         actual = testInstance.invoke(makeTestCommandLine(new String[]{SECURED_OPTION_WORD}));
-        assertTrue(actual.contains(Settings.Secured));
+        assertTrue(actual.contains(SettingType.Secured));
 
         actual = testInstance.invoke(makeTestCommandLine(new String[]{LOG_FORMAT_OPTION_WORD}));
-        assertTrue(actual.contains(Settings.LogFormat));
+        assertTrue(actual.contains(SettingType.LogFormat));
 
     }
 
     @Test
     public void testParamsWithWords() throws Exception {
 
-        Set<Settings> actual = testInstance.invoke(makeTestCommandLine(new String[]{LOCATORS_WORD, GOOD_LOCATOR_ARG}));
-        assertTrue(actual.contains(Settings.LookupLocators));
+        Set<SettingType> actual = testInstance.invoke(makeTestCommandLine(new String[]{LOCATORS_WORD, GOOD_LOCATOR_ARG}));
+        assertTrue(actual.contains(SettingType.LookupLocators));
 
         actual = testInstance.invoke(makeTestCommandLine(new String[]{LOOKUP_GROUPS_WORD, GOOD_GROUP_VAL}));
-        assertTrue(actual.contains(Settings.LookupGroups));
+        assertTrue(actual.contains(SettingType.LookupGroups));
 
         actual = testInstance.invoke(makeTestCommandLine(new String[]{SPACES_WORD, GOOD_SPACE_NAMES}));
-        assertTrue(actual.contains(Settings.SpaceNames));
+        assertTrue(actual.contains(SettingType.SpaceNames));
 
         actual = testInstance.invoke(makeTestCommandLine(new String[]{OUTPUT_WORD, GOOD_FILENAME}));
-        assertTrue(actual.contains(Settings.OutputFile));
+        assertTrue(actual.contains(SettingType.OutputFile));
 
     }
 
     @Test
     public void testInvokeMultipleOptions() throws Exception {
 
-        Set<Settings> actual = testInstance.invoke(makeTestCommandLine(new String[]{SECURED_OPTION, CSV_OPTION}));
-        assertTrue(actual.contains(Settings.Secured));
-        assertTrue(actual.contains(Settings.Csv));
+        Set<SettingType> actual = testInstance.invoke(makeTestCommandLine(new String[]{SECURED_OPTION, CSV_OPTION}));
+        assertTrue(actual.contains(SettingType.Secured));
+        assertTrue(actual.contains(SettingType.Csv));
 
     }
 
@@ -221,7 +221,7 @@ public final class ProcessArgsTest {
     @Test
     public void testInvokeRequiresHyphens() throws Exception {
 
-        Set<Settings> actual = testInstance.invoke(makeTestCommandLine(new String[]{Settings.Secured.getOptionCharacter()}));
+        Set<SettingType> actual = testInstance.invoke(makeTestCommandLine(new String[]{SettingType.Secured.getOptionCharacter()}));
         assertNotNull(actual);
 
         assertEquals(actual.size(), 2, 0);

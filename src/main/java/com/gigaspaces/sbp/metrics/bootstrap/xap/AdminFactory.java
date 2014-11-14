@@ -1,5 +1,6 @@
-package com.gigaspaces.sbp.metrics.bootstrap;
+package com.gigaspaces.sbp.metrics.bootstrap.xap;
 
+import com.gigaspaces.sbp.metrics.bootstrap.GsMonitorSettings;
 import org.openspaces.admin.Admin;
 import org.springframework.stereotype.Component;
 

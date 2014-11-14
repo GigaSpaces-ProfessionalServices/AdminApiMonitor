@@ -1,6 +1,5 @@
-package com.gigaspaces.sbp.metrics.bootstrap;
+package com.gigaspaces.sbp.metrics.bootstrap.props;
 
-import com.gigaspaces.sbp.metrics.bootstrap.MonitorDefaultsImpl;
 import org.springframework.stereotype.Component;
 
 /**

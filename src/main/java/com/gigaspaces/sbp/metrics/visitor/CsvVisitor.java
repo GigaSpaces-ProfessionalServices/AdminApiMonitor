@@ -2,7 +2,7 @@ package com.gigaspaces.sbp.metrics.visitor;
 
 import com.gigaspaces.sbp.metrics.Constants;
 import com.gigaspaces.sbp.metrics.ExponentialMovingAverage;
-import com.gigaspaces.sbp.metrics.FullMetric;
+import com.gigaspaces.sbp.metrics.metric.FullMetric;
 import com.gigaspaces.sbp.metrics.metric.NamedMetric;
 import org.openspaces.admin.Admin;
 import org.slf4j.Logger;

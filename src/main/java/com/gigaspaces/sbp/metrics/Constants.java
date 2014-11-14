@@ -9,5 +9,7 @@ package com.gigaspaces.sbp.metrics;
 public interface Constants {
 
     String DATE_FORMAT = "dd-M-yyyy HH:mm:ss";
+    String DEFAULT_FLAG_VALUE = Boolean.TRUE.toString();
+    String LIST_ITEM_SEPARATOR = ",";
 
 }

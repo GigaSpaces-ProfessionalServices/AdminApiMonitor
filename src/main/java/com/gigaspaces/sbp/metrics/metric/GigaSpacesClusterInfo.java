@@ -1,7 +1,6 @@
 package com.gigaspaces.sbp.metrics.metric;
 
 import com.gigaspaces.lrmi.*;
-import com.gigaspaces.sbp.metrics.FullMetric;
 import com.gigaspaces.sbp.metrics.visitor.StatsVisitor;
 import org.openspaces.admin.gsc.GridServiceContainer;
 import org.openspaces.admin.space.SpaceInstance;

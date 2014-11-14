@@ -1,4 +1,6 @@
-package com.gigaspaces.sbp.metrics.bootstrap;
+package com.gigaspaces.sbp.metrics.bootstrap.props;
+
+import com.gigaspaces.sbp.metrics.bootstrap.cli.OutputFormat;
 
 /**
  * Created by IntelliJ IDEA.
@@ -33,8 +35,10 @@ public interface MonitorDefaults {
      * a given metric. Not all metrics are affected.
      * @return the value
      */
-    Float metricAlpha();
+    Float movingAverageAlpha();
 
     String outputFilename();
+
+    OutputFormat outputFormat();
 
 }

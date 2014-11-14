@@ -1,5 +1,6 @@
-package com.gigaspaces.sbp.metrics.bootstrap;
+package com.gigaspaces.sbp.metrics.bootstrap.props;
 
+import com.gigaspaces.sbp.metrics.bootstrap.cli.OutputFormat;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -44,7 +45,7 @@ public final class MonitorDefaultsImplTest {
 
     @Test
     public void testMetricAlpha() throws Exception {
-        assertEquals(2.71828, testInstance.metricAlpha(), 0.0005);
+        assertEquals(2.71828, testInstance.movingAverageAlpha(), 0.0005);
     }
 
     @Test(expected = ExceptionInInitializerError.class)
@@ -55,5 +56,10 @@ public final class MonitorDefaultsImplTest {
     @Test
     public void testOutputFile() throws Exception{
         assertEquals("myfile.txt", testInstance.outputFilename());
+    }
+
+    @Test
+    public void testOutputFormat() throws Exception{
+        assertEquals(OutputFormat.InfluxDb, testInstance.outputFormat());
     }
 }

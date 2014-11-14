@@ -1,7 +1,7 @@
 package com.gigaspaces.sbp.metrics.visitor;
 
 import com.gigaspaces.cluster.replication.async.mirror.MirrorStatistics;
-import com.gigaspaces.sbp.metrics.FullMetric;
+import com.gigaspaces.sbp.metrics.metric.FullMetric;
 import com.gigaspaces.sbp.metrics.metric.NamedMetric;
 import com.j_spaces.core.filters.ReplicationStatistics;
 import org.openspaces.admin.Admin;
@@ -47,7 +47,6 @@ public interface StatsVisitor {
     //    SpaceStatistics spaceStatistics();
     //    SpaceInstanceStatistics instanceStatistics();
 
-
     /**
      * Save off a statistic for safe-keeping. May be reported now or later, at the
      * Visitor's discretion
@@ -67,8 +66,5 @@ public interface StatsVisitor {
      * @param fullMetric the metric
      */
     void saveOnce(FullMetric fullMetric);
-
-
-
 
 }
