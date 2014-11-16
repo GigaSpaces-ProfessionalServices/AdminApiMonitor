@@ -74,10 +74,9 @@ public class CreateGsMonitorSettings {
 
     /**
      * Processes the arguments passed to it (using {@link com.gigaspaces.sbp.metrics.bootstrap.cli.CalculateSettingsFromCliArgs#invoke(String[])}.
-     * In the case that the user has passed some non-compliant input, the system will log to stderr and terminate forcefully.
      * @param args CLI input
      * @return a map from each interpreted setting to
-     * @throws ParseException
+     * @throws ParseException In the case that the user has passed some non-compliant input
      */
     public Map<SettingType, String> invokeOrThrow(String[] args) throws ParseException {
 
