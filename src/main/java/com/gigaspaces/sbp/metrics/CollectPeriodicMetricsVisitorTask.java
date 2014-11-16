@@ -1,6 +1,7 @@
 package com.gigaspaces.sbp.metrics;
 
 import com.gigaspaces.sbp.metrics.bootstrap.GsMonitorSettings;
+import com.gigaspaces.sbp.metrics.bootstrap.GsMonitorSettingsImpl;
 import com.gigaspaces.sbp.metrics.metric.NamedMetric;
 import com.gigaspaces.sbp.metrics.visitor.CsvVisitor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class CollectPeriodicMetricsVisitorTask /*extends AbstractPeriodicVisitor
 
     @Autowired
     public CollectPeriodicMetricsVisitorTask(GsMonitorSettings settings, ExponentialMovingAverage average) {
-        assert settings != null : String.format(THING_REQUIRED, GsMonitorSettings.class.getSimpleName());
+        assert settings != null : String.format(THING_REQUIRED, GsMonitorSettingsImpl.class.getSimpleName());
         assert average != null : String.format(THING_REQUIRED, ExponentialMovingAverage.class.getSimpleName());
         this.settings = settings;
         this.average = average;

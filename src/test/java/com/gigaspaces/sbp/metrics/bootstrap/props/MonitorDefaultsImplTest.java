@@ -62,4 +62,5 @@ public final class MonitorDefaultsImplTest {
     public void testOutputFormat() throws Exception{
         assertEquals(OutputFormat.InfluxDb, testInstance.outputFormat());
     }
+
 }

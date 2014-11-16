@@ -45,7 +45,7 @@ public class Main {
     /**
      * This command is what interprets the CLI input and injects it into the spring context
      * (which holds a reference to the output of the {@link com.gigaspaces.sbp.metrics.bootstrap.CreateGsMonitorSettings#invokeOrThrow(String[])}
-     * method call in a {@link com.gigaspaces.sbp.metrics.bootstrap.GsMonitorSettings} instance.
+     * method call in a {@link com.gigaspaces.sbp.metrics.bootstrap.GsMonitorSettingsImpl} instance.
      *
      * @param args CLI parameters
      */

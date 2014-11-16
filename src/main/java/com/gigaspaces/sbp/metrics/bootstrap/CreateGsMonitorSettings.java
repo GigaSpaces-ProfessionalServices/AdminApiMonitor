@@ -24,7 +24,7 @@ import java.util.Set;
  * Time: 10:17 PM
  *
  * Processes CLI input and property file defaults and aggregates that information into
- * an authoritative, type-safe {@link com.gigaspaces.sbp.metrics.bootstrap.GsMonitorSettings}
+ * an authoritative, type-safe {@link GsMonitorSettingsImpl}
  * instance. Since all values can't be known until after application start-up (CLI input),
  * this class is the one that processes CLI input and brings in defaults, when necessary.
  */
@@ -49,13 +49,13 @@ public class CreateGsMonitorSettings {
     @Resource
     private final ValidateAndCreateFilePath validateAndCreateFilePath;
     @Resource
-    private final GsMonitorSettings gsMonitorSettings;
+    private final GsMonitorSettingsImpl gsMonitorSettings;
 
     @Autowired
     public CreateGsMonitorSettings(CalculateSettingsFromCliArgs calculateSettingsFromCliArgs,
                                    XapDefaults xapDefaults,
                                    ValidateAndCreateFilePath validateAndCreateFilePath,
-                                   GsMonitorSettings gsMonitorSettings,
+                                   GsMonitorSettingsImpl gsMonitorSettings,
                                    MonitorDefaults monitorDefaults) {
 
         assert xapDefaults != null : "need defaults";

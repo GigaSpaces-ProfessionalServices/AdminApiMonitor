@@ -17,13 +17,13 @@ import static org.junit.Assert.*;
 @RunWith(MockitoJUnitRunner.class)
 public class GsMonitorSettingTest {
 
-    private GsMonitorSettings testInstance;
+    private GsMonitorSettingsImpl testInstance;
     private Strings strings = new Strings();
     private Numbers numbers = new Numbers();
 
     @Before
     public void setUp() throws Exception {
-        testInstance = new GsMonitorSettings();
+        testInstance = new GsMonitorSettingsImpl();
     }
 
     @Test(expected = IllegalStateException.class)
@@ -333,6 +333,37 @@ public class GsMonitorSettingTest {
         }});
 
         assertEquals(testInterval.toString(), testInstance.collectMetricsIntervalInMs().toString());
+
+    }
+
+    @Test
+    public void testCollectionMetricsInitialDelayInMs(){
+
+        final Integer testDelay = numbers.positiveInteger();
+
+        testInstance.initialize(new HashMap<SettingType, String>(){{
+            put(SettingType.CollectMetricsInitialDelayInMs, testDelay.toString());
+        }});
+
+        assertEquals(testDelay.toString(), testInstance.collectMetricsInitialDelayInMs().toString());
+
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testCollectionMetricsInitialDelayInMsThrowsIfNotInitializedAtAll(){
+
+        testInstance.collectMetricsInitialDelayInMs();
+
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testCollectionMetricInitialDelayInMsThrowsIfNotSpecificallyInitialized(){
+
+        testInstance.initialize(new HashMap<SettingType, String>() {{
+            put(SettingType.CollectMetricsIntervalInMs, numbers.positiveDouble().toString());
+        }});
+
+        testInstance.collectMetricsInitialDelayInMs();
 
     }
 

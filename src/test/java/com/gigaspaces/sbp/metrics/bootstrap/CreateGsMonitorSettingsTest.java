@@ -35,7 +35,7 @@ public class CreateGsMonitorSettingsTest {
     @Mock
     private ValidateAndCreateFilePath validateAndCreateFilePath;
     @Mock
-    private GsMonitorSettings gsMonitorSettings;
+    private GsMonitorSettingsImpl gsMonitorSettings;
     @Mock
     private MonitorDefaults monitorDefaults;
 
