@@ -71,7 +71,8 @@ class MonitorDefaultsImpl extends PropertyFileValues implements MonitorDefaults{
      */
     @Override
     public Float movingAverageAlpha() {
-        return Float.valueOf(getPropOrThrow(METRIC_ALPHA));
+        String alpha = getPropOrThrow(METRIC_ALPHA);
+        return Float.valueOf(alpha);
     }
 
     @Override

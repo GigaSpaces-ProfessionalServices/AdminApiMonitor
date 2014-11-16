@@ -2,8 +2,9 @@ package com.gigaspaces.sbp.metrics.bootstrap;
 
 import com.gigaspaces.sbp.metrics.Constants;
 import com.gigaspaces.sbp.metrics.bootstrap.cli.CalculateSettingsFromCliArgs;
+import com.gigaspaces.sbp.metrics.bootstrap.cli.OutputFormat;
 import com.gigaspaces.sbp.metrics.bootstrap.cli.SettingType;
-import com.gigaspaces.sbp.metrics.bootstrap.props.GsMonitorProperties;
+import com.gigaspaces.sbp.metrics.bootstrap.props.MonitorDefaults;
 import com.gigaspaces.sbp.metrics.bootstrap.props.XapDefaults;
 import com.jasonnerothin.testing.Strings;
 import org.apache.commons.cli.CommandLine;
@@ -36,7 +37,7 @@ public class CreateGsMonitorSettingsTest {
     @Mock
     private GsMonitorSettings gsMonitorSettings;
     @Mock
-    private GsMonitorProperties monitorDefaults;
+    private MonitorDefaults monitorDefaults;
 
     @Mock
     private CommandLine testCommandLine;
@@ -69,6 +70,10 @@ public class CreateGsMonitorSettingsTest {
         argList.add(String.format("-%s", SettingType.SpaceNames.getOptionCharacter()));
         String testSpaceNames = strings.alphabetic();
         argList.add(testSpaceNames);
+        argList.add(String.format("-%s", SettingType.Username.getOptionCharacter()));
+        argList.add(strings.alphabetic()); // username
+        argList.add(String.format("-%s", SettingType.Password.getOptionCharacter()));
+        argList.add(strings.alphabetic()); // pw
         String[] testArgs = new String[argList.size()];
         argList.toArray(testArgs);
 
@@ -76,8 +81,9 @@ public class CreateGsMonitorSettingsTest {
         doReturn(testLocator).when(testCommandLine).getOptionValue(SettingType.LookupLocators.getOptionWord());
         doReturn(testSpaceNames).when(testCommandLine).getOptionValue(SettingType.SpaceNames.getOptionCharacter());
         doReturn(testCommandLine).when(calculateSettingsFromCliArgs).parse(eq(testArgs));
+        doReturn(0.5f).when(monitorDefaults).movingAverageAlpha();
+        doReturn(OutputFormat.Csv).when(monitorDefaults).outputFormat();
 //        doReturn("0.5").when(monitorDefaults).movingAverageAlpha();
-//        doReturn("0.5").when(monitorDefaults).getPropOrThrow(eq("stat.sample.alpha"));
 
         Map<SettingType, String> actual = testInstance.invokeOrThrow(testArgs);
 
@@ -86,7 +92,8 @@ public class CreateGsMonitorSettingsTest {
         set.removeAll(defaulted);
         for( SettingType setting : set ){
             String value = actual.get(setting);
-            assertEquals(value, Constants.DEFAULT_FLAG_VALUE);
+            String expected = Constants.DEFAULT_FLAG_VALUE;
+            assertEquals(String.format("Expected '%s' to be set to '%s'.", setting.name(), expected), expected, value);
         }
 
     }
@@ -145,7 +152,7 @@ public class CreateGsMonitorSettingsTest {
         doReturn(testPw).when(testCommandLine).getOptionValue(eq(SettingType.Password.getOptionCharacter()));
         doReturn(testPw).when(testCommandLine).getOptionValue(eq(SettingType.Password.getOptionWord()));
 
-        String[] actual = testInstance.processUsernameAndPassword(testCommandLine, EnumSet.of(SettingType.Username, SettingType.Password), Collections.<SettingType, String>emptyMap());
+        String[] actual = testInstance.processUsernameAndPassword(testCommandLine, EnumSet.of(SettingType.Username, SettingType.Password), new HashMap<SettingType, String>());
 
         assertEquals(testName, actual[0]);
         assertEquals(testPw, actual[1]);

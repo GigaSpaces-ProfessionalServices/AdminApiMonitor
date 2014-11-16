@@ -55,7 +55,8 @@ public class CreateGsMonitorSettings {
     public CreateGsMonitorSettings(CalculateSettingsFromCliArgs calculateSettingsFromCliArgs,
                                    XapDefaults xapDefaults,
                                    ValidateAndCreateFilePath validateAndCreateFilePath,
-                                   GsMonitorSettings gsMonitorSettings, MonitorDefaults monitorDefaults) {
+                                   GsMonitorSettings gsMonitorSettings,
+                                   MonitorDefaults monitorDefaults) {
 
         assert xapDefaults != null : "need defaults";
         assert calculateSettingsFromCliArgs != null : "need a read argument processor";
@@ -115,11 +116,14 @@ public class CreateGsMonitorSettings {
         switch( fmt ){
             case Csv:
                 map.put(SettingType.Csv, Constants.DEFAULT_FLAG_VALUE);
+                break;
             case LogFormat:
                 map.put(SettingType.LogFormat, Constants.DEFAULT_FLAG_VALUE);
+                break;
             default:
                 throw new IllegalStateException(String.format(UNSUPPORTED_OUTPUT_FORMAT, fmt.name()));
         }
+        return map;
     }
 
     private void processAlpha(Map<SettingType, String> map) {
