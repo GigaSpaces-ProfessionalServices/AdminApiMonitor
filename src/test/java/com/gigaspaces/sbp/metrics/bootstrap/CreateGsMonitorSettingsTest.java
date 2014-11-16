@@ -49,7 +49,10 @@ public class CreateGsMonitorSettingsTest {
         testInstance = new CreateGsMonitorSettings(calculateSettingsFromCliArgs, xapDefaults, validateAndCreateFilePath, gsMonitorSettings, monitorDefaults);
     }
 
-
+    /**
+     * Clearly this method is getting a bit too complicated.
+     * @throws Exception never
+     */
     @Test
     public void testInvokeOrThrow() throws Exception {
 
@@ -83,7 +86,6 @@ public class CreateGsMonitorSettingsTest {
         doReturn(testCommandLine).when(calculateSettingsFromCliArgs).parse(eq(testArgs));
         doReturn(0.5f).when(monitorDefaults).movingAverageAlpha();
         doReturn(OutputFormat.Csv).when(monitorDefaults).outputFormat();
-//        doReturn("0.5").when(monitorDefaults).movingAverageAlpha();
 
         Map<SettingType, String> actual = testInstance.invokeOrThrow(testArgs);
 
