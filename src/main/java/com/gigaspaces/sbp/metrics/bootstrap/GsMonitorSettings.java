@@ -79,4 +79,10 @@ public interface GsMonitorSettings {
      */
     Integer collectMetricsInitialDelayInMs();
 
+    Boolean xapSecurityEnabled();
+
+    Integer machineCount();
+
+    Integer gscCount();
+
 }

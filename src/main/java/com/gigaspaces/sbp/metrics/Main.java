@@ -64,7 +64,7 @@ public class Main {
     }
 
     void connectToXapGrids() {
-        connectToXap.connect();
+        connectToXap.invoke();
     }
 
     void run() {

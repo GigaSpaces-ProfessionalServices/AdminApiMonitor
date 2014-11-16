@@ -145,4 +145,23 @@ public class GsMonitorSettingsImpl implements GsMonitorSettings {
         ensureInitialization();
         return Integer.valueOf(getRequiredSettingOrThrow(SettingType.CollectMetricsInitialDelayInMs));
     }
+
+    @Override
+    public Boolean xapSecurityEnabled() {
+        ensureInitialization();
+        return Boolean.valueOf(getRequiredSettingOrThrow(SettingType.Secured));
+    }
+
+    @Override
+    public Integer machineCount() {
+        ensureInitialization();
+        return Integer.valueOf(getRequiredSettingOrThrow(SettingType.MachineCount));
+    }
+
+    @Override
+    public Integer gscCount() {
+        ensureInitialization();
+        return Integer.valueOf(getRequiredSettingOrThrow(SettingType.GscCount));
+    }
+
 }
