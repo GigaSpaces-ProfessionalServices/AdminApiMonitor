@@ -23,7 +23,7 @@ public class ConfigureAlerts {
 
     private static final String SETTINGS_REQUIRED_ERROR = "Non-null application settings '%s' are required.";
     private static final String ADMIN_REQUIRED_ERROR = "Required non-null admin.";
-    private static final String ALERTS_CONFIGURATION_RESOURCE = "/alerts-config.xml";
+    private static final String ALERTS_CONFIGURATION_RESOURCE = "alerts-config.xml";
 
     @Resource
     private final GsMonitorSettings settings;
