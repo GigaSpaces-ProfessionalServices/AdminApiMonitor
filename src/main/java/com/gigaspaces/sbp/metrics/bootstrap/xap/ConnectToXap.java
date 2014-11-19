@@ -28,6 +28,8 @@ public class ConnectToXap {
     private static final String MISSING_PASSWORD_ERROR = "Non-empty password required.";
     private static final String MISSING_USERNAME_ERROR = "Non-empty username required.";
     private static final String NON_NULL_INSTANCE_REQUIRED = "Require non-null instance of '%s'.";
+    private static final String SPACE_CONNECTION_REQUIRED = "Need to be able to connect to spaces.";
+    private static final String FACTORY_REQUIRED = "Need a mechanism for creating AdminFactories.";
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -35,13 +37,21 @@ public class ConnectToXap {
     private final GsMonitorSettings settings;
     @Resource
     private final ConfigureAlerts configureAlerts;
+    @Resource
+    private final SpaceConnections spaceConnections;
+    @Resource
+    private final AdminFactoryFactory adminFactoryFactory;
 
     private Admin admin;
 
     @Autowired
-    public ConnectToXap(GsMonitorSettings settings, ConfigureAlerts configureAlerts) {
+    public ConnectToXap(GsMonitorSettings settings, ConfigureAlerts configureAlerts, SpaceConnections spaceConnections, AdminFactoryFactory adminFactoryFactory) {
+        assert spaceConnections != null : SPACE_CONNECTION_REQUIRED;
         assert settings != null : String.format(SETTINGS_REQUIRED_ERROR, GsMonitorSettings.class.getSimpleName());
         assert configureAlerts != null : String.format(NON_NULL_INSTANCE_REQUIRED, ConfigureAlerts.class.getSimpleName());
+        assert adminFactoryFactory != null : FACTORY_REQUIRED;
+        this.adminFactoryFactory = adminFactoryFactory;
+        this.spaceConnections = spaceConnections;
         this.settings = settings;
         this.configureAlerts = configureAlerts;
     }
@@ -52,7 +62,7 @@ public class ConnectToXap {
      */
     public Admin invoke() {
 
-        AdminFactory factory = new AdminFactory();
+        AdminFactory factory = adminFactoryFactory.build();
         establishLookups(factory);
         enableSecurity(factory);
         factory.discoverUnmanagedSpaces();
@@ -62,12 +72,12 @@ public class ConnectToXap {
         if (settings.alertsEnabled())
             configureAlerts.invoke(admin);
 
+        for (String spaceName : settings.spaceNames()) {
+            spaceConnections.connect(spaceName).invoke(admin); // TODO Thread it through a factory
+        }
+
         connectToMachines(); // TODO Thread it
         connectToGSCs(); // TODO Thread it
-
-        for (String spaceName : settings.spaceNames()) {
-            new ConnectToSpace(spaceName).invoke(admin); // TODO Thread it through a factory
-        }
 
         return admin;
 
@@ -77,10 +87,10 @@ public class ConnectToXap {
         GridServiceContainers GSCs = admin.getGridServiceContainers();
         int gscCount = settings.gscCount();
         long start = System.currentTimeMillis();
-        logger.info("Waiting indefinitely to connect to %d GSCs.", gscCount);
+        logger.info(String.format("Waiting indefinitely to connect to %d GSCs.", gscCount));
         GSCs.waitFor(gscCount);
         long stop = System.currentTimeMillis();
-        logger.info("Successfully contacted %d GSCs in %d milliseconds.", gscCount, (stop - start));
+        logger.info(String.format("Successfully contacted %d GSCs in %d milliseconds.", gscCount, (stop - start)));
     }
 
     private void connectToMachines() {
@@ -89,17 +99,17 @@ public class ConnectToXap {
         int machineCount = settings.machineCount();
         machines.waitFor(machineCount);
         long stop = System.currentTimeMillis();
-        logger.info("Successfully contacted %d machines in %d milliseconds.", machineCount, (stop - start));
+        logger.info(String.format("Successfully contacted %d machines in %d milliseconds.", machineCount, (stop - start)));
     }
 
     private void establishLookups(AdminFactory factory) {
         String lookupLocators = settings.lookupLocators();
         factory.addLocators(lookupLocators);
-        logger.info("Connecting to XAP using locators = '%s'.", lookupLocators);
+        logger.info(String.format("Connecting to XAP using locators = '%s'.", lookupLocators));
         String lookupGroups = settings.lookupGroups();
         if (lookupGroups != null) lookupGroups = lookupGroups.trim();
         if (lookupGroups != null && lookupGroups.length() > 0) {
-            logger.info("Connecting to XAP using lookup groups = '%s'.", lookupGroups);
+            logger.info(String.format("Connecting to XAP using lookup groups = '%s'.", lookupGroups));
             factory.addGroups(lookupGroups);
         } else logger.info("Connecting to XAP using default lookup groups.");
 
