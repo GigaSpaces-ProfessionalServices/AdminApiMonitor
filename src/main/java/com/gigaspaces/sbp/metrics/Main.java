@@ -1,10 +1,11 @@
 package com.gigaspaces.sbp.metrics;
 
 import com.gigaspaces.sbp.metrics.bootstrap.BootSpring;
-import com.gigaspaces.sbp.metrics.bootstrap.xap.ConnectToXap;
 import com.gigaspaces.sbp.metrics.bootstrap.CreateGsMonitorSettings;
 import com.gigaspaces.sbp.metrics.bootstrap.GsMonitorSettings;
+import com.gigaspaces.sbp.metrics.bootstrap.GsMonitorSettingsImpl;
 import com.gigaspaces.sbp.metrics.bootstrap.cli.PrintHelpAndDie;
+import com.gigaspaces.sbp.metrics.bootstrap.xap.ConnectToXap;
 import org.apache.commons.cli.ParseException;
 import org.springframework.context.support.AbstractApplicationContext;
 
@@ -16,12 +17,12 @@ import org.springframework.context.support.AbstractApplicationContext;
  */
 public class Main {
 
-    private BootSpring bootSpring = new BootSpring();
+    BootSpring bootSpring = new BootSpring();
 
-    private AbstractApplicationContext context;
-    private ConnectToXap connectToXap;
-    private CollectMetrics collectMetrics;
-    private PrintHelpAndDie printHelpAndDie;
+    AbstractApplicationContext context;
+    ConnectToXap connectToXap;
+    CollectMetrics collectMetrics;
+    PrintHelpAndDie printHelpAndDie;
 
     public static void main(String[] args) throws Exception {
 
@@ -37,9 +38,20 @@ public class Main {
 
     void bootSpring() {
         context = bootSpring.readySetGo();
-        connectToXap = (ConnectToXap) context.getBean("connectToXap");
-        collectMetrics = (CollectMetrics) context.getBean("collectMetrics");
+        connectToXap = (ConnectToXap) context.getBean(beanNameForClass(ConnectToXap.class));
+        collectMetrics = (CollectMetrics) context.getBean(beanNameForClass(CollectMetrics.class));
         printHelpAndDie = new PrintHelpAndDie(context);
+    }
+
+    /**
+     * This little method is a necessary evil that enables this class to know as little about the
+     * Spring graph as possible. Because many settings are known at runtime (statically, through CLI),
+     * we have to defer some initialization until after the CLI is processed.
+     */
+    static String beanNameForClass(Class<?> clazz){
+        String name = clazz.getSimpleName();
+        String firstChar = name.substring(0,1);
+        return firstChar.toLowerCase() + name.substring(1, name.length());
     }
 
     /**
@@ -52,7 +64,7 @@ public class Main {
     void processCommandLine(String[] args){
 
         CreateGsMonitorSettings createSettings
-                = (CreateGsMonitorSettings) context.getBean("createGsMonitorSettings");
+                = (CreateGsMonitorSettings) context.getBean(beanNameForClass(CreateGsMonitorSettings.class));
         try {
             createSettings.invokeOrThrow(args);
         } catch( ParseException e ){
@@ -76,7 +88,7 @@ public class Main {
      * ENV so that logback.xml can pick it up.
      */
     void setOutputFile() {
-        GsMonitorSettings settings = (GsMonitorSettings) context.getBean("gsMonitorSettings");
+        GsMonitorSettings settings = (GsMonitorSettings) context.getBean(beanNameForClass(GsMonitorSettingsImpl.class));
         System.setProperty("outputFile", settings.outputFilePath());
     }
 

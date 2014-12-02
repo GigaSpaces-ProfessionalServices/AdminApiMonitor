@@ -19,7 +19,7 @@ public class CalculateSettingsFromCliArgs {
     private static final String MULTIPLE_FORMAT_ERROR = String.format("CSV and log formats cannot be used at the same time ('-%s' and '-%s').", SettingType.Csv.getOptionCharacter(), SettingType.LogFormat.getOptionCharacter());
     private static final String LOOKUP_LOCATORS_REQUIRED = String.format("Lookup locators must be supplied ('-%s').", SettingType.LookupLocators.getOptionCharacter());
     private static final String SPACE_NAMES_REQUIRED = String.format("Spaces is a required parameter ('-%s').", SettingType.SpaceNames);
-    private static final String ONE_REQIURES_TWO_ERROR = "Using '%s', means that '%s' is required also.";
+    private static final String ONE_REQUIRES_TWO_ERROR = "Using '%s', means that '%s' is required also.";
 
     private final Parser parser = new GnuParser();
 
@@ -61,9 +61,9 @@ public class CalculateSettingsFromCliArgs {
         boolean username = settings.contains(SettingType.Username);
         boolean password = settings.contains(SettingType.Password);
         if (username && !password)
-            throw new ParseException(String.format(ONE_REQIURES_TWO_ERROR, SettingType.Username.name(), SettingType.Password.name()));
+            throw new ParseException(String.format(ONE_REQUIRES_TWO_ERROR, SettingType.Username.name(), SettingType.Password.name()));
         else if (password && !username)
-            throw new ParseException(String.format(ONE_REQIURES_TWO_ERROR, SettingType.Password.name(), SettingType.Username.name()));
+            throw new ParseException(String.format(ONE_REQUIRES_TWO_ERROR, SettingType.Password.name(), SettingType.Username.name()));
     }
 
     public CommandLine parse(String[] args) throws ParseException {
