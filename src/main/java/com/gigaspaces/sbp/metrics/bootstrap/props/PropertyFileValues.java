@@ -38,7 +38,7 @@ abstract class PropertyFileValues {
         }
     }
 
-    String getPropOrThrow(String propertyName) {
+    final String getPropOrThrow(String propertyName) {
         String propValue = properties.getProperty(propertyName);
         if (propValue == null) {
             IllegalStateException ise = new IllegalStateException(String.format(PROPERTY_NOT_PRESENT_ERROR, propertyFileName, propertyName));
