@@ -10,10 +10,10 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.alert.AlertManager;
 import org.openspaces.admin.alert.config.AlertConfiguration;
+import org.openspaces.admin.alert.events.AlertTriggeredEventListener;
+import org.openspaces.admin.alert.events.AlertTriggeredEventManager;
 
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ConfigureAlertsTest {
@@ -26,6 +26,8 @@ public class ConfigureAlertsTest {
     private Admin admin;
     @Mock
     private AlertManager alertManager;
+    @Mock
+    private AlertTriggeredEventManager alertTriggeredEventManager;
 
     @Before
     public void setUp() throws Exception {
@@ -33,6 +35,7 @@ public class ConfigureAlertsTest {
         testInstance = new ConfigureAlerts(monitorSettings);
 
         doReturn(alertManager).when(admin).getAlertManager();
+        doReturn(alertTriggeredEventManager).when(alertManager).getAlertTriggered();
 
     }
 
@@ -40,10 +43,12 @@ public class ConfigureAlertsTest {
     public void testInvokeConfiguresAlertsWhenAlertsAreEnabled() throws Exception {
 
         doReturn(true).when(monitorSettings).alertsEnabled();
+        doReturn(true).when(monitorSettings).sendAlertsByEmail();
 
         testInstance.invoke(admin);
 
         verify(alertManager).configure(Matchers.<AlertConfiguration[]>anyVararg());
+        verify(alertTriggeredEventManager).add(Matchers.<AlertTriggeredEventListener>anyObject());
 
     }
 
