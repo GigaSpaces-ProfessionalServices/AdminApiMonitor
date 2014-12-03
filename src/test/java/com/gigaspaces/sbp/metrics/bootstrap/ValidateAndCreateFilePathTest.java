@@ -11,6 +11,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
+
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ValidateAndCreateFilePathTest {
@@ -91,6 +96,18 @@ public class ValidateAndCreateFilePathTest {
         File testFile = new File(unwritableDirectory.getAbsoluteFile(), strings.alphabetic(12));
 
         testInstance.invoke(testFile.getAbsolutePath());
+    }
+
+    @Test(expected = ParseException.class)
+    public void testCreateAndReturnFullPathIOException() throws Exception{
+
+        File file = mock(File.class);
+        doReturn(strings.alphabetic()).when(file).getAbsolutePath();
+        doReturn(false).when(file).exists();
+        doThrow(new IOException()).when(file).createNewFile();
+        doReturn(true).when(file).isAbsolute();
+
+        testInstance.createAndReturnFullPath(file);
     }
 
 }

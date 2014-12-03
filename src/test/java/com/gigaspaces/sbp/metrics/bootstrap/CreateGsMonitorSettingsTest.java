@@ -21,8 +21,7 @@ import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CreateGsMonitorSettingsTest {
@@ -228,6 +227,38 @@ public class CreateGsMonitorSettingsTest {
 
         assertNotNull(actual.containsKey(SettingType.LogFormat));
 
+    }
+
+    @Test(expected = ParseException.class)
+    public void testProcessLocatorsThrowsWhenNoLocatorsInSet() throws Exception{
+
+        testInstance.processLocators(mock(CommandLine.class), new HashSet<SettingType>());
+
+    }
+
+    @Test(expected = ParseException.class)
+    public void testProcessLocatorsThrowsWhenLocatorsAreSetToEmptyString() throws Exception{
+        CommandLine cmdLine = mock(CommandLine.class);
+        doReturn("").when(cmdLine).getOptionValue(SettingType.LookupLocators.getOptionCharacter());
+        testInstance.processLocators(cmdLine, new HashSet<SettingType>() {{
+            add(SettingType.LookupLocators);
+        }});
+    }
+
+    @Test(expected = ParseException.class)
+    public void testProcessLocatorsThrowsWhenNoSpacenamesInSet() throws Exception{
+
+        testInstance.processSpaceNames(mock(CommandLine.class), new HashSet<SettingType>());
+
+    }
+
+    @Test(expected = ParseException.class)
+    public void testProcessLocatorsThrowsWhenSpaceNamesAreSetToEmptyString() throws Exception{
+        CommandLine cmdLine = mock(CommandLine.class);
+        doReturn("").when(cmdLine).getOptionValue(SettingType.SpaceNames.getOptionCharacter());
+        testInstance.processSpaceNames(cmdLine, new HashSet<SettingType>() {{
+            add(SettingType.SpaceNames);
+        }});
     }
 
 }

@@ -75,8 +75,8 @@ public class GsMonitorSettingsImpl implements GsMonitorSettings {
     }
 
     /**
-     * This method is used to retrieve settings that are guaranteed by the implementation to be
-     * initialized.
+     * This method is used to retrieve settings that are guaranteed by the implementation (users of this class!)
+     * to be initialized by calling initialize
      * @param setting the one we expect to be able to evaluate
      * @return the setting's string value
      * @throws java.lang.IllegalStateException if there's a programming error in the code that calls

@@ -93,6 +93,17 @@ public class ConnectToXapTest {
     }
 
     @Test
+    public void testInvokeEnablesSecurity() throws Exception{
+
+        doReturn(true).when(monitorSettings).alertsEnabled();
+
+        testInstance.invoke();
+
+        verify(configureAlerts).invoke(same(admin));
+
+    }
+
+    @Test
     public void testLocatorGroupsNotUsedWhenLocatorGroupsAreEmptyString() {
 
         doReturn("").when(monitorSettings).lookupGroups();
@@ -187,6 +198,105 @@ public class ConnectToXapTest {
         InOrder spacesBeforeMachines = inOrder(spaceConnections, machines);
         spacesBeforeMachines.verify(spaceConnections, times(2)).connect(anyString());
         spacesBeforeMachines.verify(machines).waitFor(eq(numMachines));
+
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testEnsureCredentialsThrowsWhenNullUsername() throws Exception{
+
+        doReturn(null).when(monitorSettings).username();
+
+        testInstance.ensureCredentials();
+
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testEnsureCredentialsThrowsWhenNullPw() throws Exception{
+
+        doReturn(strings.alphabetic()).when(monitorSettings).username();
+        doReturn("").when(monitorSettings).password();
+
+        testInstance.ensureCredentials();
+
+    }
+
+    @Test
+    public void testEnableSecurity() throws Exception{
+
+        String uname = strings.alphabetic();
+        String pw = strings.alphabetic();
+
+        doReturn(true).when(monitorSettings).xapSecurityEnabled();
+        doReturn(uname).when(monitorSettings).username();
+        doReturn(pw).when(monitorSettings).password();
+
+        testInstance.enableSecurity(adminFactory);
+
+        verify(adminFactory).credentials(eq(uname), eq(pw));
+
+    }
+
+    @Test
+    public void testEstablishLookupsWithSingleLookupGroupSingleLookupLocator() throws Exception{
+
+        String group = strings.alphabetic();
+        String locator = strings.alphabetic();
+
+        doReturn(group).when(monitorSettings).lookupGroups();
+        doReturn(locator).when(monitorSettings).lookupLocators();
+
+        testInstance.establishLookups(adminFactory);
+
+        verify(adminFactory).addLocator(eq(locator));
+        verify(adminFactory).addGroup(eq(group));
+
+    }
+
+    @Test
+    public void testEstablishLookupsWithSingleLookupGroupMultipleLookupLocators() throws Exception{
+
+        String group = strings.alphabetic();
+        String locators = strings.alphabetic() + Constants.LIST_ITEM_SEPARATOR + strings.alphabetic();
+
+        doReturn(group).when(monitorSettings).lookupGroups();
+        doReturn(locators).when(monitorSettings).lookupLocators();
+
+        testInstance.establishLookups(adminFactory);
+
+        verify(adminFactory).addLocators(eq(locators));
+        verify(adminFactory).addGroup(eq(group));
+
+    }
+
+    @Test
+    public void testEstablishLookupsWithMultipleLookupGroupsSingleLookupLocator() throws Exception{
+
+        String groups = strings.alphabetic() + Constants.LIST_ITEM_SEPARATOR + strings.alphabetic();
+        String locator = strings.alphabetic();
+
+        doReturn(groups).when(monitorSettings).lookupGroups();
+        doReturn(locator).when(monitorSettings).lookupLocators();
+
+        testInstance.establishLookups(adminFactory);
+
+        verify(adminFactory).addLocator(eq(locator));
+        verify(adminFactory).addGroups(eq(groups));
+
+    }
+
+    @Test
+    public void testEstablishLookupsWithMultipleLookupGroupsMultipleLookupLocators() throws Exception{
+
+        String groups = strings.alphabetic() + Constants.LIST_ITEM_SEPARATOR + strings.alphabetic();
+        String locators = strings.alphabetic() + Constants.LIST_ITEM_SEPARATOR + strings.alphabetic();
+
+        doReturn(groups).when(monitorSettings).lookupGroups();
+        doReturn(locators).when(monitorSettings).lookupLocators();
+
+        testInstance.establishLookups(adminFactory);
+
+        verify(adminFactory).addLocators(eq(locators));
+        verify(adminFactory).addGroups(eq(groups));
 
     }
 

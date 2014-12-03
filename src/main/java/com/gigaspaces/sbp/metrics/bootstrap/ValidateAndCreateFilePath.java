@@ -47,7 +47,7 @@ public class ValidateAndCreateFilePath {
 
     }
 
-    private String createAndReturnFullPath(File file) throws ParseException {
+    String createAndReturnFullPath(File file) throws ParseException {
         String filePath = file.getAbsolutePath();
 
         if( file.exists() ) return filePath;

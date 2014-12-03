@@ -11,11 +11,12 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.HashMap;
+import java.util.Random;
 
 import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class GsMonitorSettingTest {
+public class GsMonitorSettingsImplTest {
 
     private GsMonitorSettingsImpl testInstance;
     private Strings strings = new Strings();
@@ -365,6 +366,55 @@ public class GsMonitorSettingTest {
 
         testInstance.collectMetricsInitialDelayInMs();
 
+    }
+
+    @Test
+    public void testEmaAlpha() throws Exception{
+
+        final Double value = numbers.positiveDouble() / 100d;
+
+        testInstance.initialize(new HashMap<SettingType, String>(){{
+            put(SettingType.MovingAverageAlpha, value.toString());
+        }});
+
+        assertEquals(testInstance.emaAlpha(), value, 0.001);
+
+    }
+
+    @Test
+    public void testXapSecurityEnabled() throws Exception{
+
+        final Boolean expected = new Random(System.currentTimeMillis()).nextBoolean();
+
+        testInstance.initialize(new HashMap<SettingType, String>(){{
+            put(SettingType.Secured, expected.toString());
+        }});
+
+        assertEquals(testInstance.xapSecurityEnabled(), expected);
+
+    }
+
+    @Test
+    public void testGscCount() throws Exception{
+        final Integer count = numbers.positiveInteger();
+
+        testInstance.initialize(new HashMap<SettingType, String>(){{
+            put(SettingType.GscCount, count.toString());
+        }});
+
+        assertEquals(testInstance.gscCount(), count, 0);
+    }
+
+    @Test
+    public void testMachineCount() throws Exception{
+
+        final Integer cnt = numbers.positiveInteger();
+
+        testInstance.initialize(new HashMap<SettingType, String>(){{
+            put(SettingType.MachineCount, cnt.toString());
+        }});
+
+        assertEquals(testInstance.machineCount(), cnt, 0);
     }
 
 }
