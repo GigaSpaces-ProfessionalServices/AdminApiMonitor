@@ -19,6 +19,7 @@ import java.util.*;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
@@ -185,6 +186,48 @@ public class CreateGsMonitorSettingsTest {
         String actual = testInstance.processSpaceNames(testCommandLine, EnumSet.of(SettingType.SpaceNames));
 
         assertEquals(testSpaceNames, actual);
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void testProcessOutputFormatThrowsForInflux() throws Exception{
+
+        doReturn(OutputFormat.InfluxDb).when(monitorDefaults).outputFormat();
+
+        testInstance.processOutputFormat(Collections.<SettingType, String>emptyMap());
+
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void testProcessOutputFormatThrowsForCarbon() throws Exception{
+
+        doReturn(OutputFormat.Carbon).when(monitorDefaults).outputFormat();
+
+        testInstance.processOutputFormat(Collections.<SettingType, String>emptyMap());
+
+    }
+
+    @Test
+    public void testProcessOutputFormatWorksForLogFormat() throws Exception{
+
+        doReturn(OutputFormat.LogFormat).when(monitorDefaults).outputFormat();
+
+        Map<SettingType, String> actual
+                = testInstance.processOutputFormat(new HashMap<SettingType, String>());
+
+        assertNotNull(actual.containsKey(SettingType.LogFormat));
+
+    }
+
+    @Test
+    public void testProcessOutputFormatWorksForCsv() throws Exception{
+
+        doReturn(OutputFormat.Csv).when(monitorDefaults).outputFormat();
+
+        Map<SettingType, String> actual
+                = testInstance.processOutputFormat(new HashMap<SettingType, String>());
+
+        assertNotNull(actual.containsKey(SettingType.LogFormat));
+
     }
 
 }

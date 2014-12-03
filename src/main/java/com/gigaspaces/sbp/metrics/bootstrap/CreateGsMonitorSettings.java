@@ -120,7 +120,7 @@ public class CreateGsMonitorSettings {
                 map.put(SettingType.LogFormat, Constants.DEFAULT_FLAG_VALUE);
                 break;
             default:
-                throw new IllegalStateException(String.format(UNSUPPORTED_OUTPUT_FORMAT, fmt.name()));
+                throw new UnsupportedOperationException(String.format(UNSUPPORTED_OUTPUT_FORMAT, fmt.name()));
         }
         return map;
     }
