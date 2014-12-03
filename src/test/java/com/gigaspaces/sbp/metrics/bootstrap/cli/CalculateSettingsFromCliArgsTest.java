@@ -1,12 +1,21 @@
 package com.gigaspaces.sbp.metrics.bootstrap.cli;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.Parser;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Set;
 
 import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 
 /**
  * Created by IntelliJ IDEA.
@@ -14,7 +23,8 @@ import static org.junit.Assert.*;
  * Date: 7/29/14
  * Time: 8:45 PM
  */
-public final class ProcessArgsTest {
+@RunWith(MockitoJUnitRunner.class)
+public final class CalculateSettingsFromCliArgsTest {
 
     // ONE OF EACH OF THESE IS REQUIRED...
     private static final String LOCATORS = String.format("-%s", SettingType.LookupLocators.getOptionCharacter());
@@ -61,6 +71,13 @@ public final class ProcessArgsTest {
         for(String c: moreCommands) arr[i++] = c;
         return arr;
     }
+
+    private String[] makeTestCommandLine(){
+        return makeTestCommandLine(new String[]{});
+    }
+
+    @Mock
+    private Parser mockParser;
 
     private CalculateSettingsFromCliArgs testInstance;
 
@@ -115,6 +132,32 @@ public final class ProcessArgsTest {
         Set<SettingType> actual = testInstance.invoke(makeTestCommandLine(new String[]{USERNAME_WORD, GOOD_USERNAME, PASSWORD_WORD, GOOD_PASSWORD}));
         assertTrue(actual.contains(SettingType.Username));
         assertTrue(actual.contains(SettingType.Password));
+
+    }
+
+    @Test(expected = ParseException.class)
+    public void testLocatorsRequiredOnCommandLine() throws Exception{
+
+        testInstance.parser = mockParser;
+
+        CommandLine cmdLine = mock(CommandLine.class);
+        doReturn(cmdLine).when(mockParser).parse(any(Options.class), any(String[].class));
+        doReturn(false).when(cmdLine).hasOption(SettingType.LookupLocators.getOptionCharacter());
+        doReturn(false).when(cmdLine).hasOption(SettingType.LookupLocators.getOptionWord());
+
+        testInstance.invoke(makeTestCommandLine());
+    }
+
+    @Test(expected = ParseException.class)
+    public void testSpacesRequiredOnCommandLine() throws Exception{
+
+        testInstance.parser = mockParser;
+
+        CommandLine cmdLine = mock(CommandLine.class);
+        doReturn(cmdLine).when(mockParser).parse(any(Options.class), any(String[].class));
+        doReturn(true).when(cmdLine).hasOption(SettingType.LookupLocators.getOptionCharacter());
+
+        testInstance.invoke(makeTestCommandLine());
 
     }
 
@@ -230,6 +273,11 @@ public final class ProcessArgsTest {
     @Test(expected = ParseException.class)
     public void testInvokeThrowsForBadOptions() throws Exception {
         testInstance.invoke(makeTestCommandLine(new String[]{"-xyz", "-pdq"}));
+    }
+
+    @Test
+    public void testParse() throws Exception{
+        testInstance.parse(makeTestCommandLine(new String[]{}));
     }
 
 }

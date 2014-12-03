@@ -68,7 +68,8 @@ public class Main {
         try {
             createSettings.invokeOrThrow(args);
         } catch( ParseException e ){
-            printHelpAndDie.invoke(e);
+            int code = printHelpAndDie.invoke(e);
+            System.exit(code);
         }
 
         setOutputFile();

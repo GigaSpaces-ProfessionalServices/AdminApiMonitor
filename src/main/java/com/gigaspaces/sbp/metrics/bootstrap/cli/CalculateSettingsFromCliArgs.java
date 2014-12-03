@@ -21,7 +21,7 @@ public class CalculateSettingsFromCliArgs {
     private static final String SPACE_NAMES_REQUIRED = String.format("Spaces is a required parameter ('-%s').", SettingType.SpaceNames);
     private static final String ONE_REQUIRES_TWO_ERROR = "Using '%s', means that '%s' is required also.";
 
-    private final Parser parser = new GnuParser();
+    Parser parser = new GnuParser();
 
     /**
      * A set of settings
