@@ -9,7 +9,11 @@ import java.util.Date;
 
 public class EmailAlertTriggeredEventListener implements AlertTriggeredEventListener {
 
-    private static Logger logger = LoggerFactory.getLogger("email_reports");
+    private final Logger logger = LoggerFactory.getLogger("email_reports");
+
+    static final String HOSTNAME_PROP_KEY = "host-name";
+    static final String HOST_ADDRESS_PROP_KEY = "host-address";
+    static final String HIGH_THRESHOLD_PCT_KEY = "high-threshold-perc";
 
     @Override
     public void alertTriggered(Alert alert) {
@@ -17,11 +21,11 @@ public class EmailAlertTriggeredEventListener implements AlertTriggeredEventList
         String name = alert.getName();
         String componentDescription = alert.getComponentDescription();
         String longMessage = alert.getDescription();
-        String hostName = alert.getProperties().get("host-name");
-        String ipInfo = alert.getProperties().get("host-address");
+        String hostName = alert.getProperties().get(HOSTNAME_PROP_KEY);
+        String ipInfo = alert.getProperties().get(HOST_ADDRESS_PROP_KEY);
         String status = alert.getStatus().getName();
         Date date = new Date(alert.getTimestamp());
-        String threshold = alert.getConfig().get("high-threshold-perc");
+        String threshold = alert.getConfig().get(HIGH_THRESHOLD_PCT_KEY);
 
         String message = "{} \n" +
                 "Host info: {} \n" +

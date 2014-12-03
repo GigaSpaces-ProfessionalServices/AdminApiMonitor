@@ -72,4 +72,7 @@ public enum SettingType implements OptionLike {
     @Override
     public boolean hasDefault() { return hasDefault; }
 
+    @Override
+    public boolean isUsedByCli(){ return isUsedByCli; }
+
 }
