@@ -1,5 +1,6 @@
 package com.gigaspaces.sbp.metrics.bootstrap.xap;
 
+import org.openspaces.admin.Admin;
 import org.springframework.stereotype.Component;
 
 /**
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Component;
 @Component
 class SpaceConnections {
 
-    ConnectToSpace connect(String spaceName){
-        return new ConnectToSpace(spaceName);
+    ConnectToSpace connect(String spaceName, Admin admin){
+        return new ConnectToSpace(spaceName, admin);
     }
 }

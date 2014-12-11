@@ -1,10 +1,9 @@
 package com.gigaspaces.sbp.metrics.bootstrap.xap;
 
+import com.gigaspaces.sbp.metrics.ActorSystemEden;
 import com.gigaspaces.sbp.metrics.bootstrap.GsMonitorSettings;
 import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;
-import org.openspaces.admin.gsc.GridServiceContainers;
-import org.openspaces.admin.machine.Machines;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,11 +40,17 @@ public class ConnectToXap {
     private final SpaceConnections spaceConnections;
     @Resource
     private final AdminFactoryFactory adminFactoryFactory;
+    @Resource
+    private final ActorSystemEden contextHolder;
 
     private Admin admin;
 
     @Autowired
-    public ConnectToXap(GsMonitorSettings settings, ConfigureAlerts configureAlerts, SpaceConnections spaceConnections, AdminFactoryFactory adminFactoryFactory) {
+    public ConnectToXap(GsMonitorSettings settings
+            , ConfigureAlerts configureAlerts
+            , SpaceConnections spaceConnections
+            , AdminFactoryFactory adminFactoryFactory
+            , ActorSystemEden contextHolder) {
         assert spaceConnections != null : SPACE_CONNECTION_REQUIRED;
         assert settings != null : String.format(SETTINGS_REQUIRED_ERROR, GsMonitorSettings.class.getSimpleName());
         assert configureAlerts != null : String.format(NON_NULL_INSTANCE_REQUIRED, ConfigureAlerts.class.getSimpleName());
@@ -54,6 +59,7 @@ public class ConnectToXap {
         this.spaceConnections = spaceConnections;
         this.settings = settings;
         this.configureAlerts = configureAlerts;
+        this.contextHolder = contextHolder;
     }
 
     /**
@@ -73,33 +79,26 @@ public class ConnectToXap {
             configureAlerts.invoke(admin);
 
         for (String spaceName : settings.spaceNames()) {
-            spaceConnections.connect(spaceName).invoke(admin); // TODO Thread it through a factory
+            dispatch(spaceConnections.connect(spaceName, admin));
         }
 
-        connectToMachines(); // TODO Thread it
-        connectToGSCs(); // TODO Thread it
+        connectToMachines();
+        connectToGSCs();
 
         return admin;
 
     }
 
+    private void dispatch(Runnable runnable){
+        contextHolder.getSystem().dispatcher().execute(runnable);
+    }
+
     private void connectToGSCs() {
-        GridServiceContainers GSCs = admin.getGridServiceContainers();
-        int gscCount = settings.gscCount();
-        long start = System.currentTimeMillis();
-        logger.info(String.format("Waiting indefinitely to connect to %d GSCs.", gscCount));
-        GSCs.waitFor(gscCount);
-        long stop = System.currentTimeMillis();
-        logger.info(String.format("Successfully contacted %d GSCs in %d milliseconds.", gscCount, (stop - start)));
+        dispatch(new ConnectToGscs(admin, settings));
     }
 
     private void connectToMachines() {
-        Machines machines = admin.getMachines();
-        long start = System.currentTimeMillis();
-        int machineCount = settings.machineCount();
-        machines.waitFor(machineCount);
-        long stop = System.currentTimeMillis();
-        logger.info(String.format("Successfully contacted %d machines in %d milliseconds.", machineCount, (stop - start)));
+        dispatch(new ConnectToMachines(admin, settings));
     }
 
     void establishLookups(AdminFactory factory) {

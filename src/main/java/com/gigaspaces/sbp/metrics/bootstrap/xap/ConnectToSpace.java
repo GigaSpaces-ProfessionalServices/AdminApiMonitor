@@ -17,20 +17,28 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * Connects to the Admin API for an individual Space.
  */
-public class ConnectToSpace {
+class ConnectToSpace implements Runnable{
 
     private static final String NON_EMPTY_SPACE_NAME_REQUIRED = "A non-empty spaceName is required in order to perform a lookup.";
+    private static final String ADMIN_REQUIRED = "Admin required.";
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final String spaceName;
+    private final Admin admin;
 
-    public ConnectToSpace(String spaceName) {
+    public ConnectToSpace(String spaceName, Admin admin) {
         assert spaceName != null && spaceName.trim().length() > 0 : NON_EMPTY_SPACE_NAME_REQUIRED;
+        assert admin != null : ADMIN_REQUIRED;
         this.spaceName = spaceName;
+        this.admin = admin;
     }
 
-    public void invoke(Admin admin) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void run() {
 
         logger.info(String.format("Waiting indefinitely to connect to XAP Space '%s'.", spaceName));
         long start = System.currentTimeMillis();

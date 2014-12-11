@@ -43,7 +43,7 @@ public class ConnectToSpaceTest {
     public void setUp() throws Exception {
 
         testSpaceName = strings.alphabetic();
-        testInstance = new ConnectToSpace(testSpaceName);
+        testInstance = new ConnectToSpace(testSpaceName, admin);
 
         doReturn(spaces).when(admin).getSpaces();
         doReturn(space).when(spaces).waitFor(eq(testSpaceName));
@@ -58,19 +58,19 @@ public class ConnectToSpaceTest {
     @Test
     public void testInvokeCausesWaitForSpaceName() throws Exception {
 
-        testInstance.invoke(admin);
+        testInstance.run();
 
         verify(spaces).waitFor(eq(testSpaceName));
 
     }
 
     @Test
-    public void testInvokeCausesLrmiMonitoringToBeEnabledOnAllSpaceInstances() throws Exception{
+    public void testInvokeCausesLrmiMonitoringToBeEnabledOnAllSpaceInstances() throws Exception {
 
 
-        testInstance.invoke(admin);
+        testInstance.run();
 
-        verify(monitoring,times(2)).enableMonitoring(); // one for each of the two SpaceInstances
+        verify(monitoring, times(2)).enableMonitoring(); // one for each of the two SpaceInstances
 
     }
 

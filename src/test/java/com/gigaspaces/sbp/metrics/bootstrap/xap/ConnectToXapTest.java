@@ -1,6 +1,8 @@
 package com.gigaspaces.sbp.metrics.bootstrap.xap;
 
+import akka.actor.ActorSystem;
 import com.gigaspaces.sbp.metrics.Constants;
+import com.gigaspaces.sbp.metrics.ActorSystemEden;
 import com.gigaspaces.sbp.metrics.bootstrap.GsMonitorSettings;
 import com.jasonnerothin.testing.Numbers;
 import com.jasonnerothin.testing.Strings;
@@ -14,6 +16,7 @@ import org.openspaces.admin.Admin;
 import org.openspaces.admin.AdminFactory;
 import org.openspaces.admin.gsc.GridServiceContainers;
 import org.openspaces.admin.machine.Machines;
+import scala.concurrent.ExecutionContextExecutor;
 
 import static org.mockito.Mockito.*;
 
@@ -40,9 +43,13 @@ public class ConnectToXapTest {
     private ConnectToSpace connectToSpace0;
     @Mock
     private ConnectToSpace connectToSpace1;
+    @Mock
+    private ActorSystemEden contextHolder;
+    @Mock
+    private ActorSystem actorSystem;
+    @Mock
+    private ExecutionContextExecutor contextExecutor;
 
-    private String spaceName0, spaceName1;
-    private String lookupLocator0, lookupLocator1;
     private String testLocators;
 
     private Strings strings;
@@ -59,6 +66,9 @@ public class ConnectToXapTest {
         strings = new Strings();
         numbers = new Numbers();
 
+        String spaceName0, spaceName1;
+        String lookupLocator0, lookupLocator1;
+
         lookupLocator0 = strings.alphabetic();
         lookupLocator1 = strings.alphabetic();
         spaceName0 = strings.alphabetic();
@@ -67,20 +77,22 @@ public class ConnectToXapTest {
 
         doReturn(new String[]{spaceName0, spaceName1}).when(monitorSettings).spaceNames();
         doReturn(testLocators).when(monitorSettings).lookupLocators();
-        doReturn(connectToSpace0).when(spaceConnections).connect(spaceName0);
-        doReturn(connectToSpace1).when(spaceConnections).connect(spaceName1);
+        doReturn(connectToSpace0).when(spaceConnections).connect(eq(spaceName0), eq(admin));
+        doReturn(connectToSpace1).when(spaceConnections).connect(eq(spaceName1), eq(admin));
         doReturn(adminFactory).when(adminFactoryFactory).build();
         doReturn(admin).when(adminFactory).create();
         doReturn(admin).when(adminFactory).createAdmin();
         doReturn(machines).when(admin).getMachines();
         doReturn(GSCs).when(admin).getGridServiceContainers();
+        doReturn(actorSystem).when(contextHolder).getSystem();
+        doReturn(contextExecutor).when(actorSystem).dispatcher();
 
         testInstance = new ConnectToXap(
                 monitorSettings
                 , configureAlerts
                 , spaceConnections
                 , adminFactoryFactory
-        );
+                , contextHolder);
     }
 
     @Test
@@ -130,8 +142,7 @@ public class ConnectToXapTest {
 
         testInstance.invoke();
 
-        verify(connectToSpace0, times(1)).invoke(admin);
-        verify(connectToSpace1, times(1)).invoke(admin);
+        verify(spaceConnections, times(2)).connect(anyString(), same(admin));
 
     }
 
@@ -143,8 +154,7 @@ public class ConnectToXapTest {
 
         testInstance.invoke();
 
-        verify(admin, times(1)).getMachines();
-        verify(machines, times(1)).waitFor(eq(numMachines));
+        verify(contextExecutor).execute(isA(ConnectToMachines.class));
 
     }
 
@@ -156,8 +166,7 @@ public class ConnectToXapTest {
 
         testInstance.invoke();
 
-        verify(admin, times(1)).getGridServiceContainers();
-        verify(GSCs, times(1)).waitFor(eq(numGSCs));
+        verify(contextExecutor).execute(isA(ConnectToGscs.class));
 
     }
 
@@ -175,9 +184,9 @@ public class ConnectToXapTest {
 
         testInstance.invoke();
 
-        InOrder inOrder = inOrder(spaceConnections, GSCs);
-        inOrder.verify(spaceConnections, times(2)).connect(anyString());
-        inOrder.verify(GSCs).waitFor(eq(numGSCs));
+        InOrder inOrder = inOrder(contextExecutor, GSCs);
+        inOrder.verify(contextExecutor, times(2)).execute(isA(ConnectToSpace.class));
+        inOrder.verify(contextExecutor).execute(isA(ConnectToMachines.class));
 
     }
 
@@ -195,9 +204,9 @@ public class ConnectToXapTest {
 
         testInstance.invoke();
 
-        InOrder spacesBeforeMachines = inOrder(spaceConnections, machines);
-        spacesBeforeMachines.verify(spaceConnections, times(2)).connect(anyString());
-        spacesBeforeMachines.verify(machines).waitFor(eq(numMachines));
+        InOrder spacesBeforeMachines = inOrder(contextExecutor);
+        spacesBeforeMachines.verify(contextExecutor, times(2)).execute(isA(ConnectToSpace.class));
+        spacesBeforeMachines.verify(contextExecutor).execute(isA(ConnectToMachines.class));
 
     }
 
