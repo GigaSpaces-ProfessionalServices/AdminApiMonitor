@@ -5,19 +5,20 @@ import com.gigaspaces.sbp.metrics.bootstrap.CreateGsMonitorSettings;
 import com.gigaspaces.sbp.metrics.bootstrap.GsMonitorSettingsImpl;
 import com.gigaspaces.sbp.metrics.bootstrap.cli.PrintHelpAndDie;
 import com.gigaspaces.sbp.metrics.bootstrap.xap.ConnectToXap;
+import com.jasonnerothin.testing.Numbers;
 import com.jasonnerothin.testing.Strings;
+import org.apache.commons.cli.ParseException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.support.AbstractApplicationContext;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.same;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MainTest {
@@ -76,14 +77,29 @@ public class MainTest {
     @Test
     public void testProcessCommandLine() throws Exception {
 
-
-
         String[] testArgs = new String[]{};
 
         mockOutputFilePath();
         testInstance.processCommandLine(testArgs);
 
         verify(createGsMonitorSettings).invokeOrThrow(same(testArgs));
+
+    }
+
+    @Test
+    public void testProcessCommandLineCatchesException() throws ParseException {
+
+        String[] testInput = new String[]{};
+
+
+        ParseException testException = mock(ParseException.class);
+        doThrow(testException).when(createGsMonitorSettings).invokeOrThrow(eq(testInput));
+
+        doReturn(0).when(printHelpAndDie).invoke(isA(ParseException.class));
+
+        mockOutputFilePath();
+
+        testInstance.processCommandLine(testInput);
 
     }
 
