@@ -137,4 +137,8 @@ public class ConnectToXap {
             throw new IllegalStateException(MISSING_PASSWORD_ERROR);
     }
 
+    public Admin getAdmin() {
+        if( admin == null) admin = adminFactoryFactory.build().createAdmin();
+        return admin;
+    }
 }

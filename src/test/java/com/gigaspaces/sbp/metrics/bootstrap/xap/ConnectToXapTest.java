@@ -18,6 +18,7 @@ import org.openspaces.admin.gsc.GridServiceContainers;
 import org.openspaces.admin.machine.Machines;
 import scala.concurrent.ExecutionContextExecutor;
 
+import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -306,6 +307,15 @@ public class ConnectToXapTest {
 
         verify(adminFactory).addLocators(eq(locators));
         verify(adminFactory).addGroups(eq(groups));
+
+    }
+
+    @Test
+    public void testGetAdmin(){
+
+        Admin actual = testInstance.getAdmin();
+
+        assertSame(admin, actual);
 
     }
 

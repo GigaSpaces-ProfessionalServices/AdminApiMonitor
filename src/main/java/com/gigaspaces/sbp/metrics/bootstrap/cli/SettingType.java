@@ -24,11 +24,12 @@ public enum SettingType implements OptionLike {
     , SendAlertsByEmail("m", "email-alerts", "When alerts occur, send a notification by email.", false, false, false, true)
     , CollectMetricsIntervalInMs("i","metrics-interval","Interval at which metrics are collected (ms)." ,true, false, true, true)
     , CollectMetricsInitialDelayInMs("d", "initial-delay-ms", "Not meant for CLI", true, true, true, false)
-    , MachineCount("m", "machine-count", "Optional: Number of machines in cluster.", true, false, true, true)
+    , DerivedMetricsPeriod("v", "derived-metric-period", "Not meant for CLI" , true , true, true, false )
+    , MachineCount("h", "machine-count", "Optional: Number of machines in cluster.", true, false, true, true)
     , GscCount("n", "gsc-count", "Optional: Number of GSCs in cluster.", true, false, true, true)
     ;
 
-    // private final static String USED_CHARS = "acdefgilmopsuz";
+    // private final static String USED_CHARS = "acdefghilmnopsuvz";
 
     private final String optionCharacter;
     private final String optionWord;

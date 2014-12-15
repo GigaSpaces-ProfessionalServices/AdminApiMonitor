@@ -10,41 +10,4 @@
     <context:component-scan base-package="com.gigaspaces.sbp.metrics.bootstrap"/>
     <context:component-scan base-package="com.gigaspaces.sbp.metrics.bootstrap.cli"/>
 
-    <!--<bean id="spaceMonitor" class="com.gigaspaces.sbp.metrics.GsMonitorRunner" init-method="init">-->
-        <!--<property name="adminUser" value="${spaceMonitor.adminUser}" />-->
-        <!--<property name="adminPassword" value="${spaceMonitor.adminPassword}" />-->
-        <!--<property name="locators" value="${spaceMonitor.locators}" />-->
-        <!--<property name="groups" value="${spaceMonitor.lookupGroups}" />-->
-        <!--<property name="spaceName" value="${spaceMonitor.spaceName}" />-->
-        <!--<property name="alertsConfiguration" value="${alerts.config}" />-->
-        <!--<property name="alertsEmailReporting" value="${alerts.email.reporting}" />-->
-    <!--</bean>-->
-
-    <!--<bean id="collectPeriodicMetricsTask" class="com.gigaspaces.sbp.metrics.CollectPeriodicMetricsVisitorTask">-->
-        <!--<property name="adminMonitor" ref="spaceMonitor" />-->
-        <!--<property name="spaceName" value="${spaceMonitor.spaceName}" />-->
-        <!--<property name="csv" value="${csv_format}" />-->
-        <!--<property name="exponentialMovingAverage" ref="exponentialMovingAverage" />-->
-        <!--<property name="period" value="${stat.periodic.sample.interval}" />-->
-    <!--</bean>-->
-
-    <!--<bean id="schedulerPeriodicTask" class="org.springframework.scheduling.timer.MethodInvokingTimerTaskFactoryBean">-->
-        <!--<property name="targetObject" ref="collectPeriodicMetricsTask" />-->
-        <!--<property name="targetMethod" value="collectMetrics" />-->
-    <!--</bean>-->
-
-    <!--<bean id="timerPeriodicTask" class="org.springframework.scheduling.timer.ScheduledTimerTask">-->
-        <!--<property name="timerTask" ref="schedulerPeriodicTask" />-->
-        <!--<property name="period" value="${stat.periodic.sample.interval}" />-->
-        <!--<property name="delay" value="${stat.periodic.sample.delay}" />-->
-    <!--</bean>-->
-
-    <!--<bean class="org.springframework.scheduling.timer.TimerFactoryBean">-->
-        <!--<property name="scheduledTimerTasks">-->
-            <!--<list>-->
-                <!--<ref local="timerPeriodicTask" />-->
-            <!--</list>-->
-        <!--</property>-->
-    <!--</bean>-->
-
 </beans>

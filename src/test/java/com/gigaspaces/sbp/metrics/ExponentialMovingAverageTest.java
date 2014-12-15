@@ -69,4 +69,24 @@ public class ExponentialMovingAverageTest {
 
         assertEquals(expected, actual, EPSILON);
     }
+
+    @Test
+    public void testFirstResultEqualsInput1() throws Exception{
+
+        Double testNew = numbers.positiveDouble();
+
+        Double actual = testInstance.average(null, testNew);
+
+        assertEquals(testNew, actual, 0);
+    }
+
+    @Test
+    public void testFirstResultEqualsInput2() throws Exception{
+
+        Long testNew = numbers.positiveLong();
+
+        Double actual = testInstance.average(null, testNew);
+
+        assertEquals(testNew, actual, 0);
+    }
 }

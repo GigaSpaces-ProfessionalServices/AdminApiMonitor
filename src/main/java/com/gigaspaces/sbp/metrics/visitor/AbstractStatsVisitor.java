@@ -38,20 +38,27 @@ public abstract class AbstractStatsVisitor implements StatsVisitor {
 
     protected List<ProcessingUnitInstance> processingUnitInstances;
 
-    protected Long period;
+    protected Long derivedMetricsPeriodInMs;
 
     private Map<String, AtomicInteger> alerts;
 
-    protected List<NamedMetric> emas = asList(new NamedMetric[]{GigaSpacesActivity.READ_PER_SEC,
-            GigaSpacesActivity.WRITES_PER_SEC,
-            GigaSpacesActivity.TAKES_PER_SECOND,
-            GigaSpacesActivity.UPDATES_PER_SEC,
-            GigaSpacesActivity.EXECUTES_PER_SEC, GigaSpacesActivity.TRANSACTION_COUNT,
-            GsMirrorInfo.REDO_LOG_SIZE, GsMirrorInfo.REDO_LOG_SEND_BYTES_PER_SECOND,
-            JvmInfo.THREAD_COUNT, 
-            //JvmInfo.JVM_CPU_LOAD,
-            Memory.TOTAL_BYTES, Memory.HEAP_USED_BYTES, Memory.HEAP_COMMITTED_BYTES, Memory.NON_HEAP_USED_BYTES, Memory.NON_HEAP_COMMITTED_BYTES,
-            OperatingSystemInfo.LRMI_CONNECTIONS
+    protected List<NamedMetric> movingAveragedMetrics = asList(new NamedMetric[]{
+            GigaSpacesActivity.READ_PER_SEC
+            , GigaSpacesActivity.WRITES_PER_SEC
+            , GigaSpacesActivity.TAKES_PER_SECOND
+            , GigaSpacesActivity.UPDATES_PER_SEC
+            , GigaSpacesActivity.EXECUTES_PER_SEC
+            , GigaSpacesActivity.TRANSACTION_COUNT
+            , GsMirrorInfo.REDO_LOG_SIZE
+            , GsMirrorInfo.REDO_LOG_SEND_BYTES_PER_SECOND
+            , JvmInfo.THREAD_COUNT
+            //, JvmInfo.JVM_CPU_LOAD
+            , Memory.TOTAL_BYTES
+            , Memory.HEAP_USED_BYTES
+            , Memory.HEAP_COMMITTED_BYTES
+            , Memory.NON_HEAP_USED_BYTES
+            , Memory.NON_HEAP_COMMITTED_BYTES
+            , OperatingSystemInfo.LRMI_CONNECTIONS
     });
 
     // value metric has to be derived from key metric
@@ -63,14 +70,24 @@ public abstract class AbstractStatsVisitor implements StatsVisitor {
 
     protected SimpleDateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT);
 
-    protected AbstractStatsVisitor(Admin admin, List<String> spaceNames, Map<String, FullMetric> metricMap, ExponentialMovingAverage average,
-                                   Map<String, AtomicInteger> alerts, Long period) {
+    /*
+     * TODO refactor me with DI in mind
+     */
+    protected AbstractStatsVisitor(
+            Admin admin
+            , List<String> spaceNames
+            , Map<String, FullMetric> metricMap
+            , ExponentialMovingAverage average
+            , Map<String, AtomicInteger> alerts
+            , Long derivedMetricsPeriodInMs ) {
+
         this.metricMap = metricMap;
         this.admin=admin;
         this.alerts=alerts;
         this.average = average;
-        this.period = period;
-        //whole grid
+        this.derivedMetricsPeriodInMs = derivedMetricsPeriodInMs;
+
+        // whole grid
         gridServiceContainers = asList(admin.getGridServiceContainers().getContainers());
 
         vmDetails = new ArrayList<>(gridServiceContainers.size());
@@ -118,7 +135,7 @@ public abstract class AbstractStatsVisitor implements StatsVisitor {
             FullMetric previous = metricMap.get(metricFullName);
             Double metricValue = parseDouble(fullMetric.getMetricValue());
             Double diff = (previous != null) ? metricValue - parseDouble(previous.getMetricValue()) : metricValue;
-            Double currentValue = diff / (period/1000);
+            Double currentValue = diff / (derivedMetricsPeriodInMs /1000);
             NamedMetric calculatedMetricName = derivedMetricsMap.get(fullMetric.getMetric());
             FullMetric calculatedMetric = new FullMetric.FullMetricBuilder().
                                             metric(calculatedMetricName).
@@ -163,7 +180,7 @@ public abstract class AbstractStatsVisitor implements StatsVisitor {
     }
 
     protected boolean exponentialMovingAverage(NamedMetric metric) {
-        return emas.contains(metric);
+        return movingAveragedMetrics.contains(metric);
     }
 
     @Override

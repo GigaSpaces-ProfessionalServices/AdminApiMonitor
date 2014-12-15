@@ -32,11 +32,9 @@ public class CollectPeriodicMetricsVisitorTask /*extends AbstractPeriodicVisitor
         this.average = average;
     }
 
-    // TODO set period from GsMonitorSettings
-
     private CsvVisitor visitor;
-    // CsvVisitor visitor = null;//new CsvVisitor(adminMonitor.getAdmin(), spaceNames, pidMetricMap, exponentialMovingAverage, alerts, period);
-    // StatsVisitor visitor = null;// new PrintVisitor(adminMonitor.getAdmin(), spaceNames, pidMetricMap, exponentialMovingAverage, alerts, period);
+    // CsvVisitor visitor = null;//new CsvVisitor(adminMonitor.getAdmin(), spaceNames, pidMetricMap, exponentialMovingAverage, alerts, derivedMetricsPeriodInMs);
+    // StatsVisitor visitor = null;// new PrintVisitor(adminMonitor.getAdmin(), spaceNames, pidMetricMap, exponentialMovingAverage, alerts, derivedMetricsPeriodInMs);
 
     public void collectMetrics() {
         switch (settings.outputFormat()) {

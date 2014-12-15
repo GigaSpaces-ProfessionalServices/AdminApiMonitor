@@ -2,6 +2,8 @@ package com.gigaspaces.sbp.metrics.bootstrap.cli;
 
 import org.junit.Test;
 
+import java.util.*;
+
 import static org.junit.Assert.*;
 
 public class SettingTypeTest {
@@ -45,4 +47,23 @@ public class SettingTypeTest {
     public void testIsUsedByCli() throws Exception{
         assertFalse(SettingType.MovingAverageAlpha.isUsedByCli());
     }
+
+    @Test
+    public void testCommandCharsAreUnique() throws Exception{
+
+        Set<String> set = new TreeSet<>();
+        List<String> list = new LinkedList<>();
+
+        for( SettingType type : SettingType.values() ){
+            set.add(type.getOptionCharacter());
+            list.add(type.getOptionCharacter());
+            Collections.sort(list);
+        }
+//        System.out.println(strings);
+//        System.out.println(list);
+
+        assertEquals(list.size(), set.size(), 0);
+
+    }
+
 }

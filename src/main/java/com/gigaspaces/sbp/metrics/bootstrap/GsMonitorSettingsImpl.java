@@ -164,4 +164,13 @@ public class GsMonitorSettingsImpl implements GsMonitorSettings {
         return Integer.valueOf(getRequiredSettingOrThrow(SettingType.GscCount));
     }
 
+    /**
+     * @return number of milliseconds to allow to pass between calculation of "derived metrics"
+     */
+    @Override
+    public Long derivedMetricsPeriodInMs() {
+        ensureInitialization();
+        return Long.valueOf(getRequiredSettingOrThrow(SettingType.DerivedMetricsPeriod));
+    }
+
 }

@@ -85,4 +85,9 @@ public interface GsMonitorSettings {
 
     Integer gscCount();
 
+    /**
+     * @return number of milliseconds to allow to pass between calculation of "derived metrics"
+     */
+    Long derivedMetricsPeriodInMs();
+
 }

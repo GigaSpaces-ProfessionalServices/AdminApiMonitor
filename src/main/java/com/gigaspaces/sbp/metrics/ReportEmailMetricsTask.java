@@ -20,7 +20,7 @@ public class ReportEmailMetricsTask extends AbstractPeriodicVisitorTask {
         for (String name : Arrays.asList(spaceName.split(","))){
             spaceNames.add(name.trim());
         }
-        CsvVisitor visitor = null;//new CsvVisitor(adminMonitor.getAdmin(), spaceNames, pidMetricMap, exponentialMovingAverage, alerts, period);
+        CsvVisitor visitor = null;//new CsvVisitor(adminMonitor.getAdmin(), spaceNames, pidMetricMap, exponentialMovingAverage, alerts, derivedMetricsPeriodInMs);
         for (NamedMetric metric : metrics){
             metric.accept(visitor);
         }
