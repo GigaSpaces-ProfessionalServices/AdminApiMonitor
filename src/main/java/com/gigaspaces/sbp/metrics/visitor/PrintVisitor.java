@@ -51,4 +51,20 @@ public class PrintVisitor extends AbstractStatsVisitor {
         logger.info(formatMetrics(fullMetric));
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setSaveHeaders(Boolean saveHeaders) {
+        // TODO code smell: refused bequest
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void printCsvMetrics() {
+        // TODO code smell: refused bequest
+    }
+
 }

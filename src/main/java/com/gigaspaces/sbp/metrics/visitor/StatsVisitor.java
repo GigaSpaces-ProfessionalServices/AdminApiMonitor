@@ -67,4 +67,13 @@ public interface StatsVisitor {
      */
     void saveOnce(FullMetric fullMetric);
 
+    /**
+     * @param saveHeaders whether to output headers on the next go-around
+     */
+    void setSaveHeaders(Boolean saveHeaders);
+
+    /**
+     * Print 'em if you've got 'em
+     */
+    void printCsvMetrics();
 }

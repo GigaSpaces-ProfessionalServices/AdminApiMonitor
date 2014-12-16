@@ -39,6 +39,10 @@ public class CsvVisitor extends AbstractStatsVisitor{
         saveStat(fullMetric);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void printCsvMetrics(){
         if (saveHeaders){
             StringBuilder headers = new StringBuilder("timestamp, ");
@@ -53,7 +57,7 @@ public class CsvVisitor extends AbstractStatsVisitor{
         for (FullMetric metric : metricMap.values()){
             values.append(metric.getMetricValue()).append(", ");
         }
-        logger.info(values.toString().substring(0, values.length()-2));
+        logger.info(values.toString().substring(0, values.length() - 2));
     }
 
     private void appendHostName(StringBuilder headers, String metric) {
@@ -67,7 +71,12 @@ public class CsvVisitor extends AbstractStatsVisitor{
         return metricMap;
     }
 
-    public void setSaveHeaders(boolean saveHeaders) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setSaveHeaders(Boolean saveHeaders) {
         this.saveHeaders = saveHeaders;
     }
+
 }
