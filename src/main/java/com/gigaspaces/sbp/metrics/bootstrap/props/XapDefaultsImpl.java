@@ -39,7 +39,7 @@ class XapDefaultsImpl extends PropertyFileValues implements XapDefaults {
      */
     @Override
     public Boolean isSecured() {
-        return Boolean.TRUE.toString().equals(getPropOrThrow(XAP_SECURITY_PROP_NAME));
+        return Boolean.TRUE.toString().equalsIgnoreCase(getPropOrThrow(XAP_SECURITY_PROP_NAME));
     }
 
 }

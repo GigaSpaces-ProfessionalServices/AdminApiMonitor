@@ -32,7 +32,7 @@ import java.util.Set;
 public class CreateGsMonitorSettings {
 
     private static final String LOOKUP_LOCATOR_INVARIANT
-            = "lookupLocators are required. Should be enforced by ParseArgs.invoke(args)";
+            = "LookupLocators are required. Should be enforced by ParseArgs.invoke(args)";
     private static final String SPACE_NAMES_INVARIANT
             = "spaceNames are required. Should be enforced by ParseArgs.invoke(args)";
     private static final String USERNAME_PASSWORD_INVARIANT
@@ -88,6 +88,7 @@ public class CreateGsMonitorSettings {
         map.put(SettingType.LookupLocators, processLocators(commandLine, set));
         map.put(SettingType.SpaceNames, processSpaceNames(commandLine, set));
         map.put(SettingType.OutputFile, processOutputFile(commandLine));
+        map.put(SettingType.Secured, processSecurityFlag(commandLine, set));
 
         processUsernameAndPassword(commandLine, set, map);
         processAlpha(map);
@@ -97,6 +98,21 @@ public class CreateGsMonitorSettings {
         gsMonitorSettings.initialize(map);
 
         return map;
+    }
+
+    private String processSecurityFlag(CommandLine commandLine, Set<SettingType> set) throws ParseException {
+        assert set != null : "need a non-null set to process";
+
+        SettingType secured = SettingType.Secured;
+
+        if(!set.contains(secured)) return xapDefaults.isSecured().toString();
+
+        String value = getStringOrNull(commandLine, secured);
+
+        assert value != null : "ParseArgs apparently failed.";
+
+        return value;
+
     }
 
     private void processFlags(Set<SettingType> set, Map<SettingType, String> map) {
@@ -146,7 +162,6 @@ public class CreateGsMonitorSettings {
         return validateAndCreateFilePath.invoke(outputFile);
 
     }
-
 
     private String getStringOrNull(CommandLine commandLine, SettingType setting) {
 

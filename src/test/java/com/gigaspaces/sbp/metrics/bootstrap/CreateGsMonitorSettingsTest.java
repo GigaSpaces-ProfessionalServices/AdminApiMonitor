@@ -57,11 +57,11 @@ public class CreateGsMonitorSettingsTest {
     public void testInvokeOrThrow() throws Exception {
 
         final EnumSet<SettingType> required = EnumSet.of(SettingType.LookupLocators, SettingType.SpaceNames);
-        final EnumSet<SettingType> defaulted = EnumSet.of(SettingType.Username, SettingType.Password, SettingType.OutputFile);
-        Set<SettingType> requiredAndDefaulted = new HashSet<SettingType>(){{addAll(required);addAll(defaulted);}};
+        final EnumSet<SettingType> defaulted = EnumSet.of(SettingType.Username, SettingType.Password, SettingType.OutputFile, SettingType.Secured);
+        Set<SettingType> requiredOrDefaulted = new HashSet<SettingType>(){{addAll(required);addAll(defaulted);}};
 
         Set<SettingType> returnMe = new HashSet<>();
-        for( SettingType setting : SettingType.values() ) if( !requiredAndDefaulted.contains(setting)) returnMe.add(setting);
+        for( SettingType setting : SettingType.values() ) if( !requiredOrDefaulted.contains(setting)) returnMe.add(setting);
         returnMe.addAll(required);
 
         // build arg list
@@ -77,6 +77,8 @@ public class CreateGsMonitorSettingsTest {
         argList.add(strings.alphabetic()); // username
         argList.add(String.format("-%s", SettingType.Password.getOptionCharacter()));
         argList.add(strings.alphabetic()); // pw
+        argList.add(String.format("-%s", SettingType.Secured.getOptionCharacter()));
+        argList.add(Boolean.TRUE.toString());
         String[] testArgs = new String[argList.size()];
         argList.toArray(testArgs);
 
@@ -86,6 +88,7 @@ public class CreateGsMonitorSettingsTest {
         doReturn(testCommandLine).when(calculateSettingsFromCliArgs).parse(eq(testArgs));
         doReturn(0.5f).when(monitorDefaults).movingAverageAlpha();
         doReturn(OutputFormat.Csv).when(monitorDefaults).outputFormat();
+        doReturn(Boolean.FALSE).when(xapDefaults).isSecured();
 
         Map<SettingType, String> actual = testInstance.invokeOrThrow(testArgs);
 
