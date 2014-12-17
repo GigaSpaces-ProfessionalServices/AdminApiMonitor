@@ -104,14 +104,19 @@ public class CalculateSettingsFromCliArgs {
         final Options options = requiredOptions();
 
         addOptionByReference(options, SettingType.LookupGroups);
-        addOptionByReference(options, SettingType.OutputFile);
 
+        addOptionByReference(options, SettingType.OutputFile);
         addOptionByReference(options, SettingType.Csv);
-        addOptionByReference(options, SettingType.Secured);
         addOptionByReference(options, SettingType.LogFormat);
 
+        addOptionByReference(options, SettingType.Secured);
         addOptionByReference(options, SettingType.Username);
         addOptionByReference(options, SettingType.Password);
+
+        addOptionByReference(options, SettingType.GscCount);
+        addOptionByReference(options, SettingType.MachineCount);
+
+        addOptionByReference(options, SettingType.AlertsEnabled);
 
         return options;
     }

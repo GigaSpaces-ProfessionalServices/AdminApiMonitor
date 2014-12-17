@@ -1,12 +1,16 @@
 package com.gigaspaces.sbp.metrics.bootstrap.cli;
 
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
 import static org.junit.Assert.*;
 
 public class SettingTypeTest {
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Test
     public void testGetOptionCharacter() throws Exception {
@@ -65,5 +69,28 @@ public class SettingTypeTest {
         assertEquals(list.size(), set.size(), 0);
 
     }
+
+    @Test
+    public void testCommandWordsAreUnique() throws Exception{
+
+        Set<String> set = new TreeSet<>();
+        List<String> list = new LinkedList<>();
+
+        for( SettingType type : SettingType.values() ){
+            String word = type.getOptionWord();
+            set.add(word);
+            list.add(word);
+            Collections.sort(list);
+        }
+//        System.out.println(strings);
+        logger.trace(list.toString());
+
+        assertEquals(list.size(), set.size(), 0);
+
+    }
+    /*
+        alerts, email-alerts, gsc-count, machine-count
+        , derived-metric-period, initial-delay-ms, metrics-interval
+    */
 
 }
