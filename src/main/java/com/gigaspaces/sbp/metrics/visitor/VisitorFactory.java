@@ -1,5 +1,6 @@
 package com.gigaspaces.sbp.metrics.visitor;
 
+import com.gigaspaces.Factory;
 import com.gigaspaces.sbp.metrics.ExponentialMovingAverage;
 import com.gigaspaces.sbp.metrics.bootstrap.GsMonitorSettings;
 import com.gigaspaces.sbp.metrics.bootstrap.cli.OutputFormat;
@@ -22,7 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Time: 10:49 AM
  */
 @Component
-public class VisitorFactory {
+public class VisitorFactory implements Factory<StatsVisitor> {
 
     private static final String UNSUPPORTED_FORMAT_ERROR = "Unsupported %s %s";
 
@@ -43,6 +44,10 @@ public class VisitorFactory {
         this.connectToXap = connectToXap;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public StatsVisitor build() {
         OutputFormat fmt = settings.outputFormat();
         switch (fmt){

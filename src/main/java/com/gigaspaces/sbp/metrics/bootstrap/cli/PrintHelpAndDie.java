@@ -1,5 +1,6 @@
 package com.gigaspaces.sbp.metrics.bootstrap.cli;
 
+import com.gigaspaces.Factory;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
@@ -50,11 +51,15 @@ public class PrintHelpAndDie {
 
     }
 
-    class HelpFormatterFactory {
+    class HelpFormatterFactory implements Factory<HelpFormatter> {
 
         private static final String SYNTAX_PREFIX = "usage:\n\n";
 
-        HelpFormatter build(){
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public HelpFormatter build(){
             HelpFormatter formatter = new HelpFormatter();
             formatter.setSyntaxPrefix(SYNTAX_PREFIX);
             return formatter;
@@ -63,7 +68,7 @@ public class PrintHelpAndDie {
     }
 
 
-    class PrintWriterFactory{
+    class PrintWriterFactory implements Factory<PrintWriter>{
 
         final PrintStream out;
 
@@ -72,7 +77,11 @@ public class PrintHelpAndDie {
             this.out = out;
         }
 
-        PrintWriter build(){
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public PrintWriter build(){
             return new PrintWriter(out);
         }
 

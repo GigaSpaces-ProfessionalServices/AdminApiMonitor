@@ -5,8 +5,11 @@ import com.gigaspaces.sbp.metrics.bootstrap.GsMonitorSettings;
 import com.gigaspaces.sbp.metrics.visitor.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import scala.concurrent.duration.FiniteDuration;
 
 import javax.annotation.Resource;
+import javax.xml.datatype.Duration;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by IntelliJ IDEA.
@@ -19,34 +22,31 @@ public class CollectMetrics {
 
     private static final String ACTOR_SYSTEM_INIT_REQUIRED = "We need an ActorSystem provider.";
     private static final String SETTINGS_REQUIRED = "Settings are required.";
-    private static final String VISITOR_FACTORY_REQUIRED = "Need a source of statistics visitors.";
 
-    @Resource
-    private final ActorSystemEden actorSystemEden;
     @Resource
     private final GsMonitorSettings settings;
     @Resource
-    private final VisitorFactory visitorFactory;
+    private final VisitorAcceptanceFactory visitorAcceptanceFactory;
 
     private ActorSystem system;
-    private StatsVisitor visitor;
 
     @Autowired
     public CollectMetrics(ActorSystemEden actorSystemEden,
                           GsMonitorSettings settings,
-                          VisitorFactory visitorFactory) {
+                          VisitorFactory visitorFactory,
+                          VisitorAcceptanceFactory visitorAcceptanceFactory) {
+        this.visitorAcceptanceFactory = visitorAcceptanceFactory;
         assert actorSystemEden != null : ACTOR_SYSTEM_INIT_REQUIRED;
         assert settings != null : SETTINGS_REQUIRED;
-        assert visitorFactory != null : VISITOR_FACTORY_REQUIRED;
 
-        this.visitorFactory = visitorFactory;
-        this.actorSystemEden = actorSystemEden;
         this.settings = settings;
         this.system = actorSystemEden.getSystem();
     }
 
     public void readySetGo() {
-        visitor = visitorFactory.build();
+        FiniteDuration delay = new FiniteDuration(settings.collectMetricsInitialDelayInMs(), TimeUnit.MILLISECONDS);
+        FiniteDuration interval = new FiniteDuration(settings.collectMetricsIntervalInMs(), TimeUnit.MILLISECONDS);
+        system.scheduler().schedule(delay, interval, visitorAcceptanceFactory.build(), system.dispatcher());
     }
 
 }

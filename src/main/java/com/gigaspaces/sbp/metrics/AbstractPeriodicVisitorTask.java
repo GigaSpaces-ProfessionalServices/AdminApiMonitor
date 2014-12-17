@@ -10,28 +10,24 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * TODO replace me
+ */
+@Deprecated
 public class AbstractPeriodicVisitorTask {
 
-//    protected GsMonitorRunner adminMonitor;
-
-    protected String spaceName;
-
-    protected boolean headersSaved = false;
-
-    protected boolean csv;
-
+    /**
+     * TODO where is this supposed to go now?
+     */
     protected Map<String, FullMetric> pidMetricMap = new LinkedHashMap<>();
 
-    protected ExponentialMovingAverage exponentialMovingAverage;
-
+    /**
+     * TODO And where does this go?
+     */
     protected ConcurrentHashMap<String, AtomicInteger> alerts = new ConcurrentHashMap<>();
 
-    protected Long period;
-
-    protected List<NamedMetric> metrics;
-
+    @Deprecated
     public void init(){
-//        Admin admin = adminMonitor.getAdmin();
         AlertManager alertManager = null;// = admin.getAlertManager();
         alertManager.getAlertTriggered().add(new AlertTriggeredEventListener() {
             @Override
@@ -41,44 +37,6 @@ public class AbstractPeriodicVisitorTask {
                 alerts.get(alertName).incrementAndGet();
             }
         });
-
-        metrics = new ArrayList<>();
-        metrics.addAll(Arrays.asList(GigaSpacesActivity.values()));
-        metrics.addAll(Arrays.asList(GigaSpacesClusterInfo.values()));
-        metrics.addAll(Arrays.asList(GsMirrorInfo.values()));
-        metrics.addAll(Arrays.asList(JvmInfo.values()));
-        metrics.addAll(Arrays.asList(Memory.values()));
-        metrics.addAll(Arrays.asList(OperatingSystemInfo.values()));
-//        metrics.addAll(Arrays.asList(MonitoringToolInfo.values()));
-        metrics.addAll(Arrays.asList(InstanceCount.values()));
-        metrics.addAll(Arrays.asList(CacheContentMetric.values()));
-        metrics.addAll(Arrays.asList(AlertsInfo.values()));
-
-    }
-
-    @Required
-    public void setCsv(Boolean csv) {
-        this.csv = csv;
-    }
-
-    @Required
-    public void setSpaceName(String spaceName) {
-        this.spaceName = spaceName;
-    }
-
-//    @Required
-//    public void setAdminMonitor(GsMonitorRunner adminMonitor) {
-//        this.adminMonitor = adminMonitor;
-//    }
-
-    @Required
-    public void setExponentialMovingAverage(ExponentialMovingAverage exponentialMovingAverage) {
-        this.exponentialMovingAverage = exponentialMovingAverage;
-    }
-
-    @Required
-    public void setPeriod(Long period) {
-        this.period = period;
     }
 
 }

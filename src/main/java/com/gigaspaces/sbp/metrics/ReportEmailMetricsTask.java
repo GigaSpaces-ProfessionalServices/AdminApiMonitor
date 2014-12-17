@@ -11,9 +11,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * TODO replace me
+ */
+@Deprecated
 public class ReportEmailMetricsTask extends AbstractPeriodicVisitorTask {
 
     private Logger logger = LoggerFactory.getLogger("email_reports");
+
+    private String spaceName;
+    private NamedMetric[] metrics;
 
     public void reportMetrics(){
         List<String> spaceNames = new ArrayList<>();

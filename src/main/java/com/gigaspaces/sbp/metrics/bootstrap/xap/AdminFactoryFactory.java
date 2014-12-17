@@ -1,5 +1,6 @@
 package com.gigaspaces.sbp.metrics.bootstrap.xap;
 
+import com.gigaspaces.Factory;
 import org.openspaces.admin.AdminFactory;
 import org.springframework.stereotype.Component;
 
@@ -12,9 +13,13 @@ import org.springframework.stereotype.Component;
  * Provides a means of testing with DI.
  */
 @Component
-class AdminFactoryFactory {
+class AdminFactoryFactory implements Factory<AdminFactory> {
 
-    AdminFactory build(){
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public AdminFactory build(){
         return new AdminFactory();
     }
 
