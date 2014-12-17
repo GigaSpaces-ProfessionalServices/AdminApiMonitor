@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Component
 public class VisitorFactory {
 
-    private static final String UNSUPPORTED_FORMAT_ERROR = "Unsupported Output Format %s";
+    private static final String UNSUPPORTED_FORMAT_ERROR = "Unsupported %s %s";
 
     private Map<String, FullMetric> pidMetricMap = new LinkedHashMap<>();
     private ConcurrentHashMap<String, AtomicInteger> alerts = new ConcurrentHashMap<>();
@@ -65,7 +65,7 @@ public class VisitorFactory {
                         , settings.derivedMetricsPeriodInMs()
                 );
             default:
-                throw new UnsupportedOperationException(String.format(UNSUPPORTED_FORMAT_ERROR, fmt.name()));
+                throw new UnsupportedOperationException(String.format(UNSUPPORTED_FORMAT_ERROR, OutputFormat.class.getSimpleName(), fmt.name()));
         }
     }
 }
