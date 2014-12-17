@@ -26,18 +26,12 @@
         </encoder>
     </appender>
 
-    <logger name="file">
-        <appender-ref ref="FILE" />
-    </logger>
-
-    <logger name="stdout">
-        <appender-ref ref="CONSOLE"/>
-    </logger>
-
     <root level="WARN">
         <appender-ref ref="FILE"/>
     </root>
 
-    <logger name="com.gigaspaces.sbp.metrics.bootstrap.props.PropertyFileValues" level="DEBUG"/>
+    <logger name="com.gigaspaces.sbp.metrics.bootstrap.props.PropertyFileValues" level="DEBUG">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
 
 </configuration>
