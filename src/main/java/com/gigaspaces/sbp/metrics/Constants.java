@@ -14,4 +14,7 @@ public interface Constants {
     String THING_REQUIRED = "A %s is required.";
     String THINGS_REQUIRED = "%s are required.";
 
+    String ALERTS_EMAIL_ADDRESS_SYSTEM_PROPERTY_NAME = "alertsEmailAddress";
+    String OUTPUT_FILE_SYSTEM_PROPERTY_NAME = "outputFile";
+
 }

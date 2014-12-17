@@ -90,4 +90,5 @@ public interface GsMonitorSettings {
      */
     Long derivedMetricsPeriodInMs();
 
+    String alertRecipientEmailAddress();
 }

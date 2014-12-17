@@ -131,7 +131,8 @@ public class GsMonitorSettingsImpl implements GsMonitorSettings {
     @Override
     public Boolean sendAlertsByEmail() {
         ensureInitialization();
-        return Boolean.valueOf(getOptionalSettingOrNull(SettingType.SendAlertsByEmail));
+        String val = getOptionalSettingOrNull(SettingType.SendAlertsByEmail);
+        return val != null ? Boolean.valueOf(val) : false;
     }
 
     @Override
@@ -171,6 +172,12 @@ public class GsMonitorSettingsImpl implements GsMonitorSettings {
     public Long derivedMetricsPeriodInMs() {
         ensureInitialization();
         return Long.valueOf(getRequiredSettingOrThrow(SettingType.DerivedMetricsPeriod));
+    }
+
+    @Override
+    public String alertRecipientEmailAddress(){
+        ensureInitialization();
+        return getOptionalSettingOrNull(SettingType.SendAlertsByEmail);
     }
 
 }

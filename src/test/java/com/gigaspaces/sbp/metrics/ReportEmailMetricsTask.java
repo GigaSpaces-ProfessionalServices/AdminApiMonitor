@@ -24,6 +24,11 @@ public class ReportEmailMetricsTask extends AbstractPeriodicVisitorTask {
     private NamedMetric[] metrics;
     private MetricsRegistry metricsRegistry;
 
+    /**
+     * TODO This little piece of functionality should be moved somewhere else
+     * TODO where it can pick up the CLI args that may have been passed in from the
+     * TODO user to specify email address.
+     */
     public void reportMetrics(){
         List<String> spaceNames = new ArrayList<>();
         for (String name : Arrays.asList(spaceName.split(","))){

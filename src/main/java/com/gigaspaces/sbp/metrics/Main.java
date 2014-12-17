@@ -73,7 +73,16 @@ public class Main {
         }
 
         setOutputFile();
+        setAlertsEmailAddress();
 
+    }
+
+    private void setAlertsEmailAddress() {
+        GsMonitorSettings settings = (GsMonitorSettings) context.getBean(beanNameForClass(GsMonitorSettingsImpl.class));
+        if( settings.alertsEnabled() && settings.sendAlertsByEmail() ){
+            String addy = settings.alertRecipientEmailAddress();
+            System.setProperty(Constants.ALERTS_EMAIL_ADDRESS_SYSTEM_PROPERTY_NAME, addy);
+        }
     }
 
     void connectToXapGrids() {
@@ -90,7 +99,7 @@ public class Main {
      */
     void setOutputFile() {
         GsMonitorSettings settings = (GsMonitorSettings) context.getBean(beanNameForClass(GsMonitorSettingsImpl.class));
-        System.setProperty("outputFile", settings.outputFilePath());
+        System.setProperty(Constants.OUTPUT_FILE_SYSTEM_PROPERTY_NAME, settings.outputFilePath());
     }
 
 }

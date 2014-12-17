@@ -79,12 +79,16 @@ public class CreateGsMonitorSettingsTest {
         argList.add(strings.alphabetic()); // pw
         argList.add(String.format("-%s", SettingType.Secured.getOptionCharacter()));
         argList.add(Boolean.TRUE.toString());
+        argList.add(String.format("-%s", SettingType.SendAlertsByEmail));
+        String addy = "jasonnerothin@gmail.com";
+        argList.add(addy);
         String[] testArgs = new String[argList.size()];
         argList.toArray(testArgs);
 
         doReturn(returnMe).when(calculateSettingsFromCliArgs).invoke(eq(testArgs));
         doReturn(testLocator).when(testCommandLine).getOptionValue(SettingType.LookupLocators.getOptionWord());
         doReturn(testSpaceNames).when(testCommandLine).getOptionValue(SettingType.SpaceNames.getOptionCharacter());
+        doReturn(addy).when(testCommandLine).getOptionValue(SettingType.SendAlertsByEmail.getOptionCharacter());
         doReturn(testCommandLine).when(calculateSettingsFromCliArgs).parse(eq(testArgs));
         doReturn(0.5f).when(monitorDefaults).movingAverageAlpha();
         doReturn(OutputFormat.Csv).when(monitorDefaults).outputFormat();
@@ -249,7 +253,7 @@ public class CreateGsMonitorSettingsTest {
     }
 
     @Test(expected = ParseException.class)
-    public void testProcessLocatorsThrowsWhenNoSpacenamesInSet() throws Exception{
+    public void testProcessLocatorsThrowsWhenNoSpaceNameIsSet() throws Exception{
 
         testInstance.processSpaceNames(mock(CommandLine.class), new HashSet<SettingType>());
 

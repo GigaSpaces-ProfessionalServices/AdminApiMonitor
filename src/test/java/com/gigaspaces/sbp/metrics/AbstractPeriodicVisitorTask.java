@@ -17,11 +17,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class AbstractPeriodicVisitorTask {
 
     /**
-     * TODO where is this supposed to go now?
-     */
-    protected Map<String, FullMetric> pidMetricMap = new LinkedHashMap<>();
-
-    /**
      * TODO And where does this go?
      */
     protected ConcurrentHashMap<String, AtomicInteger> alerts = new ConcurrentHashMap<>();
