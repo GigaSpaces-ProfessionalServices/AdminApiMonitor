@@ -16,15 +16,6 @@ import java.util.concurrent.Executors;
 @Component
 public class ActorSystemEden {
 
-//    private static final int THREAD_POOL_SIZE = 6;
-
-//    private final ExecutionContext context
-//            = ExecutionContexts.fromExecutorService(Executors.newFixedThreadPool(THREAD_POOL_SIZE));
-
-    //    public ExecutionContext getContext(){
-//        return context;
-//    }
-
     private final ActorSystem actorSystem = ActorSystem.create("mySystem");
 
     public ActorSystem getSystem(){
