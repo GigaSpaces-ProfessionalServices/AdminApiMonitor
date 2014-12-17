@@ -20,6 +20,8 @@ abstract class PropertyFileValues {
     private static final String PROPERTY_NOT_PRESENT_ERROR
             = "Classpath resource (properties file '%s') does not define required property '%s'.";
 
+    private static final String PROPERTY_LOADED_MESSAGE = "Set property '%s' to [%s].";
+
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final Properties properties = new Properties();
 
@@ -31,6 +33,10 @@ abstract class PropertyFileValues {
         logger.debug(String.format(LOADING_PROPERTIES_FILE_MESSAGE, propertyFileName));
         try {
             properties.load(PropertyFileValues.class.getClassLoader().getResourceAsStream(propertyFileName));
+            for( Object key : properties.keySet() ){
+                Object value = properties.get(key);
+                logger.debug(String.format(PROPERTY_LOADED_MESSAGE, key.toString(), value != null ? value.toString() : "null"));
+            }
         } catch (IOException | NullPointerException e) {
             ExceptionInInitializerError err = new ExceptionInInitializerError(e);
             logger.error(String.format(PROPERTY_FILE_LOAD_ERROR, propertyFileName), err);
