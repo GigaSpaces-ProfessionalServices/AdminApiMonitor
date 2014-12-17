@@ -82,12 +82,12 @@ cd %INSTALL_DIR%
 
 ECHO %CONST%
 
-echo spaceMonitor.spaceName=%SPACES%>admin-api.properties
-echo spaceMonitor.locators=%LOCATORS%>>admin-api.properties
-echo spaceMonitor.secured=%SECURED%>>admin-api.properties
+echo xap.spaceNames=%SPACES%>admin-api.properties
+echo xap.locators=%LOCATORS%>>admin-api.properties
+echo xap.security.enabled=%SECURED%>>admin-api.properties
 echo spaceMonitor.adminUser=%NAME%>>admin-api.properties
 echo spaceMonitor.adminPassword=%PASSWORD%>>admin-api.properties
-echo spaceMonitor.lookupGroups=%LOOKUP_GROUPS%>>admin-api.properties
+echo xap.lookupGroups=%LOOKUP_GROUPS%>>admin-api.properties
 echo stat.periodic.sample.interval=%INTERVAL%>>admin-api.properties
 echo stat.periodic.sample.delay=%DELAY%>>admin-api.properties
 echo stat.sample.alpha=%CONST% >>admin-api.properties

@@ -21,7 +21,7 @@ class MonitorDefaultsImpl extends PropertyFileValues implements MonitorDefaults{
     private static final String METRIC_ALPHA = "stat.sample.alpha";
 
     private static final String OUTPUT_FILENAME = "spaceMonitor.outputFile";
-    private static final String OUTPUT_FORMAT = "output.format";
+    private static final String OUTPUT_FORMAT = "spaceMonitor.outputFormat";
 
     MonitorDefaultsImpl(String propertyFileName) {
         super(propertyFileName);

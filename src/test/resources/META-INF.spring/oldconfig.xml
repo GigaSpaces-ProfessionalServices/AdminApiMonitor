@@ -8,16 +8,16 @@
     <bean id="spaceMonitor" class="com.gigaspaces.sbp.metrics.GsMonitorRunner" init-method="init">
         <property name="adminUser" value="${spaceMonitor.adminUser}"/>
         <property name="adminPassword" value="${spaceMonitor.adminPassword}"/>
-        <property name="locators" value="${spaceMonitor.locators}"/>
-        <property name="groups" value="${spaceMonitor.lookupGroups}"/>
-        <property name="spaceName" value="${spaceMonitor.spaceName}"/>
+        <property name="locators" value="${xap.locators}"/>
+        <property name="groups" value="${xap.lookupGroups}"/>
+        <property name="spaceName" value="${xap.spaceNames}"/>
         <property name="alertsConfiguration" value="${alerts.config}"/>
         <property name="alertsEmailReporting" value="${alerts.email.reporting}"/>
     </bean>
 
     <bean id="collectPeriodicMetricsTask" class="com.gigaspaces.sbp.metrics.CollectPeriodicMetricsVisitorTask">
         <property name="adminMonitor" ref="spaceMonitor"/>
-        <property name="spaceName" value="${spaceMonitor.spaceName}"/>
+        <property name="spaceName" value="${xap.spaceNames}"/>
         <property name="csv" value="${csv_format}"/>
         <property name="exponentialMovingAverage" ref="exponentialMovingAverage"/>
         <property name="period" value="${stat.periodic.sample.interval}"/>

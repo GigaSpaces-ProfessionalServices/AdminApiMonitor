@@ -9,10 +9,10 @@ package com.gigaspaces.sbp.metrics.bootstrap.props;
  */
 class XapDefaultsImpl extends PropertyFileValues implements XapDefaults {
 
-    private static final String LOOKUP_LOCATORS_PROP_NAME = "spaceMonitor.locators";
-    private static final String SPACE_NAMES_PROP_NAME = "spaceMonitor.spaceName";
+    private static final String LOOKUP_LOCATORS_PROP_NAME = "xap.locators";
+    private static final String SPACE_NAMES_PROP_NAME = "xap.spaceNames";
 
-    private static final String XAP_SECURITY_PROP_NAME = "spaceMonitor.secured";
+    private static final String XAP_SECURITY_PROP_NAME = "xap.security.enabled";
 
     XapDefaultsImpl(String propertyFilename) {
         super(propertyFilename);

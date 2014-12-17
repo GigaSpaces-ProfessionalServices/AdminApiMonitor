@@ -152,12 +152,12 @@ cp target/logback/${LOGGING_CONFIG} ${installDir}
 unzip target/GsMonitor-ConfigurationFiles.zip -d ${installDir}/config
 cd ${installDir}
 
-echo "spaceMonitor.spaceName=${spacename}" > 'admin-api.properties'
-echo "spaceMonitor.locators=${locators}" >> 'admin-api.properties'
-echo "spaceMonitor.secured=${secured}" >> 'admin-api.properties'
+echo "xap.spaceNames=${spacename}" > 'admin-api.properties'
+echo "xap.locators=${locators}" >> 'admin-api.properties'
+echo "xap.security.enabled=${secured}" >> 'admin-api.properties'
 echo "spaceMonitor.adminUser=${username}" >> 'admin-api.properties'
 echo "spaceMonitor.adminPassword=${password}" >> 'admin-api.properties'
-echo "spaceMonitor.lookupGroups=${lookupGroups}" >> 'admin-api.properties'
+echo "xap.lookupGroups=${lookupGroups}" >> 'admin-api.properties'
 echo "stat.sample.alpha=${DEFAULT_EMA_ALPHA}" >> 'admin-api.properties'
 echo "stat.periodic.sample.interval=${interval}" >> 'admin-api.properties'
 echo "stat.periodic.sample.delay=${delay}" >> 'admin-api.properties'
