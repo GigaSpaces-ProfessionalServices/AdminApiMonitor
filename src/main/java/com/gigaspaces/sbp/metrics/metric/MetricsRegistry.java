@@ -18,17 +18,18 @@ import static java.util.Arrays.asList;
 @Component
 public class MetricsRegistry {
 
-    private static final Collection<NamedMetric> METRICS = new ArrayList<NamedMetric>(){{
-        addAll(Arrays.asList(GigaSpacesActivity.values()));
-        addAll(Arrays.asList(GigaSpacesClusterInfo.values()));
-        addAll(Arrays.asList(GsMirrorInfo.values()));
-        addAll(Arrays.asList(JvmInfo.values()));
-        addAll(Arrays.asList(Memory.values()));
-        addAll(Arrays.asList(OperatingSystemInfo.values()));
-        addAll(Arrays.asList(InstanceCount.values()));
-        addAll(Arrays.asList(CacheContentMetric.values()));
-        addAll(Arrays.asList(AlertsInfo.values()));
-    }};
+    private static final Collection<NamedMetric> METRICS = new ArrayList<NamedMetric>();
+    {
+        METRICS.addAll(Arrays.asList(GigaSpacesActivity.values()));
+        METRICS.addAll(Arrays.asList(GigaSpacesClusterInfo.values()));
+        METRICS.addAll(Arrays.asList(GsMirrorInfo.values()));
+        METRICS.addAll(Arrays.asList(JvmInfo.values()));
+        METRICS.addAll(Arrays.asList(Memory.values()));
+        METRICS.addAll(Arrays.asList(OperatingSystemInfo.values()));
+        METRICS.addAll(Arrays.asList(InstanceCount.values()));
+        METRICS.addAll(Arrays.asList(CacheContentMetric.values()));
+        METRICS.addAll(Arrays.asList(AlertsInfo.values()));
+    };
 
     private static final List<NamedMetric> MOVING_AVERAGED_METRICS = asList(new NamedMetric[]{
             GigaSpacesActivity.READ_PER_SEC
@@ -53,13 +54,15 @@ public class MetricsRegistry {
      * In some cases, we calculate a per_second value based off of the cumulative value.
      * We keep track of the relationship between cumulative and per_sec value here.
      */
-    private static final Map<NamedMetric, NamedMetric> DERIVED_METRICS = new HashMap<NamedMetric, NamedMetric>(){{
-        put(GigaSpacesActivity.WRITE_COUNT, GigaSpacesActivity.WRITES_PER_SEC);
-        put(GigaSpacesActivity.READ_COUNT, GigaSpacesActivity.READ_PER_SEC);
-        put(GigaSpacesActivity.UPDATE_COUNT, GigaSpacesActivity.UPDATES_PER_SEC);
-        put(GigaSpacesActivity.EXECUTE_COUNT, GigaSpacesActivity.EXECUTES_PER_SEC);
-        put(GigaSpacesActivity.TAKE_COUNT, GigaSpacesActivity.TAKES_PER_SECOND);
-    }};
+    private static final Map<NamedMetric, NamedMetric> DERIVED_METRICS = new HashMap<NamedMetric, NamedMetric>();
+
+    {
+        DERIVED_METRICS.put(GigaSpacesActivity.WRITE_COUNT, GigaSpacesActivity.WRITES_PER_SEC);
+        DERIVED_METRICS.put(GigaSpacesActivity.READ_COUNT, GigaSpacesActivity.READ_PER_SEC);
+        DERIVED_METRICS.put(GigaSpacesActivity.UPDATE_COUNT, GigaSpacesActivity.UPDATES_PER_SEC);
+        DERIVED_METRICS.put(GigaSpacesActivity.EXECUTE_COUNT, GigaSpacesActivity.EXECUTES_PER_SEC);
+        DERIVED_METRICS.put(GigaSpacesActivity.TAKE_COUNT, GigaSpacesActivity.TAKES_PER_SECOND);
+    }
 
     private final Map<String, FullMetric> pidMetrics = new LinkedHashMap<>();
     private final ConcurrentHashMap<String, AtomicInteger> alerts = new ConcurrentHashMap<>();

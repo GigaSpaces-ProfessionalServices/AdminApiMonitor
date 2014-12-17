@@ -17,7 +17,8 @@
 
             <gigaspaces.version>9.5.1-RELEASE</gigaspaces.version>
         -->
-        <gigaspaces.version>9.5.1-RELEASE</gigaspaces.version>
+        <!--<gigaspaces.version>9.5.1-RELEASE</gigaspaces.version>-->
+        <gigaspaces.version>9.7.1-10800-RELEASE</gigaspaces.version>
         <javax.mail.version>1.4.3</javax.mail.version>
         <junit.version>4.11</junit.version>
         <logback.version>1.0.13</logback.version>
@@ -83,15 +84,33 @@
 
     <build>
         <defaultGoal>package</defaultGoal>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>properties/gs.monitor.properties</include>
+                    <include>properties/xap.default.properties</include>
+                    <include>logback/logback-csv.xml</include>
+                    <include>META-INF/spring/*</include>
+                    <include>alerts-config.xml</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.3.2</version>
                 <configuration>
+                    <compilerArgument>-Xlint:all</compilerArgument>
+                    <showWarnings>true</showWarnings>
+                    <showDeprecation>true</showDeprecation>
                     <source>1.7</source>
                     <target>1.7</target>
                     <encoding>UTF-8</encoding>
+                    <meminitial>1024m</meminitial>
+                    <maxmem>2024m</maxmem>
                 </configuration>
             </plugin>
             <plugin>
@@ -102,40 +121,62 @@
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
-                <configuration>
-                    <excludes>
-                        <exclude>**/properties/</exclude>
-                        <exclude>**/logback/</exclude>
-                    </excludes>
-                    <archive>
-                        <manifest>
-                            <mainClass>com.gigaspaces.sbp.metrics.GsMonitorRunner</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
-            </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-jar-plugin</artifactId>-->
+                <!--<version>2.4</version>-->
+                <!--<configuration>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
 
             <plugin>
-                <groupId>org.dstovall</groupId>
-                <artifactId>onejar-maven-plugin</artifactId>
-                <version>1.4.4</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.5.2</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.gigaspaces.sbp.metrics.Main</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <!--<attach>false</attach>-->
+                    <!--<ignoreDirFormatExtensions>true</ignoreDirFormatExtensions>-->
+                    <!--<descriptors>-->
+                        <!--<descriptor>src/main/assembly/assembly.xml</descriptor>-->
+                    <!--</descriptors>-->
+                </configuration>
                 <executions>
                     <execution>
-                        <configuration>
-                            <attachToBuild>true</attachToBuild>
-                            <classifier>executable</classifier>
-                            <filename>gs-monitor.jar</filename>
-                        </configuration>
+                        <id>assembly</id>
+                        <phase>package</phase>
                         <goals>
-                            <goal>one-jar</goal>
+                            <goal>single</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
+
+            <!--<plugin>-->
+                <!--<groupId>org.dstovall</groupId>-->
+                <!--<artifactId>onejar-maven-plugin</artifactId>-->
+                <!--<version>1.4.4</version>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<configuration>-->
+                            <!--<attachToBuild>true</attachToBuild>-->
+                            <!--<classifier>executable</classifier>-->
+                            <!--<filename>gs-monitor.jar</filename>-->
+                        <!--</configuration>-->
+                        <!--<goals>-->
+                            <!--<goal>one-jar</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -150,33 +191,6 @@
                         <configuration>
                             <pomFileName>pom.xml</pomFileName>
                         </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.7</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <configuration>
-                            <target>
-                                <copy todir="target/logback">
-                                    <fileset dir="src/main/resources/logback"/>
-                                </copy>
-                                <copy todir="target/properties">
-                                    <fileset dir="src/main/resources/properties"/>
-                                </copy>
-                                    <zip destfile="target/AdminApiMonitor-ConfigurationFiles.zip">
-                                    <fileset dir="src/main/resources/logback"/>
-                                    <fileset dir="src/main/resources/properties"/>
-                                </zip>
-                            </target>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
                     </execution>
                 </executions>
             </plugin>
