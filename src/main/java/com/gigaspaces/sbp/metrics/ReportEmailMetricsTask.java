@@ -1,6 +1,7 @@
 package com.gigaspaces.sbp.metrics;
 
 import com.gigaspaces.sbp.metrics.metric.FullMetric;
+import com.gigaspaces.sbp.metrics.metric.MetricsRegistry;
 import com.gigaspaces.sbp.metrics.metric.NamedMetric;
 import com.gigaspaces.sbp.metrics.visitor.CsvVisitor;
 import org.slf4j.Logger;
@@ -21,6 +22,7 @@ public class ReportEmailMetricsTask extends AbstractPeriodicVisitorTask {
 
     private String spaceName;
     private NamedMetric[] metrics;
+    private MetricsRegistry metricsRegistry;
 
     public void reportMetrics(){
         List<String> spaceNames = new ArrayList<>();
@@ -31,7 +33,7 @@ public class ReportEmailMetricsTask extends AbstractPeriodicVisitorTask {
         for (NamedMetric metric : metrics){
             metric.accept(visitor);
         }
-        Map<String, FullMetric> visitorMetrics = visitor.getMetrics();
+        Map<String, FullMetric> visitorMetrics = metricsRegistry.getPidMetrics();
         StringBuilder buffer = new StringBuilder("Metrics: \n");
         for (Map.Entry<String, FullMetric> pair : visitorMetrics.entrySet()){
             buffer.append(pair.getValue().getMetricFullName()).append(" = ").append(pair.getValue().getMetricValue()).append("\n");

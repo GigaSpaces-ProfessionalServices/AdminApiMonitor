@@ -2,6 +2,7 @@ package com.gigaspaces.sbp.metrics.visitor;
 
 import com.gigaspaces.sbp.metrics.ExponentialMovingAverage;
 import com.gigaspaces.sbp.metrics.metric.FullMetric;
+import com.gigaspaces.sbp.metrics.metric.MetricsRegistry;
 import com.gigaspaces.sbp.metrics.metric.NamedMetric;
 import org.openspaces.admin.Admin;
 import org.slf4j.Logger;
@@ -18,8 +19,14 @@ public class PrintVisitor extends AbstractStatsVisitor {
 
     private Set<NamedMetric> savedOnceMetrics = new HashSet<>();
 
-    public PrintVisitor(Admin admin, List<String> spaceName, Map<String, FullMetric> pidMetricMap, ExponentialMovingAverage average, Map<String, AtomicInteger> alerts, Long period){
-        super(admin, spaceName, pidMetricMap, average, alerts, period);
+    public PrintVisitor(
+            Admin admin
+            , List<String> spaceName
+            , ExponentialMovingAverage average
+            , Map<String, AtomicInteger> alerts
+            , Long derivedMetricsPeriodInMs
+            , MetricsRegistry metricsRegistry){
+        super(admin, spaceName, average, alerts, derivedMetricsPeriodInMs, metricsRegistry);
     }
 
     @Override

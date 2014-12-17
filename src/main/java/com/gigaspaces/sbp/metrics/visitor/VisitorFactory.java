@@ -11,7 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.Arrays;
+
+import static java.util.Arrays.asList;
 
 /**
  * Created by IntelliJ IDEA.
@@ -55,20 +56,20 @@ public class VisitorFactory implements Factory<StatsVisitor> {
             case Csv:
                 return new CsvVisitor(
                         connectToXap.getAdmin()
-                        , Arrays.asList(settings.spaceNames())
-                        , metricsRegistry.getPidMetrics()
+                        , asList(settings.spaceNames())
                         , exponentialMovingAverage
                         , metricsRegistry.getAlerts()
                         , settings.derivedMetricsPeriodInMs()
+                        , metricsRegistry
                 );
             case LogFormat:
                 return new PrintVisitor(
                         connectToXap.getAdmin()
-                        , Arrays.asList(settings.spaceNames())
-                        , metricsRegistry.getPidMetrics()
+                        , asList(settings.spaceNames())
                         , exponentialMovingAverage
                         , metricsRegistry.getAlerts()
                         , settings.derivedMetricsPeriodInMs()
+                        , metricsRegistry
                 );
             default:
                 throw new UnsupportedOperationException(String.format(UNSUPPORTED_FORMAT_ERROR, OutputFormat.class.getSimpleName(), fmt.name()));

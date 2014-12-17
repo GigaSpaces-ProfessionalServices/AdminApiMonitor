@@ -22,6 +22,8 @@ import static java.util.Arrays.*;
 
 public abstract class AbstractStatsVisitor implements StatsVisitor {
 
+    protected final MetricsRegistry metricsRegistry;
+
     protected Admin admin;
 
     protected List<GridServiceContainer> gridServiceContainers;
@@ -42,50 +44,25 @@ public abstract class AbstractStatsVisitor implements StatsVisitor {
 
     private Map<String, AtomicInteger> alerts;
 
-    protected List<NamedMetric> movingAveragedMetrics = asList(new NamedMetric[]{
-            GigaSpacesActivity.READ_PER_SEC
-            , GigaSpacesActivity.WRITES_PER_SEC
-            , GigaSpacesActivity.TAKES_PER_SECOND
-            , GigaSpacesActivity.UPDATES_PER_SEC
-            , GigaSpacesActivity.EXECUTES_PER_SEC
-            , GigaSpacesActivity.TRANSACTION_COUNT
-            , GsMirrorInfo.REDO_LOG_SIZE
-            , GsMirrorInfo.REDO_LOG_SEND_BYTES_PER_SECOND
-            , JvmInfo.THREAD_COUNT
-            //, JvmInfo.JVM_CPU_LOAD
-            , Memory.TOTAL_BYTES
-            , Memory.HEAP_USED_BYTES
-            , Memory.HEAP_COMMITTED_BYTES
-            , Memory.NON_HEAP_USED_BYTES
-            , Memory.NON_HEAP_COMMITTED_BYTES
-            , OperatingSystemInfo.LRMI_CONNECTIONS
-    });
-
-    // value metric has to be derived from key metric
-    protected Map<NamedMetric, NamedMetric> derivedMetricsMap = new HashMap<>();
-
-    protected Map<String, FullMetric> metricMap;
-
     protected ExponentialMovingAverage average;
 
     protected SimpleDateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT);
 
-    /*
-     * TODO refactor me with DI in mind
-     */
     protected AbstractStatsVisitor(
             Admin admin
             , List<String> spaceNames
-            , Map<String, FullMetric> metricMap
             , ExponentialMovingAverage average
             , Map<String, AtomicInteger> alerts
-            , Long derivedMetricsPeriodInMs ) {
+            , Long derivedMetricsPeriodInMs
+            , MetricsRegistry metricsRegistry) {
 
-        this.metricMap = metricMap;
-        this.admin=admin;
-        this.alerts=alerts;
+        this.admin = admin;
+        this.alerts = alerts;
         this.average = average;
         this.derivedMetricsPeriodInMs = derivedMetricsPeriodInMs;
+
+        assert metricsRegistry != null : String.format(Constants.THING_REQUIRED, MetricsRegistry.class.getSimpleName());
+        this.metricsRegistry = metricsRegistry;
 
         // whole grid
         gridServiceContainers = asList(admin.getGridServiceContainers().getContainers());
@@ -119,11 +96,6 @@ public abstract class AbstractStatsVisitor implements StatsVisitor {
             }
         }
 
-        derivedMetricsMap.put(GigaSpacesActivity.WRITE_COUNT, GigaSpacesActivity.WRITES_PER_SEC);
-        derivedMetricsMap.put(GigaSpacesActivity.READ_COUNT, GigaSpacesActivity.READ_PER_SEC);
-        derivedMetricsMap.put(GigaSpacesActivity.UPDATE_COUNT, GigaSpacesActivity.UPDATES_PER_SEC);
-        derivedMetricsMap.put(GigaSpacesActivity.EXECUTE_COUNT, GigaSpacesActivity.EXECUTES_PER_SEC);
-        derivedMetricsMap.put(GigaSpacesActivity.TAKE_COUNT, GigaSpacesActivity.TAKES_PER_SECOND);
     }
 
     protected List<FullMetric> prepareMetric(FullMetric fullMetric) {
@@ -131,37 +103,37 @@ public abstract class AbstractStatsVisitor implements StatsVisitor {
         NamedMetric namedMetric = fullMetric.getMetric();
         String metricFullName = fullMetric.getMetricFullName();
 
-        if (calculateAverage(namedMetric)){
-            FullMetric previous = metricMap.get(metricFullName);
+        if (metricsRegistry.hasDerivativeMetric(namedMetric)){
+            FullMetric previous = metricsRegistry.getPidMetrics().get(metricFullName);
             Double metricValue = parseDouble(fullMetric.getMetricValue());
             Double diff = (previous != null) ? metricValue - parseDouble(previous.getMetricValue()) : metricValue;
             Double currentValue = diff / (derivedMetricsPeriodInMs /1000);
-            NamedMetric calculatedMetricName = derivedMetricsMap.get(fullMetric.getMetric());
+            NamedMetric derivedMetric = metricsRegistry.getDerivedMetric(fullMetric.getMetric());
             FullMetric calculatedMetric = new FullMetric.FullMetricBuilder().
-                                            metric(calculatedMetricName).
+                                            metric(derivedMetric).
                                             metricValue(String.valueOf(currentValue)).
                                             spaceInstanceID(fullMetric.getSpaceInstanceID()).
                                             spaceMode(fullMetric.getSpaceMode()).
                                             create();
-            if (exponentialMovingAverage(calculatedMetricName)){
+            if (metricsRegistry.isMovingAveraged(derivedMetric)){
                 movingAverage(calculatedMetric);
             }
             result.add(calculatedMetric);
-            metricMap.put(calculatedMetric.getMetricFullName(), calculatedMetric);
-        }   else if (exponentialMovingAverage(namedMetric)){
+            metricsRegistry.getPidMetrics().put(calculatedMetric.getMetricFullName(), calculatedMetric);
+        }   else if (metricsRegistry.isMovingAveraged(namedMetric)){
             movingAverage(fullMetric);
         }
         result.add(fullMetric);
-        metricMap.put(metricFullName, fullMetric);
+        metricsRegistry.getPidMetrics().put(metricFullName, fullMetric);
         return result;
     }
 
     private void movingAverage(FullMetric metric) {
         String metricFullName = metric.getMetricFullName();
-        if (metricMap.get(metricFullName) == null){
-            metricMap.put(metricFullName, metric);
+        if (metricsRegistry.getPidMetrics().get(metricFullName) == null){
+            metricsRegistry.getPidMetrics().put(metricFullName, metric);
         }
-        Double oldValue = parseDouble(metricMap.get(metricFullName).getMetricValue());
+        Double oldValue = parseDouble(metricsRegistry.getPidMetrics().get(metricFullName).getMetricValue());
         Double collectedValue = parseDouble(metric.getMetricValue());
         Double averagedValue = average.average(oldValue, collectedValue);
         metric.setMetricValue(String.format(Locale.ENGLISH, "%.3f", averagedValue));
@@ -173,14 +145,6 @@ public abstract class AbstractStatsVisitor implements StatsVisitor {
             result.put(key, alerts.get(key).intValue());
         }
         return result;
-    }
-
-    private boolean calculateAverage(NamedMetric metricName) {
-        return derivedMetricsMap.keySet().contains(metricName);
-    }
-
-    protected boolean exponentialMovingAverage(NamedMetric metric) {
-        return movingAveragedMetrics.contains(metric);
     }
 
     @Override

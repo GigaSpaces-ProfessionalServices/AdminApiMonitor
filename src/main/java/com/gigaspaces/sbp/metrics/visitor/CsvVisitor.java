@@ -3,6 +3,7 @@ package com.gigaspaces.sbp.metrics.visitor;
 import com.gigaspaces.sbp.metrics.Constants;
 import com.gigaspaces.sbp.metrics.ExponentialMovingAverage;
 import com.gigaspaces.sbp.metrics.metric.FullMetric;
+import com.gigaspaces.sbp.metrics.metric.MetricsRegistry;
 import com.gigaspaces.sbp.metrics.metric.NamedMetric;
 import org.openspaces.admin.Admin;
 import org.slf4j.Logger;
@@ -19,8 +20,14 @@ public class CsvVisitor extends AbstractStatsVisitor{
 
     private boolean saveHeaders = false;
 
-    public CsvVisitor(Admin admin, List<String> spaceName, Map<String, FullMetric> pidMetricMap, ExponentialMovingAverage average, Map<String, AtomicInteger> alerts, Long period){
-        super(admin, spaceName, pidMetricMap, average, alerts, period);
+    public CsvVisitor(
+            Admin admin
+            , List<String> spaceName
+            , ExponentialMovingAverage average
+            , Map<String, AtomicInteger> alerts
+            , Long derivedMetricsPeriodInMs
+            , MetricsRegistry metricsRegistry){
+        super(admin, spaceName, average, alerts, derivedMetricsPeriodInMs, metricsRegistry);
     }
 
     @Override
@@ -46,7 +53,7 @@ public class CsvVisitor extends AbstractStatsVisitor{
     public void printCsvMetrics(){
         if (saveHeaders){
             StringBuilder headers = new StringBuilder("timestamp, ");
-            for (String metric : metricMap.keySet()){
+            for (String metric : metricsRegistry.getPidMetrics().keySet()){
                 headers.append(metric);
                 appendHostName(headers, metric);
                 headers.append(", ");
@@ -54,21 +61,17 @@ public class CsvVisitor extends AbstractStatsVisitor{
             logger.info(headers.toString().substring(0, headers.length()-2));
         }
         StringBuilder values = new StringBuilder(Constants.DATE_FORMAT).append(" ").append(dateFormat.format(new Date())).append(", ");
-        for (FullMetric metric : metricMap.values()){
+        for (FullMetric metric : metricsRegistry.getPidMetrics().values()){
             values.append(metric.getMetricValue()).append(", ");
         }
         logger.info(values.toString().substring(0, values.length() - 2));
     }
 
     private void appendHostName(StringBuilder headers, String metric) {
-        String hostName = metricMap.get(metric).getHostName();
+        String hostName = metricsRegistry.getPidMetrics().get(metric).getHostName();
         if (hostName != null){
             headers.append("_").append(hostName);
         }
-    }
-
-    public Map<String, FullMetric> getMetrics(){
-        return metricMap;
     }
 
     /**
