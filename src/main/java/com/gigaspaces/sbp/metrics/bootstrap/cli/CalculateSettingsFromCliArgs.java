@@ -51,6 +51,12 @@ public class CalculateSettingsFromCliArgs {
         settings = addOptionIfPresent(commandLine, settings, SettingType.Username);
         settings = addOptionIfPresent(commandLine, settings, SettingType.Password);
 
+        settings = addOptionIfPresent(commandLine, settings, SettingType.AlertsEnabled);
+        settings = addOptionIfPresent(commandLine, settings, SettingType.SendAlertsByEmail);
+
+        settings = addOptionIfPresent(commandLine, settings, SettingType.GscCount);
+        settings = addOptionIfPresent(commandLine, settings, SettingType.MachineCount);
+
         ensureUsernameXandPassword(settings);
 
         return settings;
