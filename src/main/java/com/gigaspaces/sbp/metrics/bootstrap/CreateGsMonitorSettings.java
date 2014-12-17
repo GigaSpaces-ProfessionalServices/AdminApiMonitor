@@ -141,7 +141,7 @@ public class CreateGsMonitorSettings {
     String processOutputFile(CommandLine commandLine) throws ParseException {
 
         String outputFile = getStringOrNull(commandLine, SettingType.OutputFile);
-        if (outputFile == null) outputFile = xapDefaults.outputFile();
+        if (outputFile == null) outputFile = monitorDefaults.outputFilename();
 
         return validateAndCreateFilePath.invoke(outputFile);
 

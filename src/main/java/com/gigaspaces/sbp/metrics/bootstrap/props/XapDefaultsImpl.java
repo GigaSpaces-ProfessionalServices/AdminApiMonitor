@@ -11,7 +11,7 @@ class XapDefaultsImpl extends PropertyFileValues implements XapDefaults {
 
     private static final String LOOKUP_LOCATORS_PROP_NAME = "spaceMonitor.locators";
     private static final String SPACE_NAMES_PROP_NAME = "spaceMonitor.spaceName";
-    private static final String OUTPUT_FILENAME_PROP_NAME = "spaceMonitor.outputFile";
+
     private static final String XAP_SECURITY_PROP_NAME = "spaceMonitor.secured";
 
     XapDefaultsImpl(String propertyFilename) {
@@ -32,14 +32,6 @@ class XapDefaultsImpl extends PropertyFileValues implements XapDefaults {
     @Override
     public String spaceNames() {
         return getPropOrThrow(SPACE_NAMES_PROP_NAME);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String outputFile() {
-        return getPropOrThrow(OUTPUT_FILENAME_PROP_NAME);
     }
 
     /**

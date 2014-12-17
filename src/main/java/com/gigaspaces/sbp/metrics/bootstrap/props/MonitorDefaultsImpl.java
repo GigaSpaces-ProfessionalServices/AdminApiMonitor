@@ -19,6 +19,7 @@ class MonitorDefaultsImpl extends PropertyFileValues implements MonitorDefaults{
     private static final String METRIC_INTERVAL_IN_MILLISECONDS = "stat.periodic.sample.interval";
     private static final String METRIC_DELAY_IN_MILLISECONDS = "stat.periodic.sample.delay";
     private static final String METRIC_ALPHA = "stat.sample.alpha";
+
     private static final String OUTPUT_FILENAME = "spaceMonitor.outputFile";
     private static final String OUTPUT_FORMAT = "output.format";
 

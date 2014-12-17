@@ -107,7 +107,7 @@ public class CreateGsMonitorSettingsTest {
 
         doReturn(null).when(testCommandLine).getOptionValue(eq(SettingType.OutputFile.getOptionCharacter()));
         doReturn(null).when(testCommandLine).getOptionValue(eq(SettingType.OutputFile.getOptionWord()));
-        doReturn(filePath).when(xapDefaults).outputFile();
+        doReturn(filePath).when(monitorDefaults).outputFilename();
         doReturn(filePath).when(validateAndCreateFilePath).invoke(filePath);
 
         String actual = testInstance.processOutputFile(testCommandLine);

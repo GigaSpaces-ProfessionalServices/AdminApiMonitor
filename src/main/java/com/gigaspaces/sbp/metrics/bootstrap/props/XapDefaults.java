@@ -13,14 +13,6 @@ public interface XapDefaults {
 
     String spaceNames();
 
-    /**
-     * Logs a message that a default output file is being used (since -o is available
-     * as a setting on the CLI).
-     *
-     * @return the default output file
-     */
-    String outputFile();
-
     Boolean isSecured();
 
 }

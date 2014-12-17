@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class GsMonitorProperties extends MonitorDefaultsImpl {
 
-    private static final String GS_MONITOR_PROPERTY_FILE_NAME = "properties/gs.monitor.properties";
+    private static final String GS_MONITOR_PROPERTY_FILE_NAME = "properties/monitor.default.properties";
 
     GsMonitorProperties() {
         super(GS_MONITOR_PROPERTY_FILE_NAME);

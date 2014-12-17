@@ -30,11 +30,6 @@ public final class XapDefaultsImplTest {
     }
 
     @Test
-    public void testOutputFile() throws Exception {
-        assertEquals(testInstance.outputFile(), "sAndM.csv");
-    }
-
-    @Test
     public void testIsSecured() throws Exception {
         assertTrue(testInstance.isSecured());
     }

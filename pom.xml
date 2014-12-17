@@ -89,7 +89,7 @@
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
                 <includes>
-                    <include>properties/gs.monitor.properties</include>
+                    <include>properties/monitor.default.properties</include>
                     <include>properties/xap.default.properties</include>
                     <include>logback/logback-csv.xml</include>
                     <include>META-INF/spring/*</include>
