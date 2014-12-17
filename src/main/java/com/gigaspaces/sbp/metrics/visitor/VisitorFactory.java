@@ -1,20 +1,17 @@
 package com.gigaspaces.sbp.metrics.visitor;
 
 import com.gigaspaces.Factory;
+import com.gigaspaces.sbp.metrics.Constants;
 import com.gigaspaces.sbp.metrics.ExponentialMovingAverage;
 import com.gigaspaces.sbp.metrics.bootstrap.GsMonitorSettings;
 import com.gigaspaces.sbp.metrics.bootstrap.cli.OutputFormat;
 import com.gigaspaces.sbp.metrics.bootstrap.xap.ConnectToXap;
-import com.gigaspaces.sbp.metrics.metric.FullMetric;
+import com.gigaspaces.sbp.metrics.metric.MetricsRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by IntelliJ IDEA.
@@ -27,21 +24,25 @@ public class VisitorFactory implements Factory<StatsVisitor> {
 
     private static final String UNSUPPORTED_FORMAT_ERROR = "Unsupported %s %s";
 
-    private Map<String, FullMetric> pidMetricMap = new LinkedHashMap<>();
-    private ConcurrentHashMap<String, AtomicInteger> alerts = new ConcurrentHashMap<>();
-
     @Resource
     private final GsMonitorSettings settings;
     @Resource
     private final ExponentialMovingAverage exponentialMovingAverage;
     @Resource
     private final ConnectToXap connectToXap;
+    @Resource
+    private final MetricsRegistry metricsRegistry;
 
     @Autowired
-    public VisitorFactory(GsMonitorSettings settings, ExponentialMovingAverage exponentialMovingAverage, ConnectToXap connectToXap) {
+    public VisitorFactory(GsMonitorSettings settings, ExponentialMovingAverage exponentialMovingAverage, ConnectToXap connectToXap, MetricsRegistry metricsRegistry) {
+        assert settings != null : String.format(Constants.THINGS_REQUIRED, GsMonitorSettings.class.getSimpleName());
+        assert exponentialMovingAverage != null : String.format(Constants.THING_REQUIRED, ExponentialMovingAverage.class.getSimpleName());
+        assert connectToXap != null : String.format(Constants.THING_REQUIRED, ConnectToXap.class.getSimpleName());
+        assert metricsRegistry != null : String.format(Constants.THING_REQUIRED, MetricsRegistry.class.getSimpleName());
         this.settings = settings;
         this.exponentialMovingAverage = exponentialMovingAverage;
         this.connectToXap = connectToXap;
+        this.metricsRegistry = metricsRegistry;
     }
 
     /**
@@ -55,18 +56,18 @@ public class VisitorFactory implements Factory<StatsVisitor> {
                 return new CsvVisitor(
                         connectToXap.getAdmin()
                         , Arrays.asList(settings.spaceNames())
-                        , pidMetricMap
+                        , metricsRegistry.getPidMetrics()
                         , exponentialMovingAverage
-                        , alerts
+                        , metricsRegistry.getAlerts()
                         , settings.derivedMetricsPeriodInMs()
                 );
             case LogFormat:
                 return new PrintVisitor(
                         connectToXap.getAdmin()
                         , Arrays.asList(settings.spaceNames())
-                        , pidMetricMap
+                        , metricsRegistry.getPidMetrics()
                         , exponentialMovingAverage
-                        , alerts
+                        , metricsRegistry.getAlerts()
                         , settings.derivedMetricsPeriodInMs()
                 );
             default:

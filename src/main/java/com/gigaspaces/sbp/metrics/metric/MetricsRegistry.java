@@ -2,9 +2,9 @@ package com.gigaspaces.sbp.metrics.metric;
 
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by IntelliJ IDEA.
@@ -16,7 +16,7 @@ import java.util.Collection;
 @Component
 public class MetricsRegistry {
 
-    private Collection<NamedMetric> metrics = new ArrayList<NamedMetric>(){{
+    private static final Collection<NamedMetric> METRICS = new ArrayList<NamedMetric>(){{
         addAll(Arrays.asList(GigaSpacesActivity.values()));
         addAll(Arrays.asList(GigaSpacesClusterInfo.values()));
         addAll(Arrays.asList(GsMirrorInfo.values()));
@@ -32,7 +32,19 @@ public class MetricsRegistry {
      * {@link com.gigaspaces.sbp.metrics.visitor.VisitorAcceptance} calls me
      */
     public Collection<? extends NamedMetric> getMetrics() {
-        return new ArrayList<>(metrics);
+        return new ArrayList<>(METRICS);
+    }
+
+    private final Map<String, FullMetric> pidMetricMap = new LinkedHashMap<>();
+
+    private final ConcurrentHashMap<String, AtomicInteger> alerts = new ConcurrentHashMap<>();
+
+    public Map<String, FullMetric> getPidMetrics() {
+        return pidMetricMap;
+    }
+
+    public ConcurrentHashMap<String, AtomicInteger> getAlerts() {
+        return alerts;
     }
 
 }

@@ -4,6 +4,7 @@ import com.gigaspaces.sbp.metrics.ExponentialMovingAverage;
 import com.gigaspaces.sbp.metrics.bootstrap.GsMonitorSettings;
 import com.gigaspaces.sbp.metrics.bootstrap.cli.OutputFormat;
 import com.gigaspaces.sbp.metrics.bootstrap.xap.ConnectToXap;
+import com.gigaspaces.sbp.metrics.metric.MetricsRegistry;
 import com.jasonnerothin.testing.Numbers;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,11 +36,13 @@ public class VisitorFactoryTest {
     private Admin testAdmin;
     @Mock
     private GridServiceContainers testGridServiceContainers;
+    @Mock
+    private MetricsRegistry metricsRegistry;
 
     @Before
     public void setUp() throws Exception {
 
-        testInstance = new VisitorFactory(settings, average, connectToXap);
+        testInstance = new VisitorFactory(settings, average, connectToXap, metricsRegistry);
         numbers = new Numbers();
 
         doReturn(testAdmin).when(connectToXap).getAdmin();
