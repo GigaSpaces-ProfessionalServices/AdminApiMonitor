@@ -117,6 +117,7 @@ public class CalculateSettingsFromCliArgs {
         addOptionByReference(options, SettingType.MachineCount);
 
         addOptionByReference(options, SettingType.AlertsEnabled);
+        addOptionByReference(options, SettingType.SendAlertsByEmail);
 
         return options;
     }
