@@ -57,7 +57,7 @@ public class CreateGsMonitorSettingsTest {
     public void testInvokeOrThrow() throws Exception {
 
         final EnumSet<SettingType> required = EnumSet.of(SettingType.LookupLocators, SettingType.SpaceNames);
-        final EnumSet<SettingType> defaulted = EnumSet.of(SettingType.Username, SettingType.Password, SettingType.OutputFile, SettingType.Secured);
+        final EnumSet<SettingType> defaulted = EnumSet.of(SettingType.Username, SettingType.Password, SettingType.OutputFile, SettingType.Secured, SettingType.GscCount, SettingType.MachineCount);
         Set<SettingType> requiredOrDefaulted = new HashSet<SettingType>(){{addAll(required);addAll(defaulted);}};
 
         Set<SettingType> returnMe = new HashSet<>();
@@ -91,6 +91,8 @@ public class CreateGsMonitorSettingsTest {
         doReturn(addy).when(testCommandLine).getOptionValue(SettingType.SendAlertsByEmail.getOptionCharacter());
         doReturn(testCommandLine).when(calculateSettingsFromCliArgs).parse(eq(testArgs));
         doReturn(0.5f).when(monitorDefaults).movingAverageAlpha();
+        doReturn(1).when(xapDefaults).hostMachineCount();
+        doReturn(2).when(xapDefaults).gscCount();
         doReturn(OutputFormat.Csv).when(monitorDefaults).outputFormat();
         doReturn(Boolean.FALSE).when(xapDefaults).isSecured();
 

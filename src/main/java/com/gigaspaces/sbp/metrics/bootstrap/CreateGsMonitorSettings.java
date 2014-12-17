@@ -106,8 +106,38 @@ public class CreateGsMonitorSettings {
         return map;
     }
 
-    void processHostAndGscCount(CommandLine commandLine, Set<SettingType> set, Map<SettingType, String> map) {
+    void processHostAndGscCount(CommandLine commandLine, Set<SettingType> set, Map<SettingType, String> map) throws ParseException {
 
+        assert set != null && set.size() > 0 : "Need a real set.";
+        assert map != null && map.size() > 0 : "Need a real map.";
+        assert commandLine != null : "Require a command line.";
+
+        SettingType gscCount = SettingType.GscCount;
+        String gscStr = getStringOrNull(commandLine, gscCount);
+
+        if( gscStr == null ) map.put(gscCount, xapDefaults.gscCount().toString());
+        else{
+            validateNumber(gscStr, gscCount);
+            map.put(gscCount, gscStr);
+        }
+
+        SettingType machineCount = SettingType.MachineCount;
+        String machinesStr = getStringOrNull(commandLine, machineCount);
+
+        if( machinesStr == null ) map.put(machineCount, xapDefaults.hostMachineCount().toString());
+        else{
+            validateNumber(machinesStr, machineCount);
+            map.put(machineCount, machinesStr.trim());
+        }
+
+    }
+
+    private void validateNumber(String string, SettingType setting) throws ParseException {
+        try{
+            Integer.valueOf(string.trim());
+        } catch( NumberFormatException | NullPointerException e ){
+            throw new ParseException(String.format("Illegal number for %s [%s].", setting.name(), string));
+        }
     }
 
     void processAlerting(CommandLine commandLine, Set<SettingType> set, Map<SettingType, String> map) throws ParseException {

@@ -15,4 +15,8 @@ public interface XapDefaults {
 
     Boolean isSecured();
 
+    Integer hostMachineCount();
+
+    Integer gscCount();
+
 }

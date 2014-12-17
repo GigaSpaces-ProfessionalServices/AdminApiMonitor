@@ -14,6 +14,9 @@ class XapDefaultsImpl extends PropertyFileValues implements XapDefaults {
 
     private static final String XAP_SECURITY_PROP_NAME = "xap.security.enabled";
 
+    private static final String NUM_HOST_MACHINES = "xap.default.num.host.machines";
+    private static final String NUM_GSCS = "xap.default.num.GSCs";
+
     XapDefaultsImpl(String propertyFilename) {
         super(propertyFilename);
     }
@@ -40,6 +43,16 @@ class XapDefaultsImpl extends PropertyFileValues implements XapDefaults {
     @Override
     public Boolean isSecured() {
         return Boolean.TRUE.toString().equalsIgnoreCase(getPropOrThrow(XAP_SECURITY_PROP_NAME));
+    }
+
+    @Override
+    public Integer hostMachineCount() {
+        return Integer.valueOf(getPropOrThrow(NUM_HOST_MACHINES));
+    }
+
+    @Override
+    public Integer gscCount() {
+        return Integer.valueOf(getPropOrThrow(NUM_GSCS));
     }
 
 }

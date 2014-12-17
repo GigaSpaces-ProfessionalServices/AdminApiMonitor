@@ -89,8 +89,8 @@ public class SettingTypeTest {
 
     }
     /*
-        alerts, email-alerts, gsc-count, machine-count
-        , derived-metric-period, initial-delay-ms, metrics-interval
+        gsc-count, machine-count,
+        derived-metric-period, initial-delay-ms, metrics-interval
     */
 
 }
