@@ -40,12 +40,12 @@ class ConnectToSpace implements Runnable{
     @Override
     public void run() {
 
-        logger.debug(String.format("Waiting indefinitely to connect to XAP Space '%s'.", spaceName));
+        logger.debug(String.format("Waiting indefinitely to connect to XAP Space with name '%s'.", spaceName));
         long start = System.currentTimeMillis();
         Spaces spaces = admin.getSpaces();
         Space space = spaces.waitFor(spaceName);
         long stop = System.currentTimeMillis();
-        logger.debug(String.format("Successfully connected to '%s' in %d milliseconds.", spaceName, (stop - start)));
+        logger.debug(String.format("Successfully connected to XAP Space with name '%s' in %d milliseconds.", spaceName, (stop - start)));
 
         for (SpaceInstance spaceInstance : space.getInstances()) {
             Transport transport = spaceInstance.getTransport();
