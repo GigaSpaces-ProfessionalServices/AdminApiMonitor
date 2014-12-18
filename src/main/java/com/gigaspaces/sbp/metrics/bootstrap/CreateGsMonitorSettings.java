@@ -94,29 +94,52 @@ public class CreateGsMonitorSettings {
         map.put(SettingType.Secured, processSecuritySetting(commandLine, set));
 
         processUsernameAndPassword(commandLine, set, map);
-        processAlerting(commandLine, set, map);
-        processAlpha(map);
         processOutputFormat(map);
-        processFlags(set, map);
-
+        processAlerting(commandLine, set, map);
+        processMetricsIntervals(commandLine, set, map);
+        processAlpha(map);
         processHostAndGscCount(commandLine, set, map);
+
+        processFlags(set, map);
 
         gsMonitorSettings.initialize(map);
 
         return map;
     }
 
+    void processMetricsIntervals(CommandLine commandLine, Set<SettingType> set, Map<SettingType, String> map) throws ParseException {
+
+        ensureArgs(commandLine, set, map);
+
+        SettingType metricDelay = SettingType.CollectMetricsInitialDelayInMs;
+        String delayInMs = getStringOrNull(commandLine, metricDelay);
+
+        if (delayInMs == null) map.put(metricDelay, monitorDefaults.metricDelayInMs().toString());
+        else {
+            validateNumber(delayInMs, metricDelay);
+            map.put(metricDelay, delayInMs);
+        }
+
+        SettingType metricInterval = SettingType.CollectMetricsIntervalInMs;
+        String interval = getStringOrNull(commandLine, metricInterval);
+
+        if (interval == null) map.put(metricInterval, monitorDefaults.metricIntervalInMs().toString());
+        else {
+            validateNumber(interval, metricInterval);
+            map.put(metricInterval, interval);
+        }
+
+    }
+
     void processHostAndGscCount(CommandLine commandLine, Set<SettingType> set, Map<SettingType, String> map) throws ParseException {
 
-        assert set != null && set.size() > 0 : "Need a real set.";
-        assert map != null && map.size() > 0 : "Need a real map.";
-        assert commandLine != null : "Require a command line.";
+        ensureArgs(commandLine, set, map);
 
         SettingType gscCount = SettingType.GscCount;
         String gscStr = getStringOrNull(commandLine, gscCount);
 
-        if( gscStr == null ) map.put(gscCount, xapDefaults.gscCount().toString());
-        else{
+        if (gscStr == null) map.put(gscCount, xapDefaults.gscCount().toString());
+        else {
             validateNumber(gscStr, gscCount);
             map.put(gscCount, gscStr);
         }
@@ -124,18 +147,24 @@ public class CreateGsMonitorSettings {
         SettingType machineCount = SettingType.MachineCount;
         String machinesStr = getStringOrNull(commandLine, machineCount);
 
-        if( machinesStr == null ) map.put(machineCount, xapDefaults.hostMachineCount().toString());
-        else{
+        if (machinesStr == null) map.put(machineCount, xapDefaults.hostMachineCount().toString());
+        else {
             validateNumber(machinesStr, machineCount);
             map.put(machineCount, machinesStr.trim());
         }
 
     }
 
+    private void ensureArgs(CommandLine commandLine, Set<SettingType> set, Map<SettingType, String> map) {
+        assert set != null && set.size() > 0 : "Need a real set.";
+        assert map != null && map.size() > 0 : "Need a real map.";
+        assert commandLine != null : "Require a command line.";
+    }
+
     private void validateNumber(String string, SettingType setting) throws ParseException {
-        try{
+        try {
             Integer.valueOf(string.trim());
-        } catch( NumberFormatException | NullPointerException e ){
+        } catch (NumberFormatException | NullPointerException e) {
             throw new ParseException(String.format("Illegal number for %s [%s].", setting.name(), string));
         }
     }
@@ -155,7 +184,7 @@ public class CreateGsMonitorSettings {
         if (!set.contains(emailSetting)) throw new ParseException(INCONSISTENT_ALERT_SETTINGS);
 
         String emailAddy = getStringOrNull(commandLine, emailSetting);
-        if( emailAddy == null || emailAddy.trim().length() == 0) throw new ParseException(INCONSISTENT_ALERT_SETTINGS);
+        if (emailAddy == null || emailAddy.trim().length() == 0) throw new ParseException(INCONSISTENT_ALERT_SETTINGS);
         emailAddy = emailAddy.trim();
 
         map.put(emailSetting, emailAddy);

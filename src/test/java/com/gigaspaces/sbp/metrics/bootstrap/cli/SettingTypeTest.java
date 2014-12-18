@@ -88,9 +88,9 @@ public class SettingTypeTest {
         assertEquals(list.size(), set.size(), 0);
 
     }
+
     /*
-        gsc-count, machine-count,
-        derived-metric-period, initial-delay-ms, metrics-interval
+        derived-metric-period
     */
 
 }
