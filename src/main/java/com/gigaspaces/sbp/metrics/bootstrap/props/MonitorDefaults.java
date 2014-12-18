@@ -41,4 +41,5 @@ public interface MonitorDefaults {
 
     OutputFormat outputFormat();
 
+    Integer derivedPeriodInMs();
 }

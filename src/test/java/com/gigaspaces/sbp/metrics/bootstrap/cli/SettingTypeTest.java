@@ -89,8 +89,4 @@ public class SettingTypeTest {
 
     }
 
-    /*
-        derived-metric-period
-    */
-
 }

@@ -22,6 +22,7 @@ class MonitorDefaultsImpl extends PropertyFileValues implements MonitorDefaults{
 
     private static final String OUTPUT_FILENAME = "spaceMonitor.outputFile";
     private static final String OUTPUT_FORMAT = "spaceMonitor.outputFormat";
+    private static final String DERIVED_METRIC_PERIOD_IN_MS = "spaceMonitor.derivedMetrics.period.in.ms";
 
     MonitorDefaultsImpl(String propertyFileName) {
         super(propertyFileName);
@@ -84,6 +85,11 @@ class MonitorDefaultsImpl extends PropertyFileValues implements MonitorDefaults{
     @Override
     public OutputFormat outputFormat() {
         return OutputFormat.valueOf(getPropOrThrow(OUTPUT_FORMAT));
+    }
+
+    @Override
+    public Integer derivedPeriodInMs() {
+        return Integer.valueOf(getPropOrThrow(DERIVED_METRIC_PERIOD_IN_MS));
     }
 
 }

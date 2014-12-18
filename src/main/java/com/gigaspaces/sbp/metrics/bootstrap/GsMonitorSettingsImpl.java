@@ -171,7 +171,7 @@ public class GsMonitorSettingsImpl implements GsMonitorSettings {
     @Override
     public Long derivedMetricsPeriodInMs() {
         ensureInitialization();
-        return Long.valueOf(getRequiredSettingOrThrow(SettingType.DerivedMetricsPeriod));
+        return Long.valueOf(getRequiredSettingOrThrow(SettingType.DerivedMetricsPeriodInMs));
     }
 
     @Override

@@ -38,7 +38,7 @@ public enum SettingType implements OptionLike {
             , true, false, true, true)
     , CollectMetricsInitialDelayInMs("d", "initial-delay-ms", "Not meant for CLI"
             , true, true, true, false)
-    , DerivedMetricsPeriod("v", "derived-metric-period", "Not meant for CLI"
+    , DerivedMetricsPeriodInMs("v", "derived-metric-period", "Not meant for CLI"
             , true , true, true, false )
     , MachineCount("h", "machine-count", "Optional: Number of machines in cluster. arg format = 12"
             , true, false, true, true)

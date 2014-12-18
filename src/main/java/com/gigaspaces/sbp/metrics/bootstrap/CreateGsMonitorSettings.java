@@ -99,12 +99,27 @@ public class CreateGsMonitorSettings {
         processMetricsIntervals(commandLine, set, map);
         processAlpha(map);
         processHostAndGscCount(commandLine, set, map);
+        processDerivedMetricsPeriod(commandLine, set, map);
 
         processFlags(set, map);
 
         gsMonitorSettings.initialize(map);
 
         return map;
+    }
+
+    void processDerivedMetricsPeriod(CommandLine commandLine, Set<SettingType> set, Map<SettingType, String> map) throws ParseException {
+
+        ensureArgs(commandLine, set, map);
+
+        SettingType derivedPeriodMs = SettingType.DerivedMetricsPeriodInMs;
+        String periodStr = getStringOrNull(commandLine, derivedPeriodMs);
+        if( periodStr == null) map.put(derivedPeriodMs, monitorDefaults.derivedPeriodInMs().toString());
+        else{
+            validateNumber(periodStr, derivedPeriodMs);
+            map.put(derivedPeriodMs, periodStr);
+        }
+
     }
 
     void processMetricsIntervals(CommandLine commandLine, Set<SettingType> set, Map<SettingType, String> map) throws ParseException {

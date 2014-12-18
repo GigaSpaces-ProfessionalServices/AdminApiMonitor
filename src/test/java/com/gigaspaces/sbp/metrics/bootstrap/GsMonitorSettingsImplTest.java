@@ -423,7 +423,7 @@ public class GsMonitorSettingsImplTest {
         final Long interval = numbers.positiveLong();
 
         testInstance.initialize(new HashMap<SettingType, String>(){{
-            put(SettingType.DerivedMetricsPeriod, interval.toString());
+            put(SettingType.DerivedMetricsPeriodInMs, interval.toString());
         }});
 
         assertEquals(interval, testInstance.derivedMetricsPeriodInMs(), 0);
