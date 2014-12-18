@@ -59,6 +59,7 @@ public class CsvVisitor extends AbstractStatsVisitor{
                 headers.append(", ");
             }
             logger.info(headers.toString().substring(0, headers.length()-2));
+            saveHeaders = false;
         }
         StringBuilder values = new StringBuilder(Constants.DATE_FORMAT).append(" ").append(dateFormat.format(new Date())).append(", ");
         for (FullMetric metric : metricsRegistry.getPidMetrics().values()){
