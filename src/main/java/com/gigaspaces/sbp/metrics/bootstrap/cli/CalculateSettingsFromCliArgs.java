@@ -125,6 +125,8 @@ public class CalculateSettingsFromCliArgs {
         addOptionByReference(options, SettingType.AlertsEnabled);
         addOptionByReference(options, SettingType.SendAlertsByEmail);
 
+        addOptionByReference(options, SettingType.CollectMetricsIntervalInMs);
+
         return options;
     }
 
