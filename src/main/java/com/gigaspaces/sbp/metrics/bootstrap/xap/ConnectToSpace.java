@@ -50,9 +50,11 @@ class ConnectToSpace implements Runnable{
         for (SpaceInstance spaceInstance : space.getInstances()) {
             Transport transport = spaceInstance.getTransport();
             TransportLRMIMonitoring lrmiMonitoring = transport.getLRMIMonitoring();
-            logger.debug(String.format("Enabling LRMI monitoring for spaceInstance %s with backupId %s.", spaceInstance.getInstanceId(), spaceInstance.getBackupId()));
-            lrmiMonitoring.enableMonitoring();
-            logger.debug(String.format("LRMI monitoring successfully enabled for spaceInstance %s with backupId %s.", spaceInstance.getInstanceId(), spaceInstance.getBackupId()));
+            if( lrmiMonitoring != null ) {
+                logger.debug(String.format("Enabling LRMI monitoring for spaceInstance %s with backupId %s.", spaceInstance.getInstanceId(), spaceInstance.getBackupId()));
+                lrmiMonitoring.enableMonitoring();
+                logger.debug(String.format("LRMI monitoring successfully enabled for spaceInstance %s with backupId %s.", spaceInstance.getInstanceId(), spaceInstance.getBackupId()));
+            }
         }
 
     }
