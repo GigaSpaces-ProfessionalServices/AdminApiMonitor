@@ -1,28 +1,37 @@
-<configuration>
+<configuration debug="true">
 
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <!--
-            Take the value of outputFile from CLI or gs.monitor.properties
-            and stuff it in here. Otherwise use default value and hope
-            for it to be written in some reasonable directory...
-        -->
-        <file>${outputFile:-gs-monitor.csv}</file>
+
+        <file>${outputFile:gs-monitor.csv}</file>
+
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <fileNamePattern>logs/mylog.%i.log.zip</fileNamePattern>
+            <fileNamePattern>logs/${outputFile:gs-monitor.csv}.%i.zip</fileNamePattern>
             <minIndex>1</minIndex>
             <maxIndex>20</maxIndex>
         </rollingPolicy>
 
         <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <maxFileSize>5GB</maxFileSize>
+            <maxFileSize>50MB</maxFileSize>
         </triggeringPolicy>
+
+        <encoder>
+            <pattern>%msg%n</pattern>
+        </encoder>
+
+    </appender>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%msg%n</pattern>
         </encoder>
     </appender>
 
-    <logger name="file">
-        <appender-ref ref="FILE" />
+    <root level="INFO">
+        <appender-ref ref="FILE"/>
+    </root>
+
+    <logger name="com.gigaspaces.sbp.metrics.bootstrap.props.PropertyFileValues" level="DEBUG">
+        <appender-ref ref="CONSOLE"/>
     </logger>
 
 </configuration>

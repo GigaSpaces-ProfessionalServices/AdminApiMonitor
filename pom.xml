@@ -91,7 +91,7 @@
                 <includes>
                     <include>properties/monitor.default.properties</include>
                     <include>properties/xap.default.properties</include>
-                    <include>logback/logback-csv.xml</include>
+                    <include>logback/logback.xml</include>
                     <include>META-INF/spring/*</include>
                     <include>alerts-config.xml</include>
                 </includes>
