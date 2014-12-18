@@ -227,6 +227,10 @@
 
     <repositories>
         <repository>
+            <id>cloudbees-jpn</id>
+            <url>http://repository-jasonnerothin.forge.cloudbees.com/release/</url>
+        </repository>
+        <repository>
             <id>org.openspaces</id>
             <url>http://maven-repository.openspaces.org</url>
         </repository>
