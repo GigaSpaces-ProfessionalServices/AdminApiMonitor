@@ -107,25 +107,25 @@ public class ConnectToXap {
             factory.addLocators(lookupLocators);
         else
             factory.addLocator(lookupLocators);
-        logger.info(String.format("Connecting to XAP using locators = '%s'.", lookupLocators));
+        logger.debug(String.format("Connecting to XAP using locators = '%s'.", lookupLocators));
         String lookupGroups = settings.lookupGroups();
         if (lookupGroups != null) lookupGroups = lookupGroups.trim();
         if (lookupGroups != null && lookupGroups.length() > 0) {
-            logger.info(String.format("Connecting to XAP using lookup groups = '%s'.", lookupGroups));
+            logger.debug(String.format("Connecting to XAP using lookup groups = '%s'.", lookupGroups));
             if( lookupGroups.indexOf(",") > 0 )
                 factory.addGroups(lookupGroups);
             else
                 factory.addGroup(lookupGroups);
-        } else logger.info("Connecting to XAP using default lookup groups.");
+        } else logger.debug("Connecting to XAP using default lookup groups.");
 
     }
 
     void enableSecurity(AdminFactory factory) {
         if (settings.xapSecurityEnabled()) {
-            logger.info("Connecting to XAP with security enabled.");
+            logger.debug("Connecting to XAP with security enabled.");
             ensureCredentials();
             factory.credentials(settings.username(), settings.password());
-        } else logger.info("Connecting to XAP without security enabled.");
+        } else logger.debug("Connecting to XAP without security enabled.");
     }
 
     void ensureCredentials() {

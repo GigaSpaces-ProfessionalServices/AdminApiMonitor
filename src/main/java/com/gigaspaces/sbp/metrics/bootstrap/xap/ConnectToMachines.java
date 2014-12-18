@@ -34,11 +34,12 @@ class ConnectToMachines implements Runnable {
      */
     @Override
     public void run() {
+        int machineCount = settings.machineCount();
+        logger.debug(String.format("Waiting indefinitely to connect to %d machines.", machineCount));
         Machines machines = admin.getMachines();
         long start = System.currentTimeMillis();
-        int machineCount = settings.machineCount();
         machines.waitFor(machineCount);
         long stop = System.currentTimeMillis();
-        logger.info(String.format("Successfully contacted %d machines in %d milliseconds.", machineCount, (stop - start)));
+        logger.debug(String.format("Successfully contacted %d machines in %d milliseconds.", machineCount, (stop - start)));
     }
 }

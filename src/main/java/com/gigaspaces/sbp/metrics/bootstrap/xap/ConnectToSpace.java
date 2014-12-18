@@ -40,18 +40,19 @@ class ConnectToSpace implements Runnable{
     @Override
     public void run() {
 
-        logger.info(String.format("Waiting indefinitely to connect to XAP Space '%s'.", spaceName));
+        logger.debug(String.format("Waiting indefinitely to connect to XAP Space '%s'.", spaceName));
         long start = System.currentTimeMillis();
         Spaces spaces = admin.getSpaces();
         Space space = spaces.waitFor(spaceName);
         long stop = System.currentTimeMillis();
-        logger.info(String.format("Successfully connected to '%s' in %d milliseconds.", spaceName, (stop - start)));
+        logger.debug(String.format("Successfully connected to '%s' in %d milliseconds.", spaceName, (stop - start)));
 
         for (SpaceInstance spaceInstance : space.getInstances()) {
             Transport transport = spaceInstance.getTransport();
             TransportLRMIMonitoring lrmiMonitoring = transport.getLRMIMonitoring();
-            logger.info(String.format("Enabling LRMI monitoring for spaceInstance '%s' with backupId '%s'.", spaceInstance.getInstanceId(), spaceInstance.getBackupId()));
+            logger.debug(String.format("Enabling LRMI monitoring for spaceInstance %s with backupId %s.", spaceInstance.getInstanceId(), spaceInstance.getBackupId()));
             lrmiMonitoring.enableMonitoring();
+            logger.debug(String.format("LRMI monitoring successfully enabled for spaceInstance %s with backupId %s.", spaceInstance.getInstanceId(), spaceInstance.getBackupId()));
         }
 
     }

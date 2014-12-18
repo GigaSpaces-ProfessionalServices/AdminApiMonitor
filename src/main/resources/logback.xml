@@ -18,6 +18,13 @@
             <pattern>%msg%n</pattern>
         </encoder>
 
+        <!-- This eliminates bootstrap debug logging from ending up at the top of the output file -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>DEBUG</level>
+            <onMatch>DENY</onMatch>
+            <onMismatch>ACCEPT</onMismatch>
+        </filter>
+
     </appender>
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
@@ -30,8 +37,27 @@
         <appender-ref ref="FILE"/>
     </root>
 
+    <!-- These are useful to be aware of sometimes -->
     <logger name="com.gigaspaces.sbp.metrics.bootstrap.props.PropertyFileValues" level="DEBUG">
         <appender-ref ref="CONSOLE"/>
     </logger>
+
+    <!-- Connection info is useful in debugging the startup procedure -->
+    <logger name="com.gigaspaces.sbp.metrics.bootstrap.xap.ConnectToGscs" level="DEBUG">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    <logger name="com.gigaspaces.sbp.metrics.bootstrap.xap.ConnectToMachines" level="DEBUG">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    <logger name="com.gigaspaces.sbp.metrics.bootstrap.xap.ConnectToSpace" level="DEBUG">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    <logger name="com.gigaspaces.sbp.metrics.bootstrap.xap.ConnectToXap" level="DEBUG">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    <logger name="com.gigaspaces.sbp.metrics.bootstrap.xap.ConfigureAlerts" level="DEBUG">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
 
 </configuration>

@@ -37,9 +37,9 @@ class ConnectToGscs implements Runnable {
         GridServiceContainers GSCs = admin.getGridServiceContainers();
         int gscCount = settings.gscCount();
         long start = System.currentTimeMillis();
-        logger.info(String.format("Waiting indefinitely to connect to %d GSCs.", gscCount));
+        logger.debug(String.format("Waiting indefinitely to connect to %d GSCs.", gscCount));
         GSCs.waitFor(gscCount);
         long stop = System.currentTimeMillis();
-        logger.info(String.format("Successfully contacted %d GSCs in %d milliseconds.", gscCount, (stop - start)));
+        logger.debug(String.format("Successfully contacted %d GSCs in %d milliseconds.", gscCount, (stop - start)));
     }
 }
